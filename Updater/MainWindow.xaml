@@ -1,0 +1,31 @@
+﻿<Controls:MetroWindow x:Class="Updater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Updater"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="120" Width="525"
+        Loaded="MetroWindow_Loaded"
+                      >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=Value, ElementName=DownloadProgressBar}" 
+                       Margin="2" VerticalAlignment="Top" />
+            <TextBlock Text="%" />
+        </StackPanel>
+        <Controls:MetroProgressBar Name="DownloadProgressBar" 
+                                   VerticalAlignment="Bottom" Height="25" Margin="5" Value="0" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Name="BtnStart" Content="Start Download" Margin="5" Click="BtnStart_Click" />
+            <Button Name="BtnOK" Content="OK" Visibility="Collapsed" Margin="5" Click="Button_Click" />
+            <Button Name="BtnRetry" Content="Retry" Visibility="Collapsed" Margin="5" Click="BtnRetry_Click" />
+        </StackPanel>
+    </Grid>
+</Controls:MetroWindow>

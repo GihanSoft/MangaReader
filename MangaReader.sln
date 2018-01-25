@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaReader", "MangaReader\MangaReader.csproj", "{9E686957-082D-4319-94D6-92CF9CC09189}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{8A23BA3F-9589-4737-9697-FF327A7E893E}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{D9ED7070-D49E-433D-AA1E-F7D22D590426}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E686957-082D-4319-94D6-92CF9CC09189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E686957-082D-4319-94D6-92CF9CC09189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E686957-082D-4319-94D6-92CF9CC09189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E686957-082D-4319-94D6-92CF9CC09189}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A23BA3F-9589-4737-9697-FF327A7E893E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A23BA3F-9589-4737-9697-FF327A7E893E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A23BA3F-9589-4737-9697-FF327A7E893E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A23BA3F-9589-4737-9697-FF327A7E893E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9ED7070-D49E-433D-AA1E-F7D22D590426}.Debug|Any CPU.ActiveCfg = Debug
+		{D9ED7070-D49E-433D-AA1E-F7D22D590426}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2709031-7E16-4863-9823-50F8737D553C}
+	EndGlobalSection
+EndGlobal
