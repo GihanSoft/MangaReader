@@ -219,8 +219,8 @@ namespace MangaReader
                     ChapterListCombo.ItemsSource = null;
                     ChapterListCombo.ItemsSource = ChapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
 
-                    ChapterListCombo.SelectedIndex = CurrentManga.CurrentChapter;
-                    Next_Click(sender, e);
+                    ChapterListCombo.SelectedIndex = ++CurrentManga.CurrentChapter;
+                    //Next_Click(sender, e);
                     return;
                 }
                 MessageBox.Show("این چپتر آخر است.", "خطا", MessageBoxButton.OK, MessageBoxImage.Warning,
