@@ -4,7 +4,7 @@
   <description asmv2:iconFile="icon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="MangaReader" version="2.3.1.0" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="MangaReader" version="2.3.2.0" language="neutral" processorArchitecture="msil" />
     <commandLine file="MangaReader.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -80,13 +80,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MangaReader.exe" size="230912">
-      <assemblyIdentity name="MangaReader" version="2.3.1.0" language="neutral" processorArchitecture="msil" />
+      <assemblyIdentity name="MangaReader" version="2.3.2.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>0PFEPUIqnMgG9Wl99HHQCbeQ8PoxnF6jYEGjdel7Z4w=</dsig:DigestValue>
+        <dsig:DigestValue>WB9bN1TXp0fpvuZ7hca8iIQDrxUuns7PwAtwzoHsB0Y=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

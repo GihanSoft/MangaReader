@@ -405,7 +405,7 @@ namespace MangaReader
         private void MangaPanel_KeyUp(object sender, KeyEventArgs e)
         {
             if ((MangaPanel.Children[0] as MangaItem).IsEditActive) return;
-            if (e.Key >= Key.A && e.Key <= Key.Z)
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.None && e.Key >= Key.A && e.Key <= Key.Z)
             {
                 foreach (MangaItem item in MangaPanel.Children)
                 {

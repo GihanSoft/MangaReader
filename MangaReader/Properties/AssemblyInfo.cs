@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("MangaReader")]
-[assembly: AssemblyDescription("offline manga reader of KuroNeko")]
+[assembly: AssemblyDescription("offline manga reader of GihanSoft")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("KuroNeko")]
+[assembly: AssemblyCompany("GihanSoft")]
 [assembly: AssemblyProduct("MangaReader")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,7 +51,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.3.1.0")]
-[assembly: AssemblyFileVersion("2.3.1.0")]
+[assembly: AssemblyVersion("2.3.2.0")]
+[assembly: AssemblyFileVersion("2.3.2.0")]
 [assembly: NeutralResourcesLanguage("fa-IR")]
 
