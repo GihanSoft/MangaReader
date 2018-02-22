@@ -10,15 +10,18 @@ namespace MangaReader
 {
     static class CompressApi
     {
-        static string ExtractPath { get; } = @"extractpath\";
+        static string ExtractPath { get; }
 
         static CompressApi()
         {
+            ExtractPath = "extractpath\\";
             CleanExtractPath();
             try
             {
                 if (!Directory.Exists(ExtractPath))
-                    Directory.CreateDirectory(ExtractPath);
+                {
+                    Directory.CreateDirectory(ExtractPath).Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+                }
             }
             catch (Exception e)
             {
@@ -38,10 +41,12 @@ namespace MangaReader
 
                     tarPath = ExtractPath + archivePath.Substring(archivePath.LastIndexOf("\\") + 1);
                     tarPath = tarPath.Substring(0, tarPath.LastIndexOf("."));
+                    DirectoryInfo tarDirectory = new DirectoryInfo(tarPath);
 
-                    if (Directory.Exists(tarPath))
-                        Directory.Delete(tarPath, true);
-                    Directory.CreateDirectory(tarPath);
+                    if (tarDirectory.Exists)
+                        tarDirectory.Delete(true);
+                    tarDirectory.Create();
+                    //tarDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden; 
                     reader.WriteAllToDirectory(tarPath, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
                 }
                 return tarPath;
@@ -61,10 +66,18 @@ namespace MangaReader
                 if (Directory.Exists(ExtractPath))
                     Directory.Delete(ExtractPath, true);
             }
-            catch (Exception e)
+            catch
             {
-                System.Windows.MessageBox.Show(e.ToString(), "Error",
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                try
+                {
+                    if (Directory.Exists(ExtractPath))
+                        Directory.Delete(ExtractPath, true);
+                }
+                catch (Exception err)
+                {
+                    System.Windows.MessageBox.Show(err.ToString(), "Error",
+                        System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                }
             }
         }
     }

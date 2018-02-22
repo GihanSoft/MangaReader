@@ -30,9 +30,9 @@ namespace MangaReader
             return SafeNativeMethods.StrCmpLogicalW(a, b);
         }
 
-        public int MangaCompare(Models.MangaInfo x, Models.MangaInfo y)
+        public int Compare(Models.MangaInfo a, Models.MangaInfo b)
         {
-            return Compare(x.Name, y.Name);
+            return Compare(a.Name, b.Name);
         }
     }
 

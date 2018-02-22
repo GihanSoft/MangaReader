@@ -15,6 +15,11 @@ namespace MangaReader
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            var path = Environment.GetCommandLineArgs()[0];
+            Environment.CurrentDirectory = path.Substring(0, path.LastIndexOf('\\'));
+
+            CoverMaker.AllCoverConvert();
+
             if (e.Args.Length > 0)
             {
                 bool trueType = true;
@@ -27,13 +32,22 @@ namespace MangaReader
                 }
                 if (!trueType)
                     Environment.Exit(0);
+
+                StartupUri = new Uri("Views/WinMain.xaml", UriKind.Relative);
             }
+
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
             SettingApi.This.Dispose();
+            CompressApi.CleanExtractPath();
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

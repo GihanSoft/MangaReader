@@ -43,6 +43,9 @@ namespace MangaReader
         public bool ShowLastManga { get; set; } = false;
         public int LastManga { get; set; } = -1;
 
+        public int ThemeBase { get; set; } = 0;
+        public int Accent { get; set; } = 2;
+
         static SettingApi()
         {
             SaveFolderDir = @"Data";
@@ -80,5 +83,14 @@ namespace MangaReader
         }
 
         public void Dispose() => Save();
+
+        public void SortMangaList()
+        {
+            MangaList.Sort(NaturalStringComparer.Default.Compare);
+            for (int i = 0; i < MangaList.Count; i++)
+            {
+                MangaList[i].ID = i;
+            }
+        }
     }
 }

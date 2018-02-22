@@ -1,0 +1,82 @@
+﻿<Controls:MetroWindow x:Class="MangaReader.Views.WinAbout"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MangaReader"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="" Height="300" Width="500">
+    <Grid>
+        <RichTextBox FlowDirection="RightToLeft" VerticalScrollBarVisibility="Auto" 
+                     FontFamily="B Nazanin" FontSize="14" IsReadOnly="True">
+            <FlowDocument>
+                <Paragraph FontSize="16" FontWeight="Bold">
+                    <Run Text="امکانات نرم افزار و راهنمای استفاده" />
+                </Paragraph>
+                <List MarkerStyle="Decimal">
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="ایجاد کتابخانه از مانگاهای موجود در حافظه" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="انتخاب و شخصی سازی کاور و نام مانگا درون لیست" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="ذخیره محل خواندن مانگا برای تمامی مانگاهای درون لیست" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="افزودن مانگا به لیست با استفاده از drag and drop" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="افزودن گروهی همه مانگاها با انتخاب پوشه ریشه (پوشه‌ای که همه مانگاها درون آن قرار دارند)" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="جست و جوی سریع بین مانگاهای درون برنامه با استفاده از فشردن حرف اول نام" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="امکان آپدیت فوق کم حجم برنامه (حجم زیر 500 کیلوبایت)" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="وجود کلید میانبر برای عملیات‌های مختلف (موس را روی دکمه نگه دارید تا کلید میانبر نمایش داده شود)" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="مرتب سازی بر اساس سیستم ترتیب ویندوز" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="حالت تمام صفحه برای خواندن مانگا به همراه مخفی سازی خودکار نوار ابزار" />
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="تغییر بزرگ نمایی با استفاده از ترکیب Ctrl + غلتک موس" />
+                        </Paragraph> 
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Run Text="امکان اسکرول خودکار با فشردن غلتک و جا به جا کردن موس (به سبک مرورگرها)" />
+                        </Paragraph>
+                    </ListItem>
+                </List>
+            </FlowDocument>
+        </RichTextBox>
+    </Grid>
+</Controls:MetroWindow>
