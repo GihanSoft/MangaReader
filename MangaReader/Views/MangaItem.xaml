@@ -8,11 +8,11 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="80"
-             Name="MainControl" Background="White"
+             Name="MainControl" Background="{DynamicResource WhiteColorBrush}"
              IsTabStop="True"
              MaxHeight="125" MinHeight="125" MaxWidth="80" MinWidth="80" Margin="5">
     <UserControl.BitmapEffect>
-        <DropShadowBitmapEffect Color="Black" Opacity="0.2" />
+        <DropShadowBitmapEffect Color="{DynamicResource BlackColor}" Opacity="0.2" />
     </UserControl.BitmapEffect>
     <Border>
         <Grid>

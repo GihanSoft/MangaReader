@@ -281,17 +281,17 @@ namespace MangaReader.Views
         {
             if (FullScreenIcon.Kind == MahApps.Metro.IconPacks.PackIconMaterialKind.Fullscreen)
             {
+                IgnoreTaskbarOnMaximize = true;
                 FullScreenIcon.Kind = MahApps.Metro.IconPacks.PackIconMaterialKind.FullscreenExit;
                 previousState = this.WindowState;
                 WindowState = WindowState.Maximized;
-                IgnoreTaskbarOnMaximize = true;
             }
             else
             {
+                IgnoreTaskbarOnMaximize = false;
                 FullScreenIcon.Kind = MahApps.Metro.IconPacks.PackIconMaterialKind.Fullscreen;
                 MyToolBar.Visibility = Visibility.Visible;
                 WindowState = previousState;
-                IgnoreTaskbarOnMaximize = false;
             }
             ShowTitleBar = !ShowTitleBar;
         }
