@@ -17,6 +17,6 @@ namespace Updater
         public int LeastVersion { get; set; }
         public UpdateMode UpdateMode { get; set; }
         public List<string> SourceFiles { get; set; }
-        public static int ProgramVersionCode { get; } = 20300;
+        public static int ProgramVersionCode { get; } = 20400;
     }
 }
