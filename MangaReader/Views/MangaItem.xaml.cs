@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -107,23 +108,42 @@ namespace MangaReader.Views
         {
             MangaTitle = manga.Name;
 
-            if (manga.CoverAddress == null)
+            if (manga.CoverAddress == null || !File.Exists(manga.CoverAddress))
             {
                 try
                 {
-                    var chapters = System.IO.Directory.EnumerateDirectories(manga.Address).ToList();
-                    chapters.Sort(NaturalStringComparer.Default.Compare);
-                    var pages = System.IO.Directory.EnumerateFiles(chapters[0], "*.*", System.IO.SearchOption.AllDirectories).ToList();
-                    pages.Sort(NaturalStringComparer.Default.Compare);
-                    CoverSource = pages.Find(file =>
-                        FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
-
+                    var chapters = Directory.EnumerateDirectories(manga.Address).ToList();
+                    if (chapters.Count > 0)
+                    {
+                        chapters.Sort(NaturalStringComparer.Default.Compare);
+                        var pages = Directory.EnumerateFiles(chapters[0], "*.*", SearchOption.AllDirectories).ToList();
+                        pages.Sort(NaturalStringComparer.Default.Compare);
+                        CoverSource = pages.Find(file =>
+                            FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
+                    }
+                    else
+                    {
+                        chapters = Directory.EnumerateFiles(manga.Address).ToList();
+                        chapters.Sort(NaturalStringComparer.Default.Compare);
+                        var exPath = CompressApi.OpenArchive(chapters[0]);
+                        var pages = Directory.EnumerateFiles(exPath, "*.*", SearchOption.AllDirectories).ToList();
+                        pages.Sort(NaturalStringComparer.Default.Compare);
+                        CoverSource = pages.Find(file =>
+                            FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
+                    }
                     SettingApi.This.MangaList[manga.ID].CoverAddress = CoverSource;
+                    CoverMaker.CoverConvert(manga);
+                    CoverSource = SettingApi.This.MangaList[manga.ID].CoverAddress;
+                    CompressApi.CleanExtractPath();
                 }
                 catch { }
             }
             else
+            {
+                if (!manga.CoverAddress.StartsWith(CoverMaker.AbsoluteCoverPath))
+                    CoverMaker.CoverConvert(manga);
                 CoverSource = manga.CoverAddress;
+            }
             Manga = manga;
         }
 

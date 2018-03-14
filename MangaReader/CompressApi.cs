@@ -46,8 +46,8 @@ namespace MangaReader
                     if (tarDirectory.Exists)
                         tarDirectory.Delete(true);
                     tarDirectory.Create();
-                    //tarDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden; 
-                    reader.WriteAllToDirectory(tarPath, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
+                    reader.WriteAllToDirectory(tarPath, 
+                        new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
                 }
                 return tarPath;
             }

@@ -40,8 +40,8 @@ namespace MangaReader
         public List<MangaInfo> MangaList { get; set; } = null;
         public string MangaRoot { get; set; } = null;
         public byte BackgroundColor { get; set; } = 0;
-        public bool ShowLastManga { get; set; } = false;
-        public int LastManga { get; set; } = -1;
+        public bool ShowLastManga { get; set; } = true;
+        public int LastManga { get; set; } = 0;
 
         public int ThemeBase { get; set; } = 0;
         public int Accent { get; set; } = 2;
@@ -70,27 +70,45 @@ namespace MangaReader
                 this.BackgroundColor = setting.BackgroundColor;
                 this.ShowLastManga = setting.ShowLastManga;
                 this.LastManga = setting.LastManga;
+                this.ThemeBase = setting.ThemeBase;
+                this.Accent = setting.Accent;
             }
             if (MangaList == null)
                 MangaList = new List<MangaInfo>();
         }
 
-        public async void Save()
-        {
-            var file = File.OpenWrite(SaveFileDir);
-            await Task.Run(() => binaryFormatter.Serialize(file, this));
-            file.Close();
-        }
-
-        public void Dispose() => Save();
+        // باید این سیستم مسخره آی دی رو درست کنم و مثل بچه آدم کار کنه
 
         public void SortMangaList()
         {
             MangaList.Sort(NaturalStringComparer.Default.Compare);
             for (int i = 0; i < MangaList.Count; i++)
             {
-                MangaList[i].ID = i;
+                if (MangaList[i].ID != i)
+                {
+                    var tempCover = "t_" + CoverMaker.CoverPathTemp(i);
+                    Directory.Move(MangaList[i].CoverAddress, tempCover);
+                    MangaList[i].ID = i;
+                }
+            }
+
+            var files = Directory.EnumerateFiles(CoverMaker.AbsoluteCoverPath).ToArray();
+            foreach (var item in files)
+            {
+                if (item.StartsWith("t_"))
+                {
+                    Directory.Move(item, item.Substring(2));
+                }
             }
         }
+
+        public void Save()
+        {
+            var file = File.OpenWrite(SaveFileDir);
+            binaryFormatter.Serialize(file, this);
+            file.Close();
+        }
+
+        public void Dispose() => Save();
     }
 }

@@ -59,23 +59,5 @@ namespace Updater.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://kuroneko3.tk/kn/api.
-        /// </summary>
-        internal static string ApiUrl {
-            get {
-                return ResourceManager.GetString("ApiUrl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update.
-        /// </summary>
-        internal static string UpdateLocation {
-            get {
-                return ResourceManager.GetString("UpdateLocation", resourceCulture);
-            }
-        }
     }
 }

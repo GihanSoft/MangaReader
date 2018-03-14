@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahApps.Metro;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -17,16 +18,14 @@ namespace MangaReader
         {
             var path = Environment.GetCommandLineArgs()[0];
             Environment.CurrentDirectory = path.Substring(0, path.LastIndexOf('\\'));
-
-            CoverMaker.AllCoverConvert();
-
+            
             if (e.Args.Length > 0)
             {
                 bool trueType = true;
                 foreach (var item in e.Args)
                 {
                     bool exist = System.IO.File.Exists(item);
-                    bool isCompressedFile = item.ToLower().EndsWith(".zip") || item.ToLower().EndsWith(".rar");
+                    bool isCompressedFile = FileTypeList.CompressedType.Any(t => item.ToLower().EndsWith(t));
                     if (!exist || !isCompressedFile)
                         trueType = false;
                 }
@@ -36,6 +35,9 @@ namespace MangaReader
                 StartupUri = new Uri("Views/WinMain.xaml", UriKind.Relative);
             }
 
+            var theme = ThemeManager.AppThemes.ToArray()[SettingApi.This.ThemeBase];
+            var accent = ThemeManager.Accents.ToArray()[SettingApi.This.Accent];
+            ThemeManager.ChangeAppStyle(Current, accent, theme);
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -47,7 +49,7 @@ namespace MangaReader
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

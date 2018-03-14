@@ -19,12 +19,11 @@ namespace Updater
         static UpdateChecker()
         {
             HttpClient = new HttpClient();
-
-            string uriApi = Properties.Resources.ApiUrl;
+            string uriApi = System.Configuration.ConfigurationManager.AppSettings["ApiUrl"];
             if (uriApi.Last() != '/') // check and edit path form for combine 
                 uriApi += '/';
 
-            string updateLocation = Properties.Resources.UpdateLocation;
+            string updateLocation = System.Configuration.ConfigurationManager.AppSettings["UpdateLocation"];
             if (updateLocation.First() == '/') // check and edit path form for combine
                 updateLocation = updateLocation.Substring(1);
 

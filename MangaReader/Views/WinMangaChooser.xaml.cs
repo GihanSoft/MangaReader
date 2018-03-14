@@ -99,6 +99,8 @@ namespace MangaReader.Views
             }
             Dispatcher.Invoke(() =>
             {
+                if (SettingApi.This.LastManga == -1 || SettingApi.This.LastManga >= MangaPanel.Children.Count)
+                    SettingApi.This.ShowLastManga = false;
                 if (SettingApi.This.ShowLastManga)
                     (MangaPanel.Children[SettingApi.This.LastManga] as MangaItem).MangaButton.Focus();
                 else if (MangaPanel.Children.Count > 0)
@@ -159,6 +161,7 @@ namespace MangaReader.Views
         private void MangaItem_Click(object sender, RoutedEventArgs e)
         {
             var clickedManga = (sender as MangaItem).Manga;
+            SettingApi.This.LastManga = clickedManga.ID;
             new WinMain(clickedManga).Show();
             Close();
         }
@@ -193,6 +196,7 @@ namespace MangaReader.Views
 
             YN_tlb.Visibility = Visibility.Collapsed;
         }
+
         private void BtnSelectAll_Click(object sender, RoutedEventArgs e)
         {
             foreach (MangaItem item in MangaPanel.Children)
@@ -281,8 +285,10 @@ namespace MangaReader.Views
 
             try
             {
-                list = Directory.EnumerateFiles(mangaPath, "*.*", SearchOption.AllDirectories).Where(file =>
-                    FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t))).ToList();
+                list = Directory.EnumerateFiles(mangaPath).ToList();
+                if (list.Any(f => FileTypeList.CompressedType.Any(t=>f.ToLower().EndsWith(t))))
+                    return MangaFolderStastus.manga;
+                list = list.Where(file => FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t))).ToList();
             }
             catch { return MangaFolderStastus.not; }
             if (subDir.Count == 0 && list.Count > 0)

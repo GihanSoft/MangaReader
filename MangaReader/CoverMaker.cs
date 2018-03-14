@@ -14,15 +14,22 @@ namespace MangaReader
     static class CoverMaker
     {
         static string CoverPath { get; }
+        public static string AbsoluteCoverPath { get; }
         static CoverMaker()
         {
             CoverPath = "covers\\";
+            AbsoluteCoverPath = Environment.CurrentDirectory + '\\' + CoverPath;
             DirectoryInfo directory = new DirectoryInfo(CoverPath);
             if (!directory.Exists)
             {
                 directory.Create();
                 directory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
             }
+        }
+
+        public static string CoverPathTemp(int mangaID)
+        {
+            return Environment.CurrentDirectory + '\\' + CoverPath + mangaID + ".jpg";
         }
 
         private static Bitmap ResizeImage(Image image, int NewHeight = 500)
@@ -44,16 +51,21 @@ namespace MangaReader
             var preCover = Image.FromFile(manga.CoverAddress);
             var tumbCover = ResizeImage(preCover);
             tumbCover.Save(CoverPath + manga.ID + ".jpg", ImageFormat.Jpeg);
-            SettingApi.This.MangaList[manga.ID].CoverAddress = Environment.CurrentDirectory + '\\' + CoverPath + manga.ID + ".jpg";
+            SettingApi.This.MangaList[manga.ID].CoverAddress = CoverPathTemp(manga.ID);
+            preCover.Dispose();
+            tumbCover.Dispose();
         }
 
-        public static void AllCoverConvert()
+        /*
+        publuc static void AllCoverConvert()
         {
-            foreach (var manga in SettingApi.This.MangaList)
+            for (int i = SettingApi.This.MangaList.Count - 1; i >= 0; i--)
             {
+                var manga = SettingApi.This.MangaList[i];
                 if (manga.CoverAddress.StartsWith(Environment.CurrentDirectory + '\\' + CoverPath)) continue;
                 CoverConvert(manga);
             }
         }
+        */
     }
 }
