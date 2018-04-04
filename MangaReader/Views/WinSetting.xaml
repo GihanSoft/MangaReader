@@ -8,7 +8,7 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="Setting" Height="400" Width="600"
-        GlowBrush="{DynamicResource AccentColorBrush}" Icon="..\icon.ico"
+        GlowBrush="{DynamicResource AccentColorBrush}" Icon="/MangaReader;component/OtakuLib.ico"
         WindowStartupLocation="CenterScreen" SaveWindowPosition="True"
                       Closing="MetroWindow_Closing"
         >
@@ -78,7 +78,6 @@
                             <Run Text="طراحی و برنامه نویسی: محمد بابایی" />
                         </Paragraph>
                         <Paragraph TextIndent="25">
-                            <Run Text="سایت کرونکو در سال 95 با هدف ایجاد فضای مناسب برای دانلود،خواندن و معرفی مانگا و مانهوا تاسیس شده است .این سایت با داشتن تیمی دلسوز که بدون هیچ چشم داشتی شبانه روز درحال تلاش برای تهیه مانگا و مانهوا ترجمه شده می باشد. و امیدواریم با پیشرفت روزافزون به هدف اصلی خود که رضایت شماکاربران عزیز و قدمی کوچک در پیشرفت کشور عزیزمان ایران است برسیم ."/>
                         </Paragraph>
                     </FlowDocument>
                 </RichTextBox>

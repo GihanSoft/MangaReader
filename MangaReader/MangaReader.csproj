@@ -212,9 +212,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Updater\Updater.csproj">
       <Project>{8a23ba3f-9589-4737-9697-ff327a7e893e}</Project>
       <Name>Updater</Name>

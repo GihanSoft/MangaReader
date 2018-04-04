@@ -27,13 +27,8 @@ namespace MangaReader.Views
         public WinSetting()
         {
             InitializeComponent();
-            var version = Updater.UpdateData.ProgramVersionCode;
-            RtVersion.Text = "." + (version % 100).ToString();
-            version /= 100;
-            RtVersion.Text = "." + (version % 100).ToString() + RtVersion.Text;
-            version /= 100;
-            RtVersion.Text = version.ToString() + RtVersion.Text;
-
+            RtVersion.Text = Updater.Models.UpdateInfo.CurrentVersionName;
+            
             CboThemeBase.ItemsSource = ThemeManager.AppThemes.Select(t => t.Name);
             CboTheme.ItemsSource = ThemeManager.Accents.Select(a => a.Name);
 

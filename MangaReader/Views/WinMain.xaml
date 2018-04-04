@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="KN offline Manga Reader" WindowState="Maximized" GlowBrush="{DynamicResource AccentColorBrush}" 
         Closing="MetroWindow_Closing" StateChanged="MetroWindow_StateChanged" Loaded="MetroWindow_Loaded"
-        Icon="..\icon.ico">
+        Icon="/MangaReader;component/OtakuLib.ico">
     <Controls:MetroWindow.CommandBindings>
         <CommandBinding Command="{x:Static local:WinMain.nextChapterCmd}" Executed="NextChapterCmd_Executed" />
         <CommandBinding Command="{x:Static local:WinMain.previousChapterCmd}" Executed="PreviousChapterCmd_Executed" />

@@ -46,11 +46,11 @@ namespace MangaReader.Views
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 try
                 {
-                    if (await Updater.UpdateChecker.Check())
+                    if (new Updater.Controllers.Updater().IsNeedUpdate)
                     {
                         BtnUpdate.Background = (Brush)FindResource("HighlightBrush");
                     }
@@ -253,14 +253,15 @@ namespace MangaReader.Views
                     });
                     break;
                 case MangaFolderStastus.chapter:
-                    var rootFolder = mangaPath.Substring(0, mangaPath.LastIndexOf('\\') + 1);
+                    var rootFolder = mangaPath.Substring(0, mangaPath.LastIndexOf('\\'));
                     var subFolders = Directory.EnumerateDirectories(rootFolder).ToList();
                     subFolders.Sort(NaturalStringComparer.Default.Compare);
                     var currentCh = subFolders.FindIndex(m => m == mangaPath);
+                    var name = rootFolder.Substring(rootFolder.LastIndexOf('\\') + 1);
                     SettingApi.This.MangaList.Add(new MangaInfo()
                     {
                         ID = SettingApi.This.MangaList.Count,
-                        Name = rootFolder.Substring(rootFolder.LastIndexOf('\\') + 1),
+                        Name = name,
                         Address = rootFolder,
                         CurrentChapter = currentCh,
                         CurrentPlace = 0,

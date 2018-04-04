@@ -8,7 +8,7 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="GS Manga Reader" Height="350" Width="480"
-        GlowBrush="{DynamicResource AccentBaseColorBrush}" Icon="..\icon.ico"
+        GlowBrush="{DynamicResource AccentBaseColorBrush}" Icon="/MangaReader;component/OtakuLib.ico"
         Loaded="MetroWindow_Loaded" 
         AllowDrop="True" DragEnter="MetroWindow_DragEnter" DragLeave="MetroWindow_DragLeave" Drop="MetroWindow_Drop">
     <Controls:MetroWindow.CommandBindings>

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MangaReader"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="" Height="300" Width="500">
+        Title="" Height="300" Width="500" Icon="/MangaReader;component/OtakuLib.ico">
     <Grid>
         <RichTextBox FlowDirection="RightToLeft" VerticalScrollBarVisibility="Auto" 
                      FontFamily="B Nazanin" FontSize="14" IsReadOnly="True">
