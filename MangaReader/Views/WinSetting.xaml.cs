@@ -1,7 +1,9 @@
 ﻿using MahApps.Metro;
 using MahApps.Metro.Controls;
+using MangaReader.Controllers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +36,7 @@ namespace MangaReader.Views
 
             CboThemeBase.ItemsSource = ThemeManager.AppThemes.Select(t => t.Name);
             CboTheme.ItemsSource = ThemeManager.Accents.Select(a => a.Name);
-            
+
             CboThemeBase.SelectedIndex = SettingApi.This.ThemeBase;
             CboTheme.SelectedIndex = SettingApi.This.Accent;
         }
@@ -73,6 +75,62 @@ namespace MangaReader.Views
         private void BtnOk_Click(object sender, RoutedEventArgs e)
         {
             BtnApply_Click(null, null);
+            Close();
+        }
+
+        private void BtnBackup_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                DefaultExt = ".ini",
+                Filter = "GS Setting(*.ini)|*.ini"
+            };
+            var result = saveFileDialog.ShowDialog();
+            if (result == true)
+            {
+                File.Copy(@"Data\setting.ini", saveFileDialog.FileName);
+            }
+        }
+
+        private void BtnRestore_Click(object sender, RoutedEventArgs e)
+        {
+            var restoreFileDialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "GS Setting(*.ini)|*.ini"
+            };
+            var result = restoreFileDialog.ShowDialog();
+            if (result == true)
+            {
+                FileInfo settingFile = new FileInfo(@"Data\setting.ini");
+                if (settingFile.Exists)
+                    settingFile.Delete();
+                File.Copy(restoreFileDialog.FileName, settingFile.FullName);
+                SettingApi.This.ReLoad();
+                for (int i = 0; i < Application.Current.Windows.Count; i++)
+                {
+                    if (!(Application.Current.Windows[i] is WinSetting))
+                        Application.Current.Windows[i].Close();
+                }
+                new WinMangaChooser().Show();
+                Close();
+            }
+        }
+
+        private void BtnReset_Click(object sender, RoutedEventArgs e)
+        {
+            DirectoryInfo dataDir = new DirectoryInfo("Data");
+            DirectoryInfo coverDir = new DirectoryInfo(CoverMaker.AbsoluteCoversPath);
+            for (int i = 0; i < Application.Current.Windows.Count; i++)
+            {
+                if (!(Application.Current.Windows[i] is WinSetting))
+                    Application.Current.Windows[i].Close();
+            }
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (dataDir.Exists) dataDir.Delete(true);
+            });
+            SettingApi.This.ReLoad();
+            new WinMangaChooser().Show();
             Close();
         }
     }

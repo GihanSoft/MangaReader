@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MangaReader.Controllers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -140,7 +141,7 @@ namespace MangaReader.Views
             }
             else
             {
-                if (!manga.CoverAddress.StartsWith(CoverMaker.AbsoluteCoverPath))
+                if (!manga.CoverAddress.StartsWith(CoverMaker.AbsoluteCoversPath))
                     CoverMaker.CoverConvert(manga);
                 CoverSource = manga.CoverAddress;
             }

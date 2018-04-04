@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MangaReader.Models;
+using MangaReader.Controllers;
 
 namespace MangaReader.Views
 {

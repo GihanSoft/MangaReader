@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using MangaReader.Controllers;
 using MangaReader.Models;
 using System;
 using System.Collections.Generic;
@@ -66,8 +67,10 @@ namespace MangaReader.Views
         {
             SettingApi.This.SortMangaList();
             Dispatcher.Invoke(() => MangaPanel.Children.Clear());
-            foreach (var item in SettingApi.This.MangaList)
+            for (int i = 0; i < SettingApi.This.MangaList.Count; i++)
+
             {
+                var item = SettingApi.This.MangaList[i];
                 try
                 {
                     Dispatcher.Invoke(() =>
@@ -76,14 +79,19 @@ namespace MangaReader.Views
                         {
                             var mngItem = new MangaItem(item);
                             mngItem.Click += MangaItem_Click;
+                            if (IsManga(item.Address) == MangaFolderStastus.not)
+                                throw new Exception($"There is no Manga in \"{item.Address}\" .");
                             MangaPanel.Children.Add(mngItem);
                         }
                         catch (Exception err)
                         {
-                            var result = MessageBox.Show(err.ToString() + "\n\n" + $"Remove {item.Name}?",
+                            var result = MessageBox.Show(err.Message + "\n\n" + $"Remove {item.Name}?",
                                 "Error", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
                             if (result == MessageBoxResult.Yes)
+                            {
                                 SettingApi.This.MangaList.Remove(item);
+                                i--;
+                            }
                         }
                     });
                 }
@@ -92,7 +100,10 @@ namespace MangaReader.Views
                     var result = MessageBox.Show(err.ToString() + "\n\n" + $"Remove {item.Name}?",
                                 "Error", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
                     if (result == MessageBoxResult.Yes)
+                    {
                         SettingApi.This.MangaList.Remove(item);
+                        SettingApi.This.SortMangaList();
+                    }
                     continue;
                 }
                 Thread.Sleep(1);
@@ -286,7 +297,7 @@ namespace MangaReader.Views
             try
             {
                 list = Directory.EnumerateFiles(mangaPath).ToList();
-                if (list.Any(f => FileTypeList.CompressedType.Any(t=>f.ToLower().EndsWith(t))))
+                if (list.Any(f => FileTypeList.CompressedType.Any(t => f.ToLower().EndsWith(t))))
                     return MangaFolderStastus.manga;
                 list = list.Where(file => FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t))).ToList();
             }
@@ -390,7 +401,7 @@ namespace MangaReader.Views
 
         private void BtnGoToSite_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://kuroneko.in");
+            Process.Start("http://GihanSoft.ir");
         }
     }
 

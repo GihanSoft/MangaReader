@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro;
+using MangaReader.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

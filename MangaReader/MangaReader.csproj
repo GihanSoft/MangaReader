@@ -57,7 +57,7 @@
     <StartupObject>MangaReader.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>OtakuLib.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>21EC2F6C43F43D4405C22733280E18B16577C710</ManifestCertificateThumbprint>
@@ -124,14 +124,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CompressApi.cs" />
-    <Compile Include="CoverMaker.cs" />
-    <Compile Include="FileTypeList.cs" />
-    <Compile Include="LicenseManager.cs" />
+    <Compile Include="Controllers\CompressApi.cs" />
+    <Compile Include="Controllers\CoverMaker.cs" />
+    <Compile Include="Controllers\FileTypeList.cs" />
+    <Compile Include="Controllers\LicenseManager.cs" />
     <Compile Include="Views\MangaItem.xaml.cs">
       <DependentUpon>MangaItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingApi.cs" />
+    <Compile Include="Controllers\SettingApi.cs" />
     <Compile Include="Views\WinAbout.xaml.cs">
       <DependentUpon>WinAbout.xaml</DependentUpon>
     </Compile>
@@ -172,7 +172,7 @@
       <DependentUpon>WinMangaChooser.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\MangaInfo.cs" />
-    <Compile Include="NaturalComparer.cs" />
+    <Compile Include="Controllers\NaturalComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -220,5 +220,11 @@
       <Name>Updater</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="OtakuLib.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

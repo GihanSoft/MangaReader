@@ -21,7 +21,7 @@
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Name="BtnGoToSite" Click="BtnGoToSite_Click" Focusable="False">
+            <Button Name="BtnGoToSite" Click="BtnGoToSite_Click" ToolTip="GihanSoft.ir" Focusable="False">
                 <iconPacks:PackIconMaterial Kind="Web" />
             </Button>
         </Controls:WindowCommands>
