@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
-namespace MangaReader.Controllers
+﻿namespace Gihan.Manga.Reader.Controllers
 {
     static class LicenseManager
     {

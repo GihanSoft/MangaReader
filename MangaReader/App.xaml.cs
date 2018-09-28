@@ -1,32 +1,30 @@
-﻿using MahApps.Metro;
-using MangaReader.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
+using Gihan.Manga.Reader.Controllers;
+using MahApps.Metro;
 
-namespace MangaReader
+namespace Gihan.Manga.Reader
 {
+    /// <inheritdoc />
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var path = Environment.GetCommandLineArgs()[0];
             Environment.CurrentDirectory = path.Substring(0, path.LastIndexOf('\\'));
-            
+
             if (e.Args.Length > 0)
             {
-                bool trueType = true;
+                var trueType = true;
                 foreach (var item in e.Args)
                 {
-                    bool exist = System.IO.File.Exists(item);
-                    bool isCompressedFile = FileTypeList.CompressedType.Any(t => item.ToLower().EndsWith(t));
+                    var exist = System.IO.File.Exists(item);
+                    var isCompressedFile = FileTypeList.CompressedType.Any(t => item.ToLower().EndsWith(t));
                     if (!exist || !isCompressedFile)
                         trueType = false;
                 }
@@ -48,9 +46,15 @@ namespace MangaReader
             CompressApi.CleanExtractPath();
         }
 
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            ShowError(e.Exception);
+            e.Handled = true;
+        }
+
+        public static void ShowError(Exception err)
+        {
+            MessageBox.Show(err.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

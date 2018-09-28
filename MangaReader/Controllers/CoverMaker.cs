@@ -1,25 +1,22 @@
-﻿using MangaReader.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Gihan.Manga.Reader.Models;
 
-namespace MangaReader.Controllers
+namespace Gihan.Manga.Reader.Controllers
 {
-    static class CoverMaker
+    internal static class CoverMaker
     {
-        static string CoversPath { get; }
+        private static string CoversPath { get; }
         public static string AbsoluteCoversPath { get; }
         static CoverMaker()
         {
             CoversPath = "covers\\";
             AbsoluteCoversPath = Path.Combine(Environment.CurrentDirectory, CoversPath);
-            DirectoryInfo directory = new DirectoryInfo(CoversPath);
+            var directory = new DirectoryInfo(CoversPath);
             if (!directory.Exists)
             {
                 directory.Create();
@@ -27,50 +24,38 @@ namespace MangaReader.Controllers
             }
             foreach (var item in directory.EnumerateFiles())
             {
-                if (!SettingApi.This.MangaList.Any(m => m.CoverAddress == item.FullName))
+                if (SettingApi.This.MangaList.All(m => m.CoverAddress != item.FullName))
                     item.Delete();
             }
         }
 
-        public static string CoverPath(int mangaID)
+        public static string CoverPath(int mangaId)
         {
-            return Path.Combine(AbsoluteCoversPath, SettingApi.This.MangaList[mangaID].Name + ".jpg");
+            return Path.Combine(AbsoluteCoversPath, SettingApi.This.MangaList[mangaId].Name + ".jpg");
         }
 
-        private static Bitmap ResizeImage(Image image, int NewHeight = 500)
+        private static Bitmap ResizeImage(Image image, int newHeight = 500)
         {
-            var NewWidth = (int)(image.Width * ((double)NewHeight / image.Height));
-            Bitmap NewImage = new Bitmap(NewWidth, NewHeight);
-            using (Graphics graphics = Graphics.FromImage(NewImage))
+            var newWidth = (int)(image.Width * ((double)newHeight / image.Height));
+            var newImage = new Bitmap(newWidth, newHeight);
+            using (var graphics = Graphics.FromImage(newImage))
             {
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                graphics.DrawImage(image, new Rectangle(0, 0, NewWidth, NewHeight));
+                graphics.DrawImage(image, new Rectangle(0, 0, newWidth, newHeight));
             }
-            return NewImage;
+            return newImage;
         }
 
         public static void CoverConvert(MangaInfo manga)
         {
             var preCover = Image.FromFile(manga.CoverAddress);
             var tumbCover = ResizeImage(preCover);
-            tumbCover.Save(CoverPath(manga.ID), ImageFormat.Jpeg);
-            SettingApi.This.MangaList[manga.ID].CoverAddress = CoverPath(manga.ID);
+            tumbCover.Save(CoverPath(manga.Id), ImageFormat.Jpeg);
+            SettingApi.This.MangaList[manga.Id].CoverAddress = CoverPath(manga.Id);
             preCover.Dispose();
             tumbCover.Dispose();
         }
-
-        /*
-        publuc static void AllCoverConvert()
-        {
-            for (int i = SettingApi.This.MangaList.Count - 1; i >= 0; i--)
-            {
-                var manga = SettingApi.This.MangaList[i];
-                if (manga.CoverAddress.StartsWith(Environment.CurrentDirectory + '\\' + CoverPath)) continue;
-                CoverConvert(manga);
-            }
-        }
-        */
     }
 }

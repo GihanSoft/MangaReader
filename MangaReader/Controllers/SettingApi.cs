@@ -1,14 +1,10 @@
-﻿using MangaReader.Controllers;
-using MangaReader.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+using Gihan.Manga.Reader.Models;
 
-namespace MangaReader
+namespace Gihan.Manga.Reader.Controllers
 {
     [Serializable]
     public class SettingApi : IDisposable
@@ -63,9 +59,9 @@ namespace MangaReader
             MangaList.Sort(NaturalStringComparer.Default.Compare);
             for (int i = 0; i < MangaList.Count; i++)
             {
-                if (MangaList[i].ID != i)
+                if (MangaList[i].Id != i)
                 {
-                    MangaList[i].ID = i;
+                    MangaList[i].Id = i;
                 }
             }
         }

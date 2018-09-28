@@ -1,21 +1,12 @@
-﻿using MangaReader.Controllers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Gihan.Manga.Reader.Controllers;
 
-namespace MangaReader.Views
+namespace Gihan.Manga.Reader.Views
 {
     /// <summary>
     /// Interaction logic for MangaItem.xaml
@@ -132,9 +123,9 @@ namespace MangaReader.Views
                         CoverSource = pages.Find(file =>
                             FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
                     }
-                    SettingApi.This.MangaList[manga.ID].CoverAddress = CoverSource;
+                    SettingApi.This.MangaList[manga.Id].CoverAddress = CoverSource;
                     CoverMaker.CoverConvert(manga);
-                    CoverSource = SettingApi.This.MangaList[manga.ID].CoverAddress;
+                    CoverSource = SettingApi.This.MangaList[manga.Id].CoverAddress;
                     CompressApi.CleanExtractPath();
                 }
                 catch { }
@@ -181,12 +172,12 @@ namespace MangaReader.Views
             };
             var r = fileChooser.ShowDialog();
             if (r == true)
-                SettingApi.This.MangaList[Manga.ID].CoverAddress = CoverSource = Manga.CoverAddress = fileChooser.FileName;
+                SettingApi.This.MangaList[Manga.Id].CoverAddress = CoverSource = Manga.CoverAddress = fileChooser.FileName;
         }
 
         private void NameEditOK_Click(object sender, RoutedEventArgs e)
         {
-            SettingApi.This.MangaList[Manga.ID].Name = MangaTitle = Manga.Name = NameEntry.Text;
+            SettingApi.This.MangaList[Manga.Id].Name = MangaTitle = Manga.Name = NameEntry.Text;
             NameEntryBorder.Visibility = Visibility.Collapsed;
         }
     }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace MangaReader.Controllers
+namespace Gihan.Manga.Reader.Controllers
 {
 
     [SuppressUnmanagedCodeSecurity]
@@ -15,15 +14,8 @@ namespace MangaReader.Controllers
 
     public sealed class NaturalStringComparer : IComparer<string>
     {
-        static NaturalStringComparer _default;
-        public static NaturalStringComparer Default
-        {
-            get
-            {
-                if (_default == null) _default = new NaturalStringComparer();
-                return _default;
-            }
-        }
+        private static NaturalStringComparer _default;
+        public static NaturalStringComparer Default => _default ?? (_default = new NaturalStringComparer());
 
         public int Compare(string a, string b)
         {
@@ -33,14 +25,6 @@ namespace MangaReader.Controllers
         public int Compare(Models.MangaInfo a, Models.MangaInfo b)
         {
             return Compare(a.Name, b.Name);
-        }
-    }
-
-    public sealed class NaturalFileInfoNameComparer : IComparer<FileInfo>
-    {
-        public int Compare(FileInfo a, FileInfo b)
-        {
-            return SafeNativeMethods.StrCmpLogicalW(a.Name, b.Name);
         }
     }
 }

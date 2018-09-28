@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{31F91668-B298-478A-9F99-E4DC5E1DCEEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaControls", "MangaControls\MangaControls.csproj", "{9FC02021-B0AD-4865-B650-793AA93FD22C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{D2EA5C45-228E-4BC3-9E1D-986570425A9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,14 @@ Global
 		{8A23BA3F-9589-4737-9697-FF327A7E893E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31F91668-B298-478A-9F99-E4DC5E1DCEEF}.Debug|Any CPU.ActiveCfg = Debug
 		{31F91668-B298-478A-9F99-E4DC5E1DCEEF}.Release|Any CPU.ActiveCfg = Release
+		{9FC02021-B0AD-4865-B650-793AA93FD22C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC02021-B0AD-4865-B650-793AA93FD22C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC02021-B0AD-4865-B650-793AA93FD22C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC02021-B0AD-4865-B650-793AA93FD22C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2EA5C45-228E-4BC3-9E1D-986570425A9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2EA5C45-228E-4BC3-9E1D-986570425A9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2EA5C45-228E-4BC3-9E1D-986570425A9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2EA5C45-228E-4BC3-9E1D-986570425A9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

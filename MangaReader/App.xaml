@@ -1,7 +1,6 @@
-﻿<Application x:Class="MangaReader.App"
+﻿<Application x:Class="Gihan.Manga.Reader.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MangaReader"
              StartupUri="Views/WinMangaChooser.xaml" Startup="Application_Startup" 
              DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>

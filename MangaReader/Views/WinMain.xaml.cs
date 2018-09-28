@@ -1,44 +1,41 @@
-﻿using MahApps.Metro.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using MangaReader.Models;
-using MangaReader.Controllers;
+using Gihan.Manga.Reader.Controllers;
+using Gihan.Manga.Reader.Models;
 
-namespace MangaReader.Views
+namespace Gihan.Manga.Reader.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class WinMain : MetroWindow
+    /// <inheritdoc cref="MahApps.Metro.Controls.MetroWindow" />
+    public partial class WinMain
     {
-        public static RoutedCommand nextChapterCmd = new RoutedCommand();
-        public static RoutedCommand previousChapterCmd = new RoutedCommand();
-        public static RoutedCommand zoomInCmd = new RoutedCommand();
-        public static RoutedCommand zoomOutCmd = new RoutedCommand();
-        public static RoutedCommand fullScreenCmd = new RoutedCommand();
-        public static RoutedCommand homeCmd = new RoutedCommand();
+        public static RoutedCommand NextChapterCmd = new RoutedCommand();
+        public static RoutedCommand PreviousChapterCmd = new RoutedCommand();
+        public static RoutedCommand ZoomInCmd = new RoutedCommand();
+        public static RoutedCommand ZoomOutCmd = new RoutedCommand();
+        public static RoutedCommand FullScreenCmd = new RoutedCommand();
+        public static RoutedCommand HomeCmd = new RoutedCommand();
 
-        List<string> ChapterList;
-        MangaInfo CurrentManga;
-        List<BitmapImage> imageList;
-        System.Timers.Timer clockTimer;
+        private List<string> _chapterList;
+        private readonly MangaInfo _currentManga;
+        private List<BitmapImage> _imageList;
 
-        bool firstLoad = true;
+        private bool _firstLoad = true;
 
         public WinMain()
         {
             InitializeComponent();
 
-            clockTimer = new System.Timers.Timer(1000) { AutoReset = true };
+            var clockTimer = new System.Timers.Timer(1000) { AutoReset = true };
             clockTimer.Elapsed += ClockTmr_Elapsed;
             clockTimer.Start();
 
@@ -52,31 +49,29 @@ namespace MangaReader.Views
             autoScrollTimer = new System.Timers.Timer(33) { AutoReset = true };
             autoScrollTimer.Elapsed += AutoScrollTimer_Elapsed;
 
-            nextChapterCmd.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
-            previousChapterCmd.InputGestures.Add(new KeyGesture(Key.A, ModifierKeys.Control));
-            zoomInCmd.InputGestures.Add(new KeyGesture(Key.Add, ModifierKeys.Control));
-            zoomOutCmd.InputGestures.Add(new KeyGesture(Key.Subtract, ModifierKeys.Control));
-            fullScreenCmd.InputGestures.Add(new KeyGesture(Key.F11));
-            homeCmd.InputGestures.Add(new KeyGesture(Key.H, ModifierKeys.Control));
+            NextChapterCmd.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
+            PreviousChapterCmd.InputGestures.Add(new KeyGesture(Key.A, ModifierKeys.Control));
+            ZoomInCmd.InputGestures.Add(new KeyGesture(Key.Add, ModifierKeys.Control));
+            ZoomOutCmd.InputGestures.Add(new KeyGesture(Key.Subtract, ModifierKeys.Control));
+            FullScreenCmd.InputGestures.Add(new KeyGesture(Key.F11));
+            HomeCmd.InputGestures.Add(new KeyGesture(Key.H, ModifierKeys.Control));
 
-            var Args = Environment.GetCommandLineArgs().ToList();
-            if (Args.Count > 1)
+            var args = Environment.GetCommandLineArgs().ToList();
+            if (args.Count <= 1) return;
+            _chapterList = args;
+            _chapterList.RemoveAt(0);
+            ChapterListCombo.ItemsSource = _chapterList.Select(ch => ch.Substring(ch.LastIndexOf('\\') + 1));
+            _currentManga = new MangaInfo()
             {
-                ChapterList = Args;
-                ChapterList.RemoveAt(0);
-                ChapterListCombo.ItemsSource = ChapterList.Select(ch => ch.Substring(ch.LastIndexOf('\\') + 1));
-                CurrentManga = new MangaInfo()
-                {
-                    ID = -1, // to not save on closing
-                    CurrentChapter = 0
-                };
-            }
+                Id = -1, // to not save on closing
+                CurrentChapter = 0
+            };
         }
 
         public WinMain(MangaInfo manga) : this()
         {
-            CurrentManga = manga;
-            ChapterList = GetChapterList(manga);
+            _currentManga = manga;
+            _chapterList = GetChapterList(manga);
         }
 
         private void ClockTmr_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -88,22 +83,26 @@ namespace MangaReader.Views
                 Dispatcher.Invoke(() =>
                 {
                     if (ClockViewer.Text != now)
-                        This.Interval = 60 * 1000;
+                        if (This != null)
+                            This.Interval = 60 * 1000;
                     ClockViewer.Text = now;
                 });
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             ChapterListCombo.ItemsSource = null;
-            ChapterListCombo.ItemsSource = ChapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
+            ChapterListCombo.ItemsSource = _chapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
 
-            ChapterListCombo.SelectedIndex = CurrentManga.CurrentChapter;
+            ChapterListCombo.SelectedIndex = _currentManga.CurrentChapter;
             CurrentPage.Text = "1";
 
-            PagesScroll.ScrollToVerticalOffset(CurrentManga.CurrentPlace);
+            PagesScroll.ScrollToVerticalOffset(_currentManga.CurrentPlace);
             PagesScroll.Focus();
         }
 
@@ -136,12 +135,12 @@ namespace MangaReader.Views
                 FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t))).ToList();
             list.Sort(NaturalStringComparer.Default.Compare);
 
-            imageList = new List<BitmapImage>();
+            _imageList = new List<BitmapImage>();
             foreach (var item in list)
             {
                 try
                 {
-                    Uri imgUri = new Uri(item, UriKind.Relative);
+                    var imgUri = new Uri(item, UriKind.Relative);
                     BitmapImage bitmap = null;
                     Dispatcher.Invoke(() =>
                     {
@@ -150,12 +149,12 @@ namespace MangaReader.Views
                         bitmap.StreamSource = File.OpenRead(imgUri.OriginalString);
                         bitmap.EndInit();
                     });
-                    imageList.Add(bitmap);
+                    _imageList.Add(bitmap);
                     Thread.Sleep(1);
                 }
                 catch (Exception err)
                 {
-                    MessageBox.Show("خطا در بارگذاری تصویر : " + item + "\n\n" + err.ToString(), "Error",
+                    MessageBox.Show("خطا در بارگذاری تصویر : " + item + "\n\n" + err.Message, "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
                 }
             }
@@ -166,15 +165,15 @@ namespace MangaReader.Views
             Dispatcher.Invoke(() =>
             {
                 Pages.Children.Clear();
-                PagesCount.Text = '/' + imageList.Count.ToString();
+                PagesCount.Text = '/' + _imageList.Count.ToString();
             });
-            foreach (BitmapImage image in imageList)
+            foreach (var image in _imageList)
             {
                 try
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        var ImageCtrl = new Image
+                        var imageCtrl = new Image
                         {
                             Source = image,
                             HorizontalAlignment = HorizontalAlignment.Center,
@@ -185,14 +184,17 @@ namespace MangaReader.Views
 
                         if (image.Width > image.Height)
                         {
-                            ImageCtrl.Width = double.NaN;
-                            ImageCtrl.Height = SystemParameters.FullPrimaryScreenHeight - 10;
+                            imageCtrl.Width = double.NaN;
+                            imageCtrl.Height = SystemParameters.FullPrimaryScreenHeight - 10;
                         }
-                        Pages.Children.Add(ImageCtrl);
+                        Pages.Children.Add(imageCtrl);
                     });
                     Thread.Sleep(2);
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
@@ -206,9 +208,9 @@ namespace MangaReader.Views
 
         private void Previous_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentManga.CurrentChapter != 0)
+            if (_currentManga.CurrentChapter != 0)
             {
-                ChapterListCombo.SelectedIndex = --CurrentManga.CurrentChapter;
+                ChapterListCombo.SelectedIndex = --_currentManga.CurrentChapter;
             }
             else
             {
@@ -218,20 +220,20 @@ namespace MangaReader.Views
         }
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentManga.CurrentChapter + 1 != ChapterList.Count)
+            if (_currentManga.CurrentChapter + 1 != _chapterList.Count)
             {
-                ChapterListCombo.SelectedIndex = ++CurrentManga.CurrentChapter;
+                ChapterListCombo.SelectedIndex = ++_currentManga.CurrentChapter;
             }
             else
             {
-                var nList = GetChapterList(CurrentManga);
-                if (nList.Count != ChapterList.Count)
+                var nList = GetChapterList(_currentManga);
+                if (nList.Count != _chapterList.Count)
                 {
-                    ChapterList = nList;
+                    _chapterList = nList;
                     ChapterListCombo.ItemsSource = null;
-                    ChapterListCombo.ItemsSource = ChapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
+                    ChapterListCombo.ItemsSource = _chapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
 
-                    ChapterListCombo.SelectedIndex = ++CurrentManga.CurrentChapter;
+                    ChapterListCombo.SelectedIndex = ++_currentManga.CurrentChapter;
                     return;
                 }
                 MessageBox.Show("این چپتر آخر است.", "خطا", MessageBoxButton.OK, MessageBoxImage.Warning,
@@ -243,16 +245,16 @@ namespace MangaReader.Views
         private async void ChapterListCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ChapterListCombo.SelectedIndex == -1) return;
-            CurrentManga.CurrentChapter = ChapterListCombo.SelectedIndex;
+            _currentManga.CurrentChapter = ChapterListCombo.SelectedIndex;
             RleaseImages();
-            await Task.Run(() => LoadImage(ChapterList[CurrentManga.CurrentChapter]));
-            if (!firstLoad)
+            await Task.Run(() => LoadImage(_chapterList[_currentManga.CurrentChapter]));
+            if (!_firstLoad)
             {
                 PagesScroll.ScrollToVerticalOffset(0);
                 CurrentPage.Text = "1";
             }
             else
-                firstLoad = false;
+                _firstLoad = false;
             await Task.Run(() => AddImage());
             ZoomPersent_TextChanged(null, null);
             PagesScroll.Focus();
@@ -262,21 +264,21 @@ namespace MangaReader.Views
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             RleaseImages();
-            if (CurrentManga.ID == -1) return;
-            SettingApi.This.MangaList[CurrentManga.ID].CurrentPlace = PagesScroll.VerticalOffset * (100 / double.Parse(ZoomPersent.Text));
+            if (_currentManga.Id == -1) return;
+            SettingApi.This.MangaList[_currentManga.Id].CurrentPlace = PagesScroll.VerticalOffset * (100 / double.Parse(ZoomPersent.Text));
         }
 
         private void RleaseImages()
         {
-            if (imageList == null) return;
-            foreach (BitmapImage item in imageList)
+            if (_imageList == null) return;
+            foreach (BitmapImage item in _imageList)
             {
                 item.StreamSource.Close();
             }
             CompressApi.CleanExtractPath();
         }
 
-        WindowState previousState = WindowState.Maximized;
+        WindowState _previousState = WindowState.Maximized;
 
         private void FullScreenBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -284,7 +286,7 @@ namespace MangaReader.Views
             {
                 IgnoreTaskbarOnMaximize = true;
                 FullScreenIcon.Kind = MahApps.Metro.IconPacks.PackIconMaterialKind.FullscreenExit;
-                previousState = this.WindowState;
+                _previousState = WindowState;
                 WindowState = WindowState.Maximized;
             }
             else
@@ -292,21 +294,21 @@ namespace MangaReader.Views
                 IgnoreTaskbarOnMaximize = false;
                 FullScreenIcon.Kind = MahApps.Metro.IconPacks.PackIconMaterialKind.Fullscreen;
                 MyToolBar.Visibility = Visibility.Visible;
-                WindowState = previousState;
+                WindowState = _previousState;
             }
             ShowTitleBar = !ShowTitleBar;
         }
 
         private void ZoomInBtn_Click(object sender, RoutedEventArgs e)
         {
-            ZoomPersent.Text = (double.Parse(ZoomPersent.Text) + 10).ToString();
+            ZoomPersent.Text = (double.Parse(ZoomPersent.Text) + 10).ToString(CultureInfo.InvariantCulture);
         }
         private void ZoomOutBtn_Click(object sender, RoutedEventArgs e)
         {
-            ZoomPersent.Text = (double.Parse(ZoomPersent.Text) - 10).ToString();
+            ZoomPersent.Text = (double.Parse(ZoomPersent.Text) - 10).ToString(CultureInfo.InvariantCulture);
         }
 
-        string oldText = "100";
+        private string _oldText = "100";
         private void ZoomPersent_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (ZoomPersent.Text == "") return;
@@ -324,7 +326,7 @@ namespace MangaReader.Views
             try
             {
                 var zoom = double.Parse(ZoomPersent.Text) / 100;
-                var oldZoom = double.Parse(oldText);
+                var oldZoom = double.Parse(_oldText);
                 foreach (var item in Pages.Children)
                 {
                     var i = (item as Image);
@@ -342,8 +344,12 @@ namespace MangaReader.Views
                 PagesScroll.ScrollToVerticalOffset(offset);
                 var hoffset = ((SystemParameters.FullPrimaryScreenWidth - 20) * (zn - 1));
             }
-            catch (Exception) { }
-            oldText = ZoomPersent.Text;
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            _oldText = ZoomPersent.Text;
         }
 
         private void MetroWindow_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -471,7 +477,7 @@ namespace MangaReader.Views
 
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {
-            previousState = this.WindowState;
+            _previousState = this.WindowState;
             if (FullScreenIcon.Kind == MahApps.Metro.IconPacks.PackIconMaterialKind.FullscreenExit)
                 FullScreenBtn_Click(this, new RoutedEventArgs());
         }

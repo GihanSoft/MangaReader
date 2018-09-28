@@ -1,7 +1,4 @@
-﻿using MahApps.Metro.Controls;
-using MangaReader.Controllers;
-using MangaReader.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,8 +9,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Gihan.Manga.Reader.Controllers;
+using Gihan.Manga.Reader.Models;
+using MahApps.Metro.Controls;
 
-namespace MangaReader.Views
+namespace Gihan.Manga.Reader.Views
 {
     /// <summary>
     /// Interaction logic for MangaChooser.xaml
@@ -172,7 +172,7 @@ namespace MangaReader.Views
         private void MangaItem_Click(object sender, RoutedEventArgs e)
         {
             var clickedManga = (sender as MangaItem).Manga;
-            SettingApi.This.LastManga = clickedManga.ID;
+            SettingApi.This.LastManga = clickedManga.Id;
             new WinMain(clickedManga).Show();
             Close();
         }
@@ -244,7 +244,7 @@ namespace MangaReader.Views
                 case MangaFolderStastus.manga:
                     SettingApi.This.MangaList.Add(new MangaInfo()
                     {
-                        ID = SettingApi.This.MangaList.Count,
+                        Id = SettingApi.This.MangaList.Count,
                         Name = mangaPath.Substring(mangaPath.LastIndexOf('\\') + 1),
                         Address = mangaPath,
                         CurrentChapter = 0,
@@ -260,7 +260,7 @@ namespace MangaReader.Views
                     var name = rootFolder.Substring(rootFolder.LastIndexOf('\\') + 1);
                     SettingApi.This.MangaList.Add(new MangaInfo()
                     {
-                        ID = SettingApi.This.MangaList.Count,
+                        Id = SettingApi.This.MangaList.Count,
                         Name = name,
                         Address = rootFolder,
                         CurrentChapter = currentCh,
@@ -370,11 +370,11 @@ namespace MangaReader.Views
                     if (item.MangaTitle.ToLower().StartsWith(e.Key.ToString().ToLower()))
                     {
                         var ps = (((Keyboard.FocusedElement as Button).Parent as Grid).Parent as Border).Parent as MangaItem;
-                        if (ps.Manga.ID + 1 == SettingApi.This.MangaList.Count)
+                        if (ps.Manga.Id + 1 == SettingApi.This.MangaList.Count)
                             continue;
                         if ((char.ToLower(ps.MangaTitle[0]) == char.ToLower(item.MangaTitle[0])) &&
-                            item.Manga.ID <= ps.Manga.ID &&
-                            SettingApi.This.MangaList[ps.Manga.ID + 1].Name.ToLower()[0] == ps.MangaTitle.ToLower()[0])
+                            item.Manga.Id <= ps.Manga.Id &&
+                            SettingApi.This.MangaList[ps.Manga.Id + 1].Name.ToLower()[0] == ps.MangaTitle.ToLower()[0])
                             continue;
                         Keyboard.Focus(item.SelectButton);
                         item.Focus();

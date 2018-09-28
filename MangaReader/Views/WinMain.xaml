@@ -1,4 +1,4 @@
-﻿<Controls:MetroWindow x:Class="MangaReader.Views.WinMain"
+﻿<Controls:MetroWindow x:Class="Gihan.Manga.Reader.Views.WinMain"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,18 +6,18 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:local="clr-namespace:MangaReader.Views"
+        xmlns:local="clr-namespace:Gihan.Manga.Reader.Views"
         mc:Ignorable="d"
         Title="KN offline Manga Reader" WindowState="Maximized" GlowBrush="{DynamicResource AccentColorBrush}" 
         Closing="MetroWindow_Closing" StateChanged="MetroWindow_StateChanged" Loaded="MetroWindow_Loaded"
         Icon="/MangaReader;component/OtakuLib.ico">
     <Controls:MetroWindow.CommandBindings>
-        <CommandBinding Command="{x:Static local:WinMain.nextChapterCmd}" Executed="NextChapterCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.previousChapterCmd}" Executed="PreviousChapterCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.zoomInCmd}" Executed="ZoomInCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.zoomOutCmd}" Executed="ZoomOutCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.fullScreenCmd}" Executed="FullScreenCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.homeCmd}" Executed="CommandBinding_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.NextChapterCmd}" Executed="NextChapterCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.PreviousChapterCmd}" Executed="PreviousChapterCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.ZoomInCmd}" Executed="ZoomInCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.ZoomOutCmd}" Executed="ZoomOutCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.FullScreenCmd}" Executed="FullScreenCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.HomeCmd}" Executed="CommandBinding_Executed" />
     </Controls:MetroWindow.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>

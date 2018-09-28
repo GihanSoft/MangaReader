@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpCompress.Readers;
 using System.IO;
+using SharpCompress.Readers;
 
-namespace MangaReader.Controllers
+namespace Gihan.Manga.Reader.Controllers
 {
     static class CompressApi
     {
@@ -39,8 +35,8 @@ namespace MangaReader.Controllers
                 {
                     var reader = ReaderFactory.Open(source);
 
-                    tarPath = ExtractPath + archivePath.Substring(archivePath.LastIndexOf("\\") + 1);
-                    tarPath = tarPath.Substring(0, tarPath.LastIndexOf("."));
+                    tarPath = ExtractPath + archivePath.Substring(archivePath.LastIndexOf("\\", StringComparison.Ordinal) + 1);
+                    tarPath = tarPath.Substring(0, tarPath.LastIndexOf(".", StringComparison.Ordinal));
                     DirectoryInfo tarDirectory = new DirectoryInfo(tarPath);
 
                     if (tarDirectory.Exists)
