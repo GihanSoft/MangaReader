@@ -3,10 +3,8 @@
 ################################################################################
 
 /Installer/Release
-/MangaReader/bin/Debug
-/MangaReader/obj
-/Updater/bin
-/Updater/obj/Debug
-/Updater/obj/Release
-/MangaReader/bin/Release
 /Installer/Debug
+*/[Oo]bj/*
+*/[Bb]in/*
+packages/*
+.vs/*
