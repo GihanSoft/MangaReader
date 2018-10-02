@@ -12,12 +12,12 @@
         Closing="MetroWindow_Closing" StateChanged="MetroWindow_StateChanged" Loaded="MetroWindow_Loaded"
         Icon="/MangaReader;component/OtakuLib.ico">
     <Controls:MetroWindow.CommandBindings>
-        <CommandBinding Command="{x:Static local:WinMain.nextChapterCmd}" Executed="NextChapterCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.previousChapterCmd}" Executed="PreviousChapterCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.zoomInCmd}" Executed="ZoomInCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.zoomOutCmd}" Executed="ZoomOutCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.fullScreenCmd}" Executed="FullScreenCmd_Executed" />
-        <CommandBinding Command="{x:Static local:WinMain.homeCmd}" Executed="CommandBinding_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.NextChapterCmd}" Executed="NextChapterCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.PreviousChapterCmd}" Executed="PreviousChapterCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.ZoomInCmd}" Executed="ZoomInCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.ZoomOutCmd}" Executed="ZoomOutCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.FullScreenCmd}" Executed="FullScreenCmd_Executed" />
+        <CommandBinding Command="{x:Static local:WinMain.HomeCmd}" Executed="CommandBinding_Executed" />
     </Controls:MetroWindow.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>

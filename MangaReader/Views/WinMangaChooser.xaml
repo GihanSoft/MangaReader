@@ -9,8 +9,11 @@
         mc:Ignorable="d"
         Title="GS Manga Reader" Height="350" Width="480"
         GlowBrush="{DynamicResource AccentBaseColorBrush}" Icon="/MangaReader;component/OtakuLib.ico"
-        Loaded="MetroWindow_Loaded" 
-        AllowDrop="True" DragEnter="MetroWindow_DragEnter" DragLeave="MetroWindow_DragLeave" Drop="MetroWindow_Drop">
+        Loaded="MetroWindow_Loaded" Closing="WinMangaChooser_OnClosing"
+                      StateChanged="WinMangaChooser_OnStateChanged"
+        AllowDrop="True" DragEnter="MetroWindow_DragEnter" 
+                      DragLeave="MetroWindow_DragLeave" 
+                      Drop="MetroWindow_Drop">
     <Controls:MetroWindow.CommandBindings>
         <CommandBinding Command="{x:Static local:WinMangaChooser.newMangaCmd}" Executed="NewMangaCmd_Executed" />
         <CommandBinding Command="{x:Static local:WinMangaChooser.selectMangaRootCmd}" Executed="SelectMangaRootCmd_Executed" />

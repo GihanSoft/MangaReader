@@ -15,6 +15,7 @@ namespace MangaReader.Models
         public string CoverAddress { get; set; }
         public int CurrentChapter { get; set; }
         public double CurrentPlace { get; set; }
+        public string Zoom { get; set; } = "100";
 
         public override string ToString()
         {
