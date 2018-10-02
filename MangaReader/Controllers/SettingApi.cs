@@ -42,6 +42,9 @@ namespace Gihan.Manga.Reader.Controllers
 
         public int ThemeBase { get; set; } = 0;
         public int Accent { get; set; } = 2;
+        public WindowState WinChooserState { get; set; } = WindowState.Normal;
+        public double WinChooserHeight { get; set; } = 400;
+        public double WinChooserWidth { get; set; } = 600;
 
         static SettingApi()
         {
@@ -76,7 +79,8 @@ namespace Gihan.Manga.Reader.Controllers
             if (File.Exists(SaveFileDir))
             {
                 var file = File.OpenRead(SaveFileDir);
-                var setting = (SettingApi)binaryFormatter.Deserialize(file);
+                var obj = binaryFormatter.Deserialize(file);
+                var setting = (SettingApi) obj;
                 file.Close();
                 this.MangaList = setting.MangaList;
                 this.MangaRoot = setting.MangaRoot;
@@ -85,6 +89,9 @@ namespace Gihan.Manga.Reader.Controllers
                 this.LastManga = setting.LastManga;
                 this.ThemeBase = setting.ThemeBase;
                 this.Accent = setting.Accent;
+                this.WinChooserState = setting.WinChooserState;
+                this.WinChooserHeight = setting.WinChooserHeight;
+                this.WinChooserWidth = setting.WinChooserWidth;
             }
             else MangaList = null;
             if (MangaList == null)

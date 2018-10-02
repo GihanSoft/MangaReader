@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,9 @@ using Gihan.Manga.Reader.Models;
 
 namespace Gihan.Manga.Reader.Views
 {
-    /// <inheritdoc cref="MahApps.Metro.Controls.MetroWindow" />
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class WinMain
     {
         public static RoutedCommand NextChapterCmd = new RoutedCommand();
@@ -46,8 +47,8 @@ namespace Gihan.Manga.Reader.Views
 
             BackgroundColorChooser.SelectedIndex = SettingApi.This.BackgroundColor;
 
-            autoScrollTimer = new System.Timers.Timer(33) { AutoReset = true };
-            autoScrollTimer.Elapsed += AutoScrollTimer_Elapsed;
+            _autoScrollTimer = new System.Timers.Timer(33) { AutoReset = true };
+            _autoScrollTimer.Elapsed += AutoScrollTimer_Elapsed;
 
             NextChapterCmd.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
             PreviousChapterCmd.InputGestures.Add(new KeyGesture(Key.A, ModifierKeys.Control));
@@ -76,7 +77,8 @@ namespace Gihan.Manga.Reader.Views
 
         private void ClockTmr_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            var This = sender as System.Timers.Timer;
+            var strongSender = sender as System.Timers.Timer;
+           // if(strongSender != null) return;
             var now = DateTime.Now.ToString("HH:mm");
             try
             {
@@ -352,6 +354,9 @@ namespace Gihan.Manga.Reader.Views
             _oldText = ZoomPersent.Text;
         }
 
+            _oldText = ZoomPersent.Text;
+        }
+
         private void MetroWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Keyboard.Modifiers == ModifierKeys.Control)
@@ -420,27 +425,27 @@ namespace Gihan.Manga.Reader.Views
             }
         }
 
-        System.Timers.Timer autoScrollTimer;
-        Point firstPoint = new Point();
-        bool scrollActive = false;
-        double vOff = 1;
+        readonly System.Timers.Timer _autoScrollTimer;
+        Point _firstPoint;
+        bool _scrollActive;
+        double _vOff;
         private void PagesScroll_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Middle && !scrollActive)
+            if (e.ChangedButton == MouseButton.Middle && !_scrollActive)
             {
-                autoScrollTimer.Start();
-                firstPoint = e.GetPosition(PagesScroll);
-                vOff = PagesScroll.VerticalOffset;
+                _autoScrollTimer.Start();
+                _firstPoint = e.GetPosition(PagesScroll);
+                _vOff = PagesScroll.VerticalOffset;
                 PagesScroll.CaptureMouse();
                 PagesScroll.Cursor = Cursors.ScrollNS;
-                scrollActive = true;
+                _scrollActive = true;
             }
             else
             {
-                autoScrollTimer.Stop();
+                _autoScrollTimer.Stop();
                 PagesScroll.ReleaseMouseCapture();
                 PagesScroll.Cursor = null;
-                scrollActive = false;
+                _scrollActive = false;
             }
         }
 
@@ -450,16 +455,16 @@ namespace Gihan.Manga.Reader.Views
             {
                 if (PagesScroll.IsMouseCaptured)
                 {
-                    if (Mouse.PrimaryDevice.GetPosition(PagesScroll).Y > firstPoint.Y + 5)
+                    if (Mouse.PrimaryDevice.GetPosition(PagesScroll).Y > _firstPoint.Y + 5)
                         PagesScroll.Cursor = Cursors.ScrollS;
-                    else if (Mouse.PrimaryDevice.GetPosition(PagesScroll).Y + 5 < firstPoint.Y)
+                    else if (Mouse.PrimaryDevice.GetPosition(PagesScroll).Y + 5 < _firstPoint.Y)
                         PagesScroll.Cursor = Cursors.ScrollN;
                     else
                     {
                         PagesScroll.Cursor = Cursors.ScrollNS;
                         return;
                     }
-                    PagesScroll.ScrollToVerticalOffset(PagesScroll.VerticalOffset + Mouse.PrimaryDevice.GetPosition(PagesScroll).Y - firstPoint.Y);
+                    PagesScroll.ScrollToVerticalOffset(PagesScroll.VerticalOffset + Mouse.PrimaryDevice.GetPosition(PagesScroll).Y - _firstPoint.Y);
                 }
             });
         }
@@ -468,10 +473,8 @@ namespace Gihan.Manga.Reader.Views
         {
             if (!ShowTitleBar)
             {
-                if (e.GetPosition(PagesScroll).Y <= 20)
-                    MyToolBar.Visibility = Visibility.Visible;
-                else
-                    MyToolBar.Visibility = Visibility.Collapsed;
+                MyToolBar.Visibility = e.GetPosition(PagesScroll).Y <= 20 ? 
+                    Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -517,7 +520,10 @@ namespace Gihan.Manga.Reader.Views
                     }
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         private List<string> GetChapterList(MangaInfo manga)

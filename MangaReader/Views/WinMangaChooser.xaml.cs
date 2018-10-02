@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -46,6 +47,9 @@ namespace Gihan.Manga.Reader.Views
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            Width = SettingApi.This.WinChooserWidth;
+            Height = SettingApi.This.WinChooserHeight;
+            WindowState = SettingApi.This.WinChooserState;
             await Task.Run(() =>
             {
                 try
@@ -54,6 +58,7 @@ namespace Gihan.Manga.Reader.Views
                     {
                         BtnUpdate.Background = (Brush)FindResource("HighlightBrush");
                     }
+
                 }
                 catch { }
             });
@@ -403,6 +408,22 @@ namespace Gihan.Manga.Reader.Views
         private void BtnGoToSite_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("http://GihanSoft.ir");
+        }
+
+        private void WinMangaChooser_OnClosing(object sender, CancelEventArgs e)
+        {
+            SettingApi.This.WinChooserState = WindowState;
+            if (WindowState == WindowState.Normal)
+            {
+                SettingApi.This.WinChooserHeight = Height;
+                SettingApi.This.WinChooserWidth = Width;
+            }
+        }
+
+        private void WinMangaChooser_OnStateChanged(object sender, EventArgs e)
+        {
+            Width = SettingApi.This.WinChooserWidth;
+            Height = SettingApi.This.WinChooserHeight;
         }
     }
 
