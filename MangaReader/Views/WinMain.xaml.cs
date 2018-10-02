@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,8 +86,8 @@ namespace Gihan.Manga.Reader.Views
                 Dispatcher.Invoke(() =>
                 {
                     if (ClockViewer.Text != now)
-                        if (This != null)
-                            This.Interval = 60 * 1000;
+                        if (strongSender != null)
+                            strongSender.Interval = 60 * 1000;
                     ClockViewer.Text = now;
                 });
             }
@@ -350,9 +351,6 @@ namespace Gihan.Manga.Reader.Views
             {
                 // ignored
             }
-
-            _oldText = ZoomPersent.Text;
-        }
 
             _oldText = ZoomPersent.Text;
         }
