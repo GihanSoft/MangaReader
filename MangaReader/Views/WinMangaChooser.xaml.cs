@@ -11,8 +11,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Gihan.Manga.Reader.Controllers;
-using Gihan.Manga.Reader.Models;
+//using Gihan.Manga.Reader.Models;
 using MahApps.Metro.Controls;
+using MangaReader;
+using MangaReader.Models;
 
 namespace Gihan.Manga.Reader.Views
 {

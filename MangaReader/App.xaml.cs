@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Gihan.Manga.Reader.Controllers;
 using MahApps.Metro;
+using MangaReader;
 
 namespace Gihan.Manga.Reader
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gihan.Manga.Reader.Models
+namespace MangaReader.Models
 {
     [Serializable]
     public class MangaInfo

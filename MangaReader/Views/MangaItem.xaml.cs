@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Gihan.Manga.Reader.Controllers;
+using MangaReader;
+using MangaReader.Models;
 
 namespace Gihan.Manga.Reader.Views
 {
@@ -89,14 +91,14 @@ namespace Gihan.Manga.Reader.Views
             }
         }
 
-        public Models.MangaInfo Manga { get; set; }
+        public MangaInfo Manga { get; set; }
 
         public MangaItem()
         {
             InitializeComponent();
         }
 
-        public MangaItem(Models.MangaInfo manga) : this()
+        public MangaItem(MangaInfo manga) : this()
         {
             MangaTitle = manga.Name;
 
@@ -113,9 +115,15 @@ namespace Gihan.Manga.Reader.Views
                         CoverSource = pages.Find(file =>
                             FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
                     }
-                    else
+                    else if (Directory.EnumerateFiles(manga.Address).
+                        FirstOrDefault(f => FileTypeList.ImageTypes.Any(t => f.EndsWith(t))) != null)
                     {
-                        chapters = Directory.EnumerateFiles(manga.Address).ToList();
+                        CoverSource = Directory.EnumerateFiles(manga.Address).
+                            FirstOrDefault(f => FileTypeList.ImageTypes.Any(t => f.EndsWith(t)));
+                    }
+                    {
+                        chapters = Directory.EnumerateFiles(manga.Address).
+                            Where(ch => FileTypeList.CompressedType.Any(t => ch.EndsWith(t))).ToList();
                         chapters.Sort(NaturalStringComparer.Default.Compare);
                         var exPath = CompressApi.OpenArchive(chapters[0]);
                         var pages = Directory.EnumerateFiles(exPath, "*.*", SearchOption.AllDirectories).ToList();
@@ -128,7 +136,10 @@ namespace Gihan.Manga.Reader.Views
                     CoverSource = SettingApi.This.MangaList[manga.Id].CoverAddress;
                     CompressApi.CleanExtractPath();
                 }
-                catch { }
+                catch (Exception err)
+                {
+                    var x = err.Message;
+                }
             }
             else
             {

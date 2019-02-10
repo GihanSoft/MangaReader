@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
-using Gihan.Manga.Reader.Models;
+using Gihan.Manga.Reader.Controllers;
+//using Gihan.Manga.Reader.Models;
+using MangaReader.Models;
 
-namespace Gihan.Manga.Reader.Controllers
+namespace MangaReader
 {
     [Serializable]
     public class SettingApi : IDisposable

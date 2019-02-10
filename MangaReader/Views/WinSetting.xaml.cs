@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using Gihan.Manga.Reader.Controllers;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
+using MangaReader;
 
 namespace Gihan.Manga.Reader.Views
 {

@@ -4,7 +4,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Gihan.Manga.Reader.Models;
+//using Gihan.Manga.Reader.Models;
+using MangaReader;
+using MangaReader.Models;
 
 namespace Gihan.Manga.Reader.Controllers
 {

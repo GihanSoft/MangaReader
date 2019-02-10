@@ -11,7 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Gihan.Manga.Reader.Controllers;
-using Gihan.Manga.Reader.Models;
+//using Gihan.Manga.Reader.Models;
+using MangaReader;
+using MangaReader.Models;
 
 namespace Gihan.Manga.Reader.Views
 {
@@ -79,7 +81,7 @@ namespace Gihan.Manga.Reader.Views
         private void ClockTmr_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             var strongSender = sender as System.Timers.Timer;
-           // if(strongSender != null) return;
+            // if(strongSender != null) return;
             var now = DateTime.Now.ToString("HH:mm");
             try
             {
@@ -106,6 +108,7 @@ namespace Gihan.Manga.Reader.Views
             CurrentPage.Text = "1";
 
             PagesScroll.ScrollToVerticalOffset(_currentManga.CurrentPlace);
+            ZoomPersent.Text = string.IsNullOrWhiteSpace(_currentManga.Zoom) ? "100" : _currentManga.Zoom;
             PagesScroll.Focus();
         }
 
@@ -268,7 +271,9 @@ namespace Gihan.Manga.Reader.Views
         {
             RleaseImages();
             if (_currentManga.Id == -1) return;
-            SettingApi.This.MangaList[_currentManga.Id].CurrentPlace = PagesScroll.VerticalOffset * (100 / double.Parse(ZoomPersent.Text));
+            SettingApi.This.MangaList[_currentManga.Id].CurrentPlace =
+                PagesScroll.VerticalOffset * (100 / double.Parse(ZoomPersent.Text));
+            SettingApi.This.MangaList[_currentManga.Id].Zoom = ZoomPersent.Text;
         }
 
         private void RleaseImages()
@@ -471,7 +476,7 @@ namespace Gihan.Manga.Reader.Views
         {
             if (!ShowTitleBar)
             {
-                MyToolBar.Visibility = e.GetPosition(PagesScroll).Y <= 20 ? 
+                MyToolBar.Visibility = e.GetPosition(PagesScroll).Y <= 20 ?
                     Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -530,7 +535,9 @@ namespace Gihan.Manga.Reader.Views
             chapterList.AddRange(Directory.EnumerateFiles(manga.Address).
                     Where(ch => FileTypeList.CompressedType.Any(t => ch.EndsWith(t))));
 
-            chapterList.Sort(NaturalStringComparer.Default.Compare);
+            //chapterList.Sort(NaturalStringComparer.Default.Compare);
+            chapterList = chapterList.OrderBy(ch => Path.GetFileNameWithoutExtension(ch), NaturalStringComparer.Default)
+                .ToList();
             return chapterList;
         }
     }

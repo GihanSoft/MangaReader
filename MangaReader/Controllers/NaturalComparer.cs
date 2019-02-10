@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
+using MangaReader.Models;
 
 namespace Gihan.Manga.Reader.Controllers
 {
@@ -22,7 +23,7 @@ namespace Gihan.Manga.Reader.Controllers
             return SafeNativeMethods.StrCmpLogicalW(a, b);
         }
 
-        public int Compare(Models.MangaInfo a, Models.MangaInfo b)
+        public int Compare(MangaInfo a, MangaInfo b)
         {
             return Compare(a.Name, b.Name);
         }
