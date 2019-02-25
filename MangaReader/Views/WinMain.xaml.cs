@@ -348,7 +348,9 @@ namespace Gihan.Manga.Reader.Views
                         i.Width = SystemParameters.FullPrimaryScreenWidth * 0.55 * zoom;
                 }
                 var zn = (double.Parse(ZoomPersent.Text) / oldZoom);
-                var offset = PagesScroll.VerticalOffset * zn;
+                var offset = PagesScroll.VerticalOffset == 0 ? 
+                    _currentManga.CurrentPlace * zn 
+                    : PagesScroll.VerticalOffset * zn;
                 PagesScroll.ScrollToVerticalOffset(offset);
                 var hoffset = ((SystemParameters.FullPrimaryScreenWidth - 20) * (zn - 1));
             }
