@@ -34,13 +34,13 @@
         "Entry"
         {
         "MsmKey" = "8:_389743854C4DFB18DF45F4033131CB32"
-        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
+        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_389743854C4DFB18DF45F4033131CB32"
-        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
+        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,7 +64,7 @@
         "Entry"
         {
         "MsmKey" = "8:_5864919D34F4A3233FC1DD8640D8307C"
-        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
+        "OwnerKey" = "8:_C35D05C36BE0C0218F27ECE0425C2F62"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -76,7 +76,7 @@
         "Entry"
         {
         "MsmKey" = "8:_5864919D34F4A3233FC1DD8640D8307C"
-        "OwnerKey" = "8:_C35D05C36BE0C0218F27ECE0425C2F62"
+        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -106,13 +106,13 @@
         "Entry"
         {
         "MsmKey" = "8:_C2B20AB4C5ECA58FC400E9D49D15ED51"
-        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
+        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C2B20AB4C5ECA58FC400E9D49D15ED51"
-        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
+        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -124,13 +124,13 @@
         "Entry"
         {
         "MsmKey" = "8:_C35D05C36BE0C0218F27ECE0425C2F62"
-        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
+        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C35D05C36BE0C0218F27ECE0425C2F62"
-        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
+        "OwnerKey" = "8:_B56A2200561A481DBD098E96DB2BDF6A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -154,43 +154,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A2FE88336C44491FBAD69F218890A6D0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1FFFCDA95AB0C76E0290F173226753D8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_389743854C4DFB18DF45F4033131CB32"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_EDFBD5A8C71B83DD0AED512C2D7F2852"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C35D05C36BE0C0218F27ECE0425C2F62"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4ADB0EAE3FBA742C6EA40DE358704D8B"
+        "OwnerKey" = "8:_C2B20AB4C5ECA58FC400E9D49D15ED51"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,7 +166,43 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C2B20AB4C5ECA58FC400E9D49D15ED51"
+        "OwnerKey" = "8:_4ADB0EAE3FBA742C6EA40DE358704D8B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C35D05C36BE0C0218F27ECE0425C2F62"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_EDFBD5A8C71B83DD0AED512C2D7F2852"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_389743854C4DFB18DF45F4033131CB32"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1FFFCDA95AB0C76E0290F173226753D8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_30A24E5104E4E13033F011E6B2F99D4B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A2FE88336C44491FBAD69F218890A6D0"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -307,11 +307,6 @@
             "AssemblyAsmDisplayName" = "8:SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_1FFFCDA95AB0C76E0290F173226753D8"
-                    {
-                    "Name" = "8:SharpCompress.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:SharpCompress.dll"
             "TargetName" = "8:"
@@ -338,11 +333,6 @@
             "AssemblyAsmDisplayName" = "8:Updater, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_30A24E5104E4E13033F011E6B2F99D4B"
-                    {
-                    "Name" = "8:Updater.exe"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Updater.exe"
             "TargetName" = "8:"
@@ -369,11 +359,6 @@
             "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_389743854C4DFB18DF45F4033131CB32"
-                    {
-                    "Name" = "8:Newtonsoft.Json.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Newtonsoft.Json.dll"
             "TargetName" = "8:"
@@ -400,11 +385,6 @@
             "AssemblyAsmDisplayName" = "8:ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_4ADB0EAE3FBA742C6EA40DE358704D8B"
-                    {
-                    "Name" = "8:ControlzEx.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ControlzEx.dll"
             "TargetName" = "8:"
@@ -431,11 +411,6 @@
             "AssemblyAsmDisplayName" = "8:System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_5864919D34F4A3233FC1DD8640D8307C"
-                    {
-                    "Name" = "8:System.Windows.Interactivity.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Windows.Interactivity.dll"
             "TargetName" = "8:"
@@ -482,11 +457,6 @@
             "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_C2B20AB4C5ECA58FC400E9D49D15ED51"
-                    {
-                    "Name" = "8:System.Net.Http.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
@@ -513,11 +483,6 @@
             "AssemblyAsmDisplayName" = "8:MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C35D05C36BE0C0218F27ECE0425C2F62"
-                    {
-                    "Name" = "8:MahApps.Metro.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MahApps.Metro.dll"
             "TargetName" = "8:"
@@ -544,11 +509,6 @@
             "AssemblyAsmDisplayName" = "8:MahApps.Metro.IconPacks.Material, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_EDFBD5A8C71B83DD0AED512C2D7F2852"
-                    {
-                    "Name" = "8:MahApps.Metro.IconPacks.Material.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MahApps.Metro.IconPacks.Material.dll"
             "TargetName" = "8:"
@@ -716,15 +676,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GS Manga Reader"
-        "ProductCode" = "8:{1C715335-D35E-464E-A60C-5F13C96444DE}"
-        "PackageCode" = "8:{AC34EE63-9713-4BA5-ACD2-4ACA20405930}"
+        "ProductCode" = "8:{200478A8-B428-4EF1-8A94-A59A9AF9DC55}"
+        "PackageCode" = "8:{C946C26D-6E7B-40B2-8CBD-5189B3724226}"
         "UpgradeCode" = "8:{CBB33F12-675C-4179-953B-FB3096668492}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.5.7"
+        "ProductVersion" = "8:2.5.8"
         "Manufacturer" = "8:Gihan Soft"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -257,6 +257,7 @@ namespace Gihan.Manga.Reader.Views
             if (!_firstLoad)
             {
                 PagesScroll.ScrollToVerticalOffset(0);
+                _currentManga.CurrentPlace = 0;
                 CurrentPage.Text = "1";
             }
             else
@@ -348,8 +349,8 @@ namespace Gihan.Manga.Reader.Views
                         i.Width = SystemParameters.FullPrimaryScreenWidth * 0.55 * zoom;
                 }
                 var zn = (double.Parse(ZoomPersent.Text) / oldZoom);
-                var offset = PagesScroll.VerticalOffset == 0 ? 
-                    _currentManga.CurrentPlace * zn 
+                var offset = PagesScroll.VerticalOffset == 0 ?
+                    _currentManga.CurrentPlace * zn
                     : PagesScroll.VerticalOffset * zn;
                 PagesScroll.ScrollToVerticalOffset(offset);
                 var hoffset = ((SystemParameters.FullPrimaryScreenWidth - 20) * (zn - 1));
