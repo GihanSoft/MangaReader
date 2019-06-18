@@ -61,9 +61,18 @@ namespace Gihan.Manga.Reader.Views
             HomeCmd.InputGestures.Add(new KeyGesture(Key.H, ModifierKeys.Control));
 
             var args = Environment.GetCommandLineArgs().ToList();
-            if (args.Count <= 1) return;
+            args.RemoveAt(0);
+            if (args.Count == 0) return;
+            if (args.Contains("-m"))
+            {
+                var i = args.IndexOf("-m");
+                var mangaId = args.ElementAt(i + 1);
+                var manga = SettingApi.This.MangaList[int.Parse(mangaId)];
+                _currentManga = manga;
+                _chapterList = GetChapterList(manga);
+                return;
+            }
             _chapterList = args;
-            _chapterList.RemoveAt(0);
             ChapterListCombo.ItemsSource = _chapterList.Select(ch => ch.Substring(ch.LastIndexOf('\\') + 1));
             _currentManga = new MangaInfo()
             {

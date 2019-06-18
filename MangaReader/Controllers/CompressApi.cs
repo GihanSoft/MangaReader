@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using SharpCompress.Common;
 using SharpCompress.Readers;
 
 namespace Gihan.Manga.Reader.Controllers
@@ -59,7 +60,7 @@ namespace Gihan.Manga.Reader.Controllers
                 process.StartInfo.RedirectStandardOutput = true;
                 process.Start();
 
-                var stdOut = process.StandardOutput.ReadToEnd();
+                //var stdOut = process.StandardOutput.ReadToEnd();
                 var stdErrMsg = process.StandardError.ReadToEnd();
 
                 if (stdErrMsg.Length > 0)

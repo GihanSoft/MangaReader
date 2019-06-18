@@ -29,9 +29,10 @@ namespace Gihan.Manga.Reader
                     if (!exist || !isCompressedFile)
                         trueType = false;
                 }
-                if (!trueType)
+                if (!trueType && !e.Args.Contains("-m"))
+                {
                     Environment.Exit(0);
-
+                }
                 StartupUri = new Uri("Views/WinMain.xaml", UriKind.Relative);
             }
 

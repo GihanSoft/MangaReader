@@ -15,6 +15,9 @@ using Gihan.Manga.Reader.Controllers;
 using MahApps.Metro.Controls;
 using MangaReader;
 using MangaReader.Models;
+//using Microsoft.WindowsAPICodePack.Taskbar;
+using System.Windows.Shell;
+using System.Reflection;
 
 namespace Gihan.Manga.Reader.Views
 {
@@ -182,6 +185,13 @@ namespace Gihan.Manga.Reader.Views
             SettingApi.This.LastManga = clickedManga.Id;
             new WinMain(clickedManga).Show();
             Close();
+
+            JumpList.AddToRecentCategory(new JumpTask()
+            {
+                ApplicationPath = Assembly.GetEntryAssembly().Location,
+                Arguments = $"-m {clickedManga.Id}",
+                Title = clickedManga.Name
+            });
         }
 
         private void BtnRemoveManga_Click(object sender, RoutedEventArgs e)
