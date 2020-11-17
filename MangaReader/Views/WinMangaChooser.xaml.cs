@@ -1,8 +1,6 @@
-﻿using MahApps.Metro.Controls;
-using MangaReader.Controllers;
-using MangaReader.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,8 +10,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Gihan.Manga.Reader.Controllers;
+//using Gihan.Manga.Reader.Models;
+using MahApps.Metro.Controls;
+using MangaReader;
+using MangaReader.Models;
+//using Microsoft.WindowsAPICodePack.Taskbar;
+using System.Windows.Shell;
+using System.Reflection;
 
-namespace MangaReader.Views
+namespace Gihan.Manga.Reader.Views
 {
     /// <summary>
     /// Interaction logic for MangaChooser.xaml
@@ -46,14 +52,18 @@ namespace MangaReader.Views
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await Task.Run(async () =>
+            Width = SettingApi.This.WinChooserWidth;
+            Height = SettingApi.This.WinChooserHeight;
+            WindowState = SettingApi.This.WinChooserState;
+            await Task.Run(() =>
             {
                 try
                 {
-                    if (await Updater.UpdateChecker.Check())
+                    if (new Updater.Controllers.Updater().IsNeedUpdate)
                     {
                         BtnUpdate.Background = (Brush)FindResource("HighlightBrush");
                     }
+
                 }
                 catch { }
             });
@@ -172,9 +182,16 @@ namespace MangaReader.Views
         private void MangaItem_Click(object sender, RoutedEventArgs e)
         {
             var clickedManga = (sender as MangaItem).Manga;
-            SettingApi.This.LastManga = clickedManga.ID;
+            SettingApi.This.LastManga = clickedManga.Id;
             new WinMain(clickedManga).Show();
             Close();
+
+            JumpList.AddToRecentCategory(new JumpTask()
+            {
+                ApplicationPath = Assembly.GetEntryAssembly().Location,
+                Arguments = $"-m {clickedManga.Id}",
+                Title = clickedManga.Name
+            });
         }
 
         private void BtnRemoveManga_Click(object sender, RoutedEventArgs e)
@@ -244,7 +261,7 @@ namespace MangaReader.Views
                 case MangaFolderStastus.manga:
                     SettingApi.This.MangaList.Add(new MangaInfo()
                     {
-                        ID = SettingApi.This.MangaList.Count,
+                        Id = SettingApi.This.MangaList.Count,
                         Name = mangaPath.Substring(mangaPath.LastIndexOf('\\') + 1),
                         Address = mangaPath,
                         CurrentChapter = 0,
@@ -253,14 +270,15 @@ namespace MangaReader.Views
                     });
                     break;
                 case MangaFolderStastus.chapter:
-                    var rootFolder = mangaPath.Substring(0, mangaPath.LastIndexOf('\\') + 1);
+                    var rootFolder = mangaPath.Substring(0, mangaPath.LastIndexOf('\\'));
                     var subFolders = Directory.EnumerateDirectories(rootFolder).ToList();
                     subFolders.Sort(NaturalStringComparer.Default.Compare);
                     var currentCh = subFolders.FindIndex(m => m == mangaPath);
+                    var name = rootFolder.Substring(rootFolder.LastIndexOf('\\') + 1);
                     SettingApi.This.MangaList.Add(new MangaInfo()
                     {
-                        ID = SettingApi.This.MangaList.Count,
-                        Name = rootFolder.Substring(rootFolder.LastIndexOf('\\') + 1),
+                        Id = SettingApi.This.MangaList.Count,
+                        Name = name,
                         Address = rootFolder,
                         CurrentChapter = currentCh,
                         CurrentPlace = 0,
@@ -369,11 +387,11 @@ namespace MangaReader.Views
                     if (item.MangaTitle.ToLower().StartsWith(e.Key.ToString().ToLower()))
                     {
                         var ps = (((Keyboard.FocusedElement as Button).Parent as Grid).Parent as Border).Parent as MangaItem;
-                        if (ps.Manga.ID + 1 == SettingApi.This.MangaList.Count)
+                        if (ps.Manga.Id + 1 == SettingApi.This.MangaList.Count)
                             continue;
                         if ((char.ToLower(ps.MangaTitle[0]) == char.ToLower(item.MangaTitle[0])) &&
-                            item.Manga.ID <= ps.Manga.ID &&
-                            SettingApi.This.MangaList[ps.Manga.ID + 1].Name.ToLower()[0] == ps.MangaTitle.ToLower()[0])
+                            item.Manga.Id <= ps.Manga.Id &&
+                            SettingApi.This.MangaList[ps.Manga.Id + 1].Name.ToLower()[0] == ps.MangaTitle.ToLower()[0])
                             continue;
                         Keyboard.Focus(item.SelectButton);
                         item.Focus();
@@ -402,6 +420,22 @@ namespace MangaReader.Views
         private void BtnGoToSite_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("http://GihanSoft.ir");
+        }
+
+        private void WinMangaChooser_OnClosing(object sender, CancelEventArgs e)
+        {
+            SettingApi.This.WinChooserState = WindowState;
+            if (WindowState == WindowState.Normal)
+            {
+                SettingApi.This.WinChooserHeight = Height;
+                SettingApi.This.WinChooserWidth = Width;
+            }
+        }
+
+        private void WinMangaChooser_OnStateChanged(object sender, EventArgs e)
+        {
+            Width = SettingApi.This.WinChooserWidth;
+            Height = SettingApi.This.WinChooserHeight;
         }
     }
 

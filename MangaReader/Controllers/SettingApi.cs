@@ -1,12 +1,11 @@
-﻿using MangaReader.Controllers;
-using MangaReader.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using Gihan.Manga.Reader.Controllers;
+//using Gihan.Manga.Reader.Models;
+using MangaReader.Models;
 
 namespace MangaReader
 {
@@ -46,6 +45,9 @@ namespace MangaReader
 
         public int ThemeBase { get; set; } = 0;
         public int Accent { get; set; } = 2;
+        public WindowState WinChooserState { get; set; } = WindowState.Normal;
+        public double WinChooserHeight { get; set; } = 400;
+        public double WinChooserWidth { get; set; } = 600;
 
         static SettingApi()
         {
@@ -63,9 +65,9 @@ namespace MangaReader
             MangaList.Sort(NaturalStringComparer.Default.Compare);
             for (int i = 0; i < MangaList.Count; i++)
             {
-                if (MangaList[i].ID != i)
+                if (MangaList[i].Id != i)
                 {
-                    MangaList[i].ID = i;
+                    MangaList[i].Id = i;
                 }
             }
         }
@@ -80,7 +82,8 @@ namespace MangaReader
             if (File.Exists(SaveFileDir))
             {
                 var file = File.OpenRead(SaveFileDir);
-                var setting = (SettingApi)binaryFormatter.Deserialize(file);
+                var obj = binaryFormatter.Deserialize(file);
+                var setting = (SettingApi) obj;
                 file.Close();
                 this.MangaList = setting.MangaList;
                 this.MangaRoot = setting.MangaRoot;
@@ -89,6 +92,9 @@ namespace MangaReader
                 this.LastManga = setting.LastManga;
                 this.ThemeBase = setting.ThemeBase;
                 this.Accent = setting.Accent;
+                this.WinChooserState = setting.WinChooserState;
+                this.WinChooserHeight = setting.WinChooserHeight;
+                this.WinChooserWidth = setting.WinChooserWidth;
             }
             else MangaList = null;
             if (MangaList == null)

@@ -1,23 +1,18 @@
-﻿using MahApps.Metro;
-using MahApps.Metro.Controls;
-using MangaReader.Controllers;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
+using ControlzEx.Theming;
 
-namespace MangaReader.Views
+using Gihan.Manga.Reader.Controllers;
+
+using MahApps.Metro;
+using MahApps.Metro.Controls;
+
+using MangaReader;
+
+namespace Gihan.Manga.Reader.Views
 {
     /// <summary>
     /// Interaction logic for WinSetting.xaml
@@ -27,15 +22,10 @@ namespace MangaReader.Views
         public WinSetting()
         {
             InitializeComponent();
-            var version = Updater.UpdateData.ProgramVersionCode;
-            RtVersion.Text = "." + (version % 100).ToString();
-            version /= 100;
-            RtVersion.Text = "." + (version % 100).ToString() + RtVersion.Text;
-            version /= 100;
-            RtVersion.Text = version.ToString() + RtVersion.Text;
+            RtVersion.Text = Updater.Models.UpdateInfo.CurrentVersionName;
 
-            CboThemeBase.ItemsSource = ThemeManager.AppThemes.Select(t => t.Name);
-            CboTheme.ItemsSource = ThemeManager.Accents.Select(a => a.Name);
+            CboThemeBase.ItemsSource = ThemeManager.Current.Themes.Select(t => t.Name);
+            //CboTheme.ItemsSource = ThemeManager.Accents.Select(a => a.Name);
 
             CboThemeBase.SelectedIndex = SettingApi.This.ThemeBase;
             CboTheme.SelectedIndex = SettingApi.This.Accent;
@@ -43,22 +33,22 @@ namespace MangaReader.Views
 
         private void CboThemeBase_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var theme = ThemeManager.AppThemes.ToArray()[CboThemeBase.SelectedIndex].Name;
-            ThemeManager.ChangeAppTheme(Application.Current, theme);
+            var theme = ThemeManager.Current.Themes.ToArray()[CboThemeBase.SelectedIndex].Name;
+            ThemeManager.Current.ChangeTheme(Application.Current, theme);
         }
 
         private void CboTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var accent = ThemeManager.Accents.ToArray()[CboTheme.SelectedIndex];
-            var baseTheme = ThemeManager.AppThemes.ToArray()[CboThemeBase.SelectedIndex];
-            ThemeManager.ChangeAppStyle(Application.Current, accent, baseTheme);
+            //var accent = ThemeManager.Accents.ToArray()[CboTheme.SelectedIndex];
+            var baseTheme = ThemeManager.Current.Themes.ToArray()[CboThemeBase.SelectedIndex];
+            ThemeManager.Current.ChangeTheme(Application.Current, baseTheme);
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var theme = ThemeManager.AppThemes.ToArray()[SettingApi.This.ThemeBase];
-            var accent = ThemeManager.Accents.ToArray()[SettingApi.This.Accent];
-            ThemeManager.ChangeAppStyle(Application.Current, accent, theme);
+            var theme = ThemeManager.Current.Themes.ToArray()[SettingApi.This.ThemeBase];
+            //var accent = ThemeManager.Current.Accents.ToArray()[SettingApi.This.Accent];
+            ThemeManager.Current.ChangeTheme(Application.Current, theme);
         }
 
         private void BtnApply_Click(object sender, RoutedEventArgs e)

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpCompress.Readers;
+using System.Diagnostics;
 using System.IO;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 
-namespace MangaReader.Controllers
+namespace Gihan.Manga.Reader.Controllers
 {
     static class CompressApi
     {
@@ -32,15 +30,15 @@ namespace MangaReader.Controllers
 
         public static string OpenArchive(string archivePath)
         {
+            string tarPath;
+            tarPath = ExtractPath + archivePath.Substring(archivePath.LastIndexOf("\\", StringComparison.Ordinal) + 1);
+            tarPath = tarPath.Substring(0, tarPath.LastIndexOf(".", StringComparison.Ordinal));
             try
             {
-                string tarPath;
                 using (Stream source = File.OpenRead(archivePath))
                 {
                     var reader = ReaderFactory.Open(source);
 
-                    tarPath = ExtractPath + archivePath.Substring(archivePath.LastIndexOf("\\") + 1);
-                    tarPath = tarPath.Substring(0, tarPath.LastIndexOf("."));
                     DirectoryInfo tarDirectory = new DirectoryInfo(tarPath);
 
                     if (tarDirectory.Exists)
@@ -53,9 +51,28 @@ namespace MangaReader.Controllers
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show(e.ToString(), "Error",
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                throw;
+                var process = new Process();
+                process.StartInfo.FileName = "unrar";
+                process.StartInfo.Arguments = $"x -ad \"{archivePath}\" \"{Path.Combine(Environment.CurrentDirectory, ExtractPath)}\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+
+                //var stdOut = process.StandardOutput.ReadToEnd();
+                var stdErrMsg = process.StandardError.ReadToEnd();
+
+                if (stdErrMsg.Length > 0)
+                {
+                    System.Windows.MessageBox.Show(e.ToString(), "Error",
+                        System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    throw;
+                }
+                else
+                {
+                    return tarPath;
+                }
             }
         }
 

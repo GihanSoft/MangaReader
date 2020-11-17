@@ -1,16 +1,19 @@
-﻿<Controls:MetroWindow x:Class="MangaReader.Views.WinMangaChooser"
+﻿<Controls:MetroWindow x:Class="Gihan.Manga.Reader.Views.WinMangaChooser"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MangaReader.Views"
-        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:Gihan.Manga.Reader.Views"
         mc:Ignorable="d"
         Title="GS Manga Reader" Height="350" Width="480"
-        GlowBrush="{DynamicResource AccentBaseColorBrush}" Icon="..\icon.ico"
-        Loaded="MetroWindow_Loaded" 
-        AllowDrop="True" DragEnter="MetroWindow_DragEnter" DragLeave="MetroWindow_DragLeave" Drop="MetroWindow_Drop">
+        GlowBrush="{DynamicResource AccentBaseColorBrush}" Icon="/MangaReader;component/OtakuLib.ico"
+        Loaded="MetroWindow_Loaded" Closing="WinMangaChooser_OnClosing"
+                      StateChanged="WinMangaChooser_OnStateChanged"
+        AllowDrop="True" DragEnter="MetroWindow_DragEnter" 
+                      DragLeave="MetroWindow_DragLeave" 
+                      Drop="MetroWindow_Drop">
     <Controls:MetroWindow.CommandBindings>
         <CommandBinding Command="{x:Static local:WinMangaChooser.newMangaCmd}" Executed="NewMangaCmd_Executed" />
         <CommandBinding Command="{x:Static local:WinMangaChooser.selectMangaRootCmd}" Executed="SelectMangaRootCmd_Executed" />
@@ -75,7 +78,7 @@
                     </Button>
                     <Button Name="BtnSettings" Click="SettingsBtn_Click" Visibility="Visible" IsTabStop="False"
                             ToolTip="تنظیمات">
-                        <iconPacks:PackIconMaterial Kind="Settings" Height="25" Width="25" />
+                        <iconPacks:PackIconMaterial Kind="CogOutline" Height="25" Width="25" />
                     </Button>
                     <Button Name="BtnInfo" Click="InfoButton_Click" Visibility="Visible" IsTabStop="False"
                             ToolTip="امکانات نرم افزار و راهنمای استفاده">

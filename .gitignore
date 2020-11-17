@@ -2,9 +2,9 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/Installer/Release
-/MangaReader/bin/Debug
-/MangaReader/obj
-/Updater/bin
-/Updater/obj/Debug
-/Updater/obj/Release
+Installer/Release
+Installer/Debug
+*/[Bb]in/*
+*/[Oo]bj/*
+packages/*
+.vs/*
