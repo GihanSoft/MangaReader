@@ -16,7 +16,7 @@
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Controls:MetroTabControl TabStripPlacement="Left" Controls:TabControlHelper.IsUnderlined="True"
+        <Controls:MetroTabControl TabStripPlacement="Left" Controls:TabControlHelper.Underlined="TabItems"
                                   Grid.Row="0">
             <TabItem Header="Gerenal">
                 <Grid>

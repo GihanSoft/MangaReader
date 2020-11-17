@@ -78,7 +78,7 @@
                     </Button>
                     <Button Name="BtnSettings" Click="SettingsBtn_Click" Visibility="Visible" IsTabStop="False"
                             ToolTip="تنظیمات">
-                        <iconPacks:PackIconMaterial Kind="Settings" Height="25" Width="25" />
+                        <iconPacks:PackIconMaterial Kind="CogOutline" Height="25" Width="25" />
                     </Button>
                     <Button Name="BtnInfo" Click="InfoButton_Click" Visibility="Visible" IsTabStop="False"
                             ToolTip="امکانات نرم افزار و راهنمای استفاده">

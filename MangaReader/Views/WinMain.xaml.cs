@@ -10,7 +10,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using Gihan.Manga.Reader.Controllers;
+
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 //using Gihan.Manga.Reader.Models;
 using MangaReader;
 using MangaReader.Models;
@@ -20,7 +24,7 @@ namespace Gihan.Manga.Reader.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class WinMain
+    public partial class WinMain : MetroWindow
     {
         public static RoutedCommand NextChapterCmd = new RoutedCommand();
         public static RoutedCommand PreviousChapterCmd = new RoutedCommand();
@@ -69,7 +73,7 @@ namespace Gihan.Manga.Reader.Views
                 var mangaId = args.ElementAt(i + 1);
                 var manga = SettingApi.This.MangaList[int.Parse(mangaId)];
                 _currentManga = manga;
-                _chapterList = GetChapterList(manga);
+                _chapterList = GetChapterList(manga).ToList();
                 return;
             }
             _chapterList = args;
@@ -84,7 +88,7 @@ namespace Gihan.Manga.Reader.Views
         public WinMain(MangaInfo manga) : this()
         {
             _currentManga = manga;
-            _chapterList = GetChapterList(manga);
+            _chapterList = GetChapterList(manga).ToList();
         }
 
         private void ClockTmr_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -229,8 +233,7 @@ namespace Gihan.Manga.Reader.Views
             }
             else
             {
-                MessageBox.Show("این چپتر اول است.", "خطا", MessageBoxButton.OK, MessageBoxImage.Warning,
-                    MessageBoxResult.OK, MessageBoxOptions.RtlReading);
+                this.ShowMessageAsync("خطا", "این چپتر اول است.", MessageDialogStyle.Affirmative);
             }
         }
         private void Next_Click(object sender, RoutedEventArgs e)
@@ -242,17 +245,16 @@ namespace Gihan.Manga.Reader.Views
             else
             {
                 var nList = GetChapterList(_currentManga);
-                if (nList.Count != _chapterList.Count)
+                if (nList.Count() != _chapterList.Count)
                 {
-                    _chapterList = nList;
+                    _chapterList = nList.ToList();
                     ChapterListCombo.ItemsSource = null;
                     ChapterListCombo.ItemsSource = _chapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
 
                     ChapterListCombo.SelectedIndex = ++_currentManga.CurrentChapter;
                     return;
                 }
-                MessageBox.Show("این چپتر آخر است.", "خطا", MessageBoxButton.OK, MessageBoxImage.Warning,
-                    MessageBoxResult.OK, MessageBoxOptions.RtlReading);
+                this.ShowMessageAsync("خطا", "این چپتر آخر است.", MessageDialogStyle.Affirmative);
             }
         }
 
@@ -329,7 +331,13 @@ namespace Gihan.Manga.Reader.Views
         private string _oldText = "100";
         private void ZoomPersent_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ZoomPersent.Text == "") return;
+            if (Pages is null)
+                return;
+            if (ZoomPersent.Text?.Length == 0)
+            {
+                return;
+            }
+
             if (double.Parse(ZoomPersent.Text) > 300)
             {
                 ZoomPersent.Text = "300";
@@ -355,7 +363,9 @@ namespace Gihan.Manga.Reader.Views
                         i.MaxWidth = (SystemParameters.FullPrimaryScreenWidth - 20) * zoom;
                     }
                     else
+                    {
                         i.Width = SystemParameters.FullPrimaryScreenWidth * 0.55 * zoom;
+                    }
                 }
                 var zn = (double.Parse(ZoomPersent.Text) / oldZoom);
                 var offset = PagesScroll.VerticalOffset == 0 ?
@@ -541,16 +551,16 @@ namespace Gihan.Manga.Reader.Views
             }
         }
 
-        private List<string> GetChapterList(MangaInfo manga)
+        private IEnumerable<string> GetChapterList(MangaInfo manga)
         {
-            var chapterList = new List<string>(Directory.EnumerateDirectories(manga.Address));
-            chapterList.AddRange(Directory.EnumerateFiles(manga.Address).
-                    Where(ch => FileTypeList.CompressedType.Any(t => ch.EndsWith(t))));
-
-            //chapterList.Sort(NaturalStringComparer.Default.Compare);
-            chapterList = chapterList.OrderBy(ch => Path.GetFileNameWithoutExtension(ch), NaturalStringComparer.Default)
-                .ToList();
-            return chapterList;
+            var dir = new DirectoryInfo(manga.Address);
+            var chapters = dir.EnumerateFileSystemInfos()
+                .Where(item => !(item is FileInfo file) ||
+                FileTypeList.CompressedType.Any(t => file.Name.EndsWith(t)));
+            chapters = chapters.OrderBy(item => item is FileInfo file ?
+                Path.GetFileNameWithoutExtension(file.Name) : item.Name,
+                    NaturalStringComparer.Default);
+            return chapters.Select(ch => ch.FullName);
         }
     }
 }

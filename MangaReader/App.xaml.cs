@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+
+using ControlzEx.Theming;
+
 using Gihan.Manga.Reader.Controllers;
 using MahApps.Metro;
 using MangaReader;
@@ -36,9 +39,9 @@ namespace Gihan.Manga.Reader
                 StartupUri = new Uri("Views/WinMain.xaml", UriKind.Relative);
             }
 
-            var theme = ThemeManager.AppThemes.ToArray()[SettingApi.This.ThemeBase];
-            var accent = ThemeManager.Accents.ToArray()[SettingApi.This.Accent];
-            ThemeManager.ChangeAppStyle(Current, accent, theme);
+            var theme = ThemeManager.Current.Themes.ToArray()[SettingApi.This.ThemeBase];
+            var accent = ThemeManager.Current.ColorSchemes.ToArray()[SettingApi.This.Accent];
+            ThemeManager.Current.ChangeTheme(Current, theme);
         }
 
         protected override void OnExit(ExitEventArgs e)

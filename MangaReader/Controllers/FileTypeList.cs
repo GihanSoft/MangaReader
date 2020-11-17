@@ -10,7 +10,7 @@ namespace Gihan.Manga.Reader.Controllers
 
         static FileTypeList()
         {
-            ImageTypes = new[] { "jpg", "jpeg", "png", "bmp", "gif" };
+            ImageTypes = new[] { "jpg", "jpeg", "png", "bmp", "gif", "webp" };
             CompressedType = new[] { "zip", "rar", "cbr", "cbz", "kn" };
         }
     }
