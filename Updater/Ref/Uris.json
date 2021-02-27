@@ -1,7 +1,0 @@
-﻿{
-  "Api": "http://api.gihansoft.ir/MR\"",
-  "Dl": "http://dl.gihansoft.ir/MR",
-  "Update": "Update",
-  "Setup": "Setup",
-  "Installers": [ "Installer.msi.x", "setup.exe.x" ]
-}

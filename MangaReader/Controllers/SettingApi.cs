@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
-using Gihan.Manga.Reader.Controllers;
-//using Gihan.Manga.Reader.Models;
-using MangaReader.Models;
+
+using MangaReader.Controllers;
+using MangaReader.Data.Models;
 
 namespace MangaReader
 {
@@ -19,26 +19,10 @@ namespace MangaReader
         [NonSerialized]
         static BinaryFormatter binaryFormatter;
 
-        /// <summary>
-        /// Singleton pattern field
-        /// </summary>
-        [NonSerialized]
-        static SettingApi _This;
-        /// <summary>
-        /// Singleton Pattern Property
-        /// </summary>
-        public static SettingApi This
-        {
-            get
-            {
-                if (_This == null)
-                    _This = new SettingApi();
-                return _This;
-            }
-        }
+        public static SettingApi This { get; } = new SettingApi();
 
-        public List<MangaInfo> MangaList { get; set; } = null;
-        public string MangaRoot { get; set; } = null;
+        public List<Manga>? MangaList { get; set; } = null;
+        public string? MangaRoot { get; set; } = null;
         public byte BackgroundColor { get; set; } = 0;
         public bool ShowLastManga { get; set; } = true;
         public int LastManga { get; set; } = 0;
@@ -62,6 +46,10 @@ namespace MangaReader
 
         public void SortMangaList()
         {
+            if (MangaList is null)
+            {
+                return;
+            }
             MangaList.Sort(NaturalStringComparer.Default.Compare);
             for (int i = 0; i < MangaList.Count; i++)
             {
@@ -83,7 +71,7 @@ namespace MangaReader
             {
                 var file = File.OpenRead(SaveFileDir);
                 var obj = binaryFormatter.Deserialize(file);
-                var setting = (SettingApi) obj;
+                var setting = (SettingApi)obj;
                 file.Close();
                 this.MangaList = setting.MangaList;
                 this.MangaRoot = setting.MangaRoot;
@@ -98,7 +86,7 @@ namespace MangaReader
             }
             else MangaList = null;
             if (MangaList == null)
-                MangaList = new List<MangaInfo>();
+                MangaList = new List<Manga>();
         }
 
         public void Save()

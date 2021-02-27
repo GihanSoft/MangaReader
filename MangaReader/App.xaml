@@ -1,25 +1,24 @@
-﻿<Application x:Class="Gihan.Manga.Reader.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-             StartupUri="Views/WinMangaChooser.xaml" Startup="Application_Startup"
-             DispatcherUnhandledException="Application_DispatcherUnhandledException">
+﻿<Application
+    x:Class="MangaReader.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+    StartupUri="MainWindow.xaml"
+    >
     <Application.Resources>
         <ResourceDictionary>
-            <Style TargetType="{x:Type Dialog:MessageDialog}"
-                   BasedOn="{StaticResource {x:Type Dialog:BaseMetroDialog}}">
-                <Setter Property="FlowDirection" Value="RightToLeft" />
-            </Style>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type Dialog:MessageDialog}"
+                   BasedOn="{StaticResource {x:Type Dialog:BaseMetroDialog}}">
+                <Setter Property="FlowDirection" Value="RightToLeft" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
     <JumpList.JumpList>
-        <JumpList ShowRecentCategory="True">
-
-        </JumpList>
+        <JumpList ShowRecentCategory="True" />
     </JumpList.JumpList>
 </Application>

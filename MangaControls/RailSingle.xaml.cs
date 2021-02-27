@@ -30,10 +30,8 @@ namespace Gihan.Manga.Views.Custom
                     if (image is null) continue;
                     if (dZoom is null)
                         dZoom = value / (GetBinding(image, MaxHeightProperty).Converter as ZaribConverter).Zarib;
-                    (GetBinding(image, MaxHeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
-                    (GetBinding(image, HeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
+                    (GetBinding(image, MaxHeightProperty).Converter as ZaribConverter).Zarib = value;
+                    (GetBinding(image, HeightProperty).Converter as ZaribConverter).Zarib = value;
                     image.SetBinding(MaxHeightProperty, GetBinding(image, MaxHeightProperty));
                     image.SetBinding(HeightProperty, GetBinding(image, HeightProperty));
                 }

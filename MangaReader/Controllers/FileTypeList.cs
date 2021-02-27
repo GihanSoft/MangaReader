@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gihan.Manga.Reader.Controllers
+namespace MangaReader.Controllers
 {
 
     public static class FileTypeList
@@ -10,8 +10,8 @@ namespace Gihan.Manga.Reader.Controllers
 
         static FileTypeList()
         {
-            ImageTypes = new[] { "jpg", "jpeg", "png", "bmp", "gif", "webp" };
-            CompressedType = new[] { "zip", "rar", "cbr", "cbz", "kn" };
+            ImageTypes = new[] { ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp" };
+            CompressedType = new[] { ".zip", ".rar", ".cbr", ".cbz", ".kn" };
         }
     }
 }

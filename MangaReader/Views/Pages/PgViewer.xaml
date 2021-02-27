@@ -1,0 +1,43 @@
+﻿<nav:Page
+    x:Class="MangaReader.Views.Pages.PgViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:nav="clr-namespace:GihanSoft.Navigation;assembly=GihanSoft.Navigation"
+    xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d"
+d:DesignHeight="450" d:DesignWidth="800">
+    <nav:Page.Resources>
+        <StackPanel x:Key="LeftToolBar" Orientation="Horizontal">
+            <Button Name="PreviousBtn" Click="Previous_Click" Content="{icon:Material Kind=ArrowLeft}" />
+            <ComboBox Name="ChapterListCombo" SelectionChanged="ChapterListCombo_SelectionChanged" Margin="2" Width="200" />
+            <Button Name="NextBtn" Click="Next_Click">
+                <icon:PackIconMaterial Kind="ArrowRight" />
+            </Button>
+            <!--<Separator Margin="4 0" />-->
+            <TextBox Name="CurrentPage" Margin="2" IsReadOnly="True" FontSize="15" VerticalAlignment="Center" Width="35" Padding="0" VerticalContentAlignment="Center" />
+            <TextBlock Name="PagesCount" Text="/100" FontSize="15" VerticalAlignment="Center" Width="32" Margin="1 0" />
+            <Button Click="ZoomInBtn_Click">
+                <icon:PackIconMaterial Kind="Plus" />
+            </Button>
+            <TextBox Name="ZoomPersent" Margin="2" TextChanged="ZoomPersent_TextChanged" Text="100" FontSize="14" Padding="0" VerticalContentAlignment="Center" />
+            <TextBlock Text="%" VerticalAlignment="Center" FontSize="15" Margin="1 0 2 0" />
+            <Button Click="ZoomOutBtn_Click">
+                <icon:PackIconMaterial Kind="Minus" />
+            </Button>
+        </StackPanel>
+
+        <RoutedUICommand x:Key="CmdNextPage" />
+    </nav:Page.Resources>
+    <nav:Page.CommandBindings>
+        <CommandBinding Command="{StaticResource CmdNextPage}" Executed="CmdNextPage_Executed" />
+    </nav:Page.CommandBindings>
+    <nav:Page.InputBindings>
+        <KeyBinding Key="Left" Command="{StaticResource CmdNextPage}" />
+        <KeyBinding Key="Down" Modifiers="Ctrl" Command="{StaticResource CmdNextPage}" />
+    </nav:Page.InputBindings>
+    <Grid>
+
+    </Grid>
+</nav:Page>

@@ -15,54 +15,67 @@ using Gihan.Manga.Reader.Controllers;
 
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-//using Gihan.Manga.Reader.Models;
-using MangaReader;
-using MangaReader.Models;
+using MahApps.Metro.IconPacks;
 
-namespace Gihan.Manga.Reader.Views
+using MangaReader.Controllers;
+using MangaReader.Data.Models;
+
+namespace MangaReader.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class WinMain : MetroWindow
     {
-        public static RoutedCommand NextChapterCmd = new RoutedCommand();
-        public static RoutedCommand PreviousChapterCmd = new RoutedCommand();
-        public static RoutedCommand ZoomInCmd = new RoutedCommand();
-        public static RoutedCommand ZoomOutCmd = new RoutedCommand();
-        public static RoutedCommand FullScreenCmd = new RoutedCommand();
-        public static RoutedCommand HomeCmd = new RoutedCommand();
+        //public static RoutedCommand NextChapterCmd = new RoutedCommand();
+        //public static RoutedCommand PreviousChapterCmd = new RoutedCommand();
+        //public static RoutedCommand ZoomInCmd = new RoutedCommand();
+        //public static RoutedCommand ZoomOutCmd = new RoutedCommand();
+        //public static RoutedCommand FullScreenCmd = new RoutedCommand();
+        //public static RoutedCommand HomeCmd = new RoutedCommand();
 
         private List<string> _chapterList;
-        private readonly MangaInfo _currentManga;
+        private readonly Manga _currentManga;
         private List<BitmapImage> _imageList;
 
         private bool _firstLoad = true;
+
+        //private ComboBox ChapterListCombo;
+        //private TextBox CurrentPage;
+        //private TextBox ZoomPersent;
+        //private TextBox PagesCount;
+        //private PackIconMaterial FullScreenIcon;
 
         public WinMain()
         {
             InitializeComponent();
 
+            //ChapterListCombo = ((Resources["LeftToolBar"] as FrameworkElement).FindName("ChapterListCombo") as ComboBox);
+            //CurrentPage = ((Resources["LeftToolBar"] as FrameworkElement).FindName("CurrentPage") as TextBox);
+            //ZoomPersent = ((Resources["LeftToolBar"] as FrameworkElement).FindName("ZoomPersent") as TextBox);
+            //PagesCount = ((Resources["LeftToolBar"] as FrameworkElement).FindName("PagesCount") as TextBox);
+            //FullScreenIcon = ((Resources["LeftToolBar"] as FrameworkElement).FindName("FullScreenIcon") as PackIconMaterial);
+
             var clockTimer = new System.Timers.Timer(1000) { AutoReset = true };
             clockTimer.Elapsed += ClockTmr_Elapsed;
             clockTimer.Start();
 
-            PreviousBtn.ToolTip = "چپتر قبل\nhotkey: Ctrl + Left";
-            NextBtn.ToolTip = "چپتر بعد\nhotkey: Ctrl + Right";
-            FullScreenBtn.ToolTip = "حالت تمام صفحه\nhotkey: F11";
-            HomeMenuBtn.ToolTip = "صفحه اصلی\nhotkey: Ctrl + H";
+            //PreviousBtn.ToolTip = "چپتر قبل\nhotkey: Ctrl + Left";
+            //NextBtn.ToolTip = "چپتر بعد\nhotkey: Ctrl + Right";
+            //FullScreenBtn.ToolTip = "حالت تمام صفحه\nhotkey: F11";
+            //HomeMenuBtn.ToolTip = "صفحه اصلی\nhotkey: Ctrl + H";
 
-            BackgroundColorChooser.SelectedIndex = SettingApi.This.BackgroundColor;
+            //BackgroundColorChooser.SelectedIndex = SettingApi.This.BackgroundColor;
 
             _autoScrollTimer = new System.Timers.Timer(33) { AutoReset = true };
             _autoScrollTimer.Elapsed += AutoScrollTimer_Elapsed;
 
-            NextChapterCmd.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
-            PreviousChapterCmd.InputGestures.Add(new KeyGesture(Key.A, ModifierKeys.Control));
-            ZoomInCmd.InputGestures.Add(new KeyGesture(Key.Add, ModifierKeys.Control));
-            ZoomOutCmd.InputGestures.Add(new KeyGesture(Key.Subtract, ModifierKeys.Control));
-            FullScreenCmd.InputGestures.Add(new KeyGesture(Key.F11));
-            HomeCmd.InputGestures.Add(new KeyGesture(Key.H, ModifierKeys.Control));
+            //NextChapterCmd.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
+            //PreviousChapterCmd.InputGestures.Add(new KeyGesture(Key.A, ModifierKeys.Control));
+            //ZoomInCmd.InputGestures.Add(new KeyGesture(Key.Add, ModifierKeys.Control));
+            //ZoomOutCmd.InputGestures.Add(new KeyGesture(Key.Subtract, ModifierKeys.Control));
+            //FullScreenCmd.InputGestures.Add(new KeyGesture(Key.F11));
+            //HomeCmd.InputGestures.Add(new KeyGesture(Key.H, ModifierKeys.Control));
 
             var args = Environment.GetCommandLineArgs().ToList();
             args.RemoveAt(0);
@@ -78,14 +91,14 @@ namespace Gihan.Manga.Reader.Views
             }
             _chapterList = args;
             ChapterListCombo.ItemsSource = _chapterList.Select(ch => ch.Substring(ch.LastIndexOf('\\') + 1));
-            _currentManga = new MangaInfo()
+            _currentManga = new Manga()
             {
                 Id = -1, // to not save on closing
                 CurrentChapter = 0
             };
         }
 
-        public WinMain(MangaInfo manga) : this()
+        public WinMain(Manga manga) : this()
         {
             _currentManga = manga;
             _chapterList = GetChapterList(manga).ToList();
@@ -112,16 +125,20 @@ namespace Gihan.Manga.Reader.Views
             }
         }
 
-        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        public async void MetroWindow_Loaded(object? sender, RoutedEventArgs? e)
         {
+            while (ChapterListCombo is null)
+            {
+                await Task.Delay(10);
+            }
             ChapterListCombo.ItemsSource = null;
             ChapterListCombo.ItemsSource = _chapterList.Select(chapter => chapter.Substring(chapter.LastIndexOf('\\') + 1));
 
             ChapterListCombo.SelectedIndex = _currentManga.CurrentChapter;
             CurrentPage.Text = "1";
 
-            PagesScroll.ScrollToVerticalOffset(_currentManga.CurrentPlace);
-            ZoomPersent.Text = string.IsNullOrWhiteSpace(_currentManga.Zoom) ? "100" : _currentManga.Zoom;
+            PagesScroll.ScrollToVerticalOffset(_currentManga.Offset);
+            ZoomPersent.Text = string.IsNullOrWhiteSpace((_currentManga.Zoom * 100).ToString()) ? "100" : (_currentManga.Zoom * 100).ToString();
             PagesScroll.Focus();
         }
 
@@ -268,7 +285,7 @@ namespace Gihan.Manga.Reader.Views
             if (!_firstLoad)
             {
                 PagesScroll.ScrollToVerticalOffset(0);
-                _currentManga.CurrentPlace = 0;
+                _currentManga.Offset = 0;
                 CurrentPage.Text = "1";
             }
             else
@@ -283,9 +300,9 @@ namespace Gihan.Manga.Reader.Views
         {
             RleaseImages();
             if (_currentManga.Id == -1) return;
-            SettingApi.This.MangaList[_currentManga.Id].CurrentPlace =
-                PagesScroll.VerticalOffset * (100 / double.Parse(ZoomPersent.Text));
-            SettingApi.This.MangaList[_currentManga.Id].Zoom = ZoomPersent.Text;
+            //SettingApi.This.MangaList[_currentManga.Id].CurrentPlace =
+            //    PagesScroll.VerticalOffset * (100 / double.Parse(ZoomPersent.Text));
+            //SettingApi.This.MangaList[_currentManga.Id].Zoom = double.Parse(ZoomPersent.Text) / 100;
         }
 
         private void RleaseImages()
@@ -329,8 +346,12 @@ namespace Gihan.Manga.Reader.Views
         }
 
         private string _oldText = "100";
-        private void ZoomPersent_TextChanged(object sender, TextChangedEventArgs e)
+        private async void ZoomPersent_TextChanged(object sender, TextChangedEventArgs e)
         {
+            while (ZoomPersent is null)
+            {
+                await Task.Delay(10);
+            }
             if (Pages is null)
                 return;
             if (ZoomPersent.Text?.Length == 0)
@@ -369,7 +390,7 @@ namespace Gihan.Manga.Reader.Views
                 }
                 var zn = (double.Parse(ZoomPersent.Text) / oldZoom);
                 var offset = PagesScroll.VerticalOffset == 0 ?
-                    _currentManga.CurrentPlace * zn
+                    _currentManga.Offset * zn
                     : PagesScroll.VerticalOffset * zn;
                 PagesScroll.ScrollToVerticalOffset(offset);
                 var hoffset = ((SystemParameters.FullPrimaryScreenWidth - 20) * (zn - 1));
@@ -436,18 +457,6 @@ namespace Gihan.Manga.Reader.Views
 
         private void BackgroundColorChooser_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (BackgroundColorChooser.SelectedIndex == 0)
-            {
-                Background = new SolidColorBrush(Colors.Black);
-                ClockViewer.Foreground = new SolidColorBrush(Color.FromRgb(250, 250, 250));
-                SettingApi.This.BackgroundColor = 0;
-            }
-            else
-            {
-                Background = new SolidColorBrush(Color.FromRgb(250, 250, 250));
-                ClockViewer.Foreground = new SolidColorBrush(Colors.Black);
-                SettingApi.This.BackgroundColor = 1;
-            }
         }
 
         readonly System.Timers.Timer _autoScrollTimer;
@@ -510,8 +519,12 @@ namespace Gihan.Manga.Reader.Views
                 FullScreenBtn_Click(this, new RoutedEventArgs());
         }
 
-        private void PagesScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private async void PagesScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            while (CurrentPage is null)
+            {
+                await Task.Delay(10);
+            }
             if (CurrentPage.Text == "")
                 return;
             int end;
@@ -551,9 +564,9 @@ namespace Gihan.Manga.Reader.Views
             }
         }
 
-        private IEnumerable<string> GetChapterList(MangaInfo manga)
+        private IEnumerable<string> GetChapterList(Manga manga)
         {
-            var dir = new DirectoryInfo(manga.Address);
+            var dir = new DirectoryInfo(manga.path);
             var chapters = dir.EnumerateFileSystemInfos()
                 .Where(item => !(item is FileInfo file) ||
                 FileTypeList.CompressedType.Any(t => file.Name.EndsWith(t)));

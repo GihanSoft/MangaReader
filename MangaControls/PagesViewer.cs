@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OtakuLib.MangaBase;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +20,7 @@ namespace Gihan.Manga.Views.Custom
         public virtual IEnumerable<Stream> SourceImageStreams
         {
             get => _sourceStreams != null ? Array.AsReadOnly(_sourceStreams) : null;
-            set => SetSourceStreams(value, Page);
+            //set => SetSourceStreams(value, Page);
         }
         public virtual IEnumerable<MemoryStream> InMemoryImageStreams
             => Array.AsReadOnly(_inMemoryStreams);
@@ -63,8 +65,14 @@ namespace Gihan.Manga.Views.Custom
             _images = new Image[pagesCount];
             _bitmaps = new BitmapImage[pagesCount];
         }
-        public virtual void SetSourceStreams(IEnumerable<Stream> streams, int page)
+        public async virtual void SetSourceStreams(PagesProvider pagesProvider, int page)
         {
+            List<Stream> streams = new List<Stream>();
+            for (int i = 0; i < pagesProvider.Count; i++)
+            {
+                await pagesProvider.LoadPageAsync(i);
+                streams.Add(pagesProvider[i]);
+            }
             SetSourceStreams(streams);
             Page = page > 0 ? page : 1;
         }

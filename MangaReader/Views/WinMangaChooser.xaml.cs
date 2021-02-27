@@ -9,17 +9,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using Gihan.Manga.Reader.Controllers;
-//using Gihan.Manga.Reader.Models;
 using MahApps.Metro.Controls;
-using MangaReader;
-using MangaReader.Models;
-//using Microsoft.WindowsAPICodePack.Taskbar;
 using System.Windows.Shell;
 using System.Reflection;
+using MangaReader.Data;
+using MangaReader.Data.Models;
+using MangaReader.Controllers;
+using Gihan.Manga.Reader.Views;
+using Microsoft.Extensions.DependencyInjection;
+using MangaReader.Views.Components;
 
-namespace Gihan.Manga.Reader.Views
+namespace MangaReader.Views
 {
     /// <summary>
     /// Interaction logic for MangaChooser.xaml
@@ -32,8 +33,14 @@ namespace Gihan.Manga.Reader.Views
         public static RoutedCommand editMangaCmd = new RoutedCommand();
         public static RoutedCommand no_tlbCmd = new RoutedCommand();
 
+        private readonly MainOptions mainOptions;
+
         public WinMangaChooser()
         {
+            SettingsManager settingsManager =
+                ActivatorUtilities.GetServiceOrCreateInstance<SettingsManager>(App.Current.ServiceProvider);
+            mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
+
             newMangaCmd.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
             selectMangaRootCmd.InputGestures.Add(new KeyGesture(Key.M, ModifierKeys.Control));
             deleteMangaCmd.InputGestures.Add(new KeyGesture(Key.Delete));
@@ -43,30 +50,6 @@ namespace Gihan.Manga.Reader.Views
             InitializeComponent();
 
             Task.Run(() => FirstAddMangaItems());
-
-            BtnAddManga.ToolTip = "افزودن مانگا\nhotkey: Ctrl + N";
-            BtnAddMangaRoot.ToolTip = "افزودن پوشه ریشه مانگا\nhotkey: Ctrl + M";
-            BtnRemoveManga.ToolTip = "حذف مانگا از لیست\nhotkey: Delete";
-            BtnEditManga.ToolTip = "ویرایش مانگا موجود\nhotkey: Ctrl + E";
-        }
-
-        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            Width = SettingApi.This.WinChooserWidth;
-            Height = SettingApi.This.WinChooserHeight;
-            WindowState = SettingApi.This.WinChooserState;
-            await Task.Run(() =>
-            {
-                try
-                {
-                    if (new Updater.Controllers.Updater().IsNeedUpdate)
-                    {
-                        BtnUpdate.Background = (Brush)FindResource("HighlightBrush");
-                    }
-
-                }
-                catch { }
-            });
         }
 
         /// <summary>
@@ -78,7 +61,6 @@ namespace Gihan.Manga.Reader.Views
             SettingApi.This.SortMangaList();
             Dispatcher.Invoke(() => MangaPanel.Children.Clear());
             for (int i = 0; i < SettingApi.This.MangaList.Count; i++)
-
             {
                 var item = SettingApi.This.MangaList[i];
                 try
@@ -89,8 +71,8 @@ namespace Gihan.Manga.Reader.Views
                         {
                             var mngItem = new MangaItem(item);
                             mngItem.Click += MangaItem_Click;
-                            if (IsManga(item.Address) == MangaFolderStastus.not)
-                                throw new Exception($"There is no Manga in \"{item.Address}\" .");
+                            if (IsManga(item.path) == MangaFolderStastus.not)
+                                throw new Exception($"There is no Manga in \"{item.path}\" .");
                             MangaPanel.Children.Add(mngItem);
                         }
                         catch (Exception err)
@@ -241,11 +223,11 @@ namespace Gihan.Manga.Reader.Views
             }
         }
 
-        private void AddManga(String mangaPath, bool showDuplicateErroe = true)
+        private void AddManga(String mangaPath, bool showDuplicateError = true)
         {
-            if (SettingApi.This.MangaList.Any(manga => manga.Address == mangaPath))
+            if (SettingApi.This.MangaList.Any(manga => manga.path == mangaPath))
             {
-                if (showDuplicateErroe)
+                if (showDuplicateError)
                     MessageBox.Show("مانگا جدید انتخاب کنید", "خطا مانگا تکراری",
                         MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.RtlReading);
                 return;
@@ -259,14 +241,14 @@ namespace Gihan.Manga.Reader.Views
                     MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.RtlReading);
                     return;
                 case MangaFolderStastus.manga:
-                    SettingApi.This.MangaList.Add(new MangaInfo()
+                    SettingApi.This.MangaList.Add(new Manga()
                     {
                         Id = SettingApi.This.MangaList.Count,
                         Name = mangaPath.Substring(mangaPath.LastIndexOf('\\') + 1),
-                        Address = mangaPath,
+                        path = mangaPath,
                         CurrentChapter = 0,
-                        CurrentPlace = 0,
-                        CoverAddress = null
+                        Offset = 0,
+                        CoverUri = null
                     });
                     break;
                 case MangaFolderStastus.chapter:
@@ -275,14 +257,14 @@ namespace Gihan.Manga.Reader.Views
                     subFolders.Sort(NaturalStringComparer.Default.Compare);
                     var currentCh = subFolders.FindIndex(m => m == mangaPath);
                     var name = rootFolder.Substring(rootFolder.LastIndexOf('\\') + 1);
-                    SettingApi.This.MangaList.Add(new MangaInfo()
+                    SettingApi.This.MangaList.Add(new Manga()
                     {
                         Id = SettingApi.This.MangaList.Count,
                         Name = name,
-                        Address = rootFolder,
+                        path = rootFolder,
                         CurrentChapter = currentCh,
-                        CurrentPlace = 0,
-                        CoverAddress = null
+                        Offset = 0,
+                        CoverUri = null
                     });
                     break;
             }
@@ -408,8 +390,8 @@ namespace Gihan.Manga.Reader.Views
         }
         private void SettingsBtn_Click(object sender, RoutedEventArgs e)
         {
-            var winSetting = new WinSetting();
-            winSetting.ShowDialog();
+            //var winSetting = new WinSetting();
+            //winSetting.ShowDialog();
         }
         private void UpdateBtn_Click(object sender, RoutedEventArgs e)
         {
