@@ -6,16 +6,16 @@ namespace GihanSoft.Navigation
 {
     public abstract class Page : UserControl, IDisposable
     {
-        public Page(PageNavigator navigator)
+        protected Page(PageNavigator navigator)
         {
             Navigator = navigator;
         }
 
         public PageNavigator Navigator { get; }
 
-        public virtual StackPanel? LeftToolBar { get; } = null;
+        public virtual StackPanel? LeftToolBar { get; }
 
-        public virtual Task Refresh() { return Task.CompletedTask; }
+        public virtual void Refresh() { }
 
         protected abstract void Dispose(bool disposing);
 

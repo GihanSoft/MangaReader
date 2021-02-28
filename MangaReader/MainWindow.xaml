@@ -74,6 +74,7 @@
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button
+                Focusable="False"
                 ToolTip="Open Menu&#10;HotKey : Shift+Esc"
                 Content="{icon:Material Kind=Menu}"
                 Command="{StaticResource CmdOpenMenu}" />

@@ -40,6 +40,10 @@ namespace GihanSoft.Views.AttachedProperties
 
                 static IntPtr LockHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
                 {
+                    if(hwnd == IntPtr.Zero)
+                    {
+                        return hwnd;
+                    }
                     if (msg == 0x46)
                     {
 #pragma warning disable CS0618 // Type or member is obsolete

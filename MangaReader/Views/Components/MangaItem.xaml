@@ -8,21 +8,24 @@
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="80"
              Name="MainControl" Background="{DynamicResource WhiteColorBrush}"
-             IsTabStop="True"
-             MaxHeight="125" MinHeight="125" MaxWidth="80" MinWidth="80" Margin="5">
+             IsTabStop="True" Focusable="True"
+             MaxHeight="160" MinHeight="160" MaxWidth="90" MinWidth="90" Margin="5">
     <UserControl.BitmapEffect>
         <DropShadowBitmapEffect Color="{DynamicResource BlackColor}" Opacity="0.2" />
     </UserControl.BitmapEffect>
     <Border>
         <Grid>
-            <Button Name="SelectButton" Background="{x:Null}" Controls:ControlsHelper.CornerRadius="0" Click="Button_Click" Padding="0" BorderThickness="0"
+            <Button Name="SelectButton" Focusable="False" IsTabStop="False"
+                    Background="{x:Null}"
+                    Controls:ControlsHelper.CornerRadius="0"
+                    Click="Button_Click" Padding="0" BorderThickness="0"
                     ToolTip="{Binding Path=Text, ElementName=Title}" >
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Image Name="Cover" Grid.Row="0" VerticalAlignment="Center" Height="105" />
+                    <Image Name="Cover" Grid.Row="0" VerticalAlignment="Center" Height="150" />
                     <TextBlock Name="Title" Grid.Row="1" Padding="2.5 0" Margin="0 1" TextAlignment="Center" />
                 </Grid>
             </Button>

@@ -2,8 +2,6 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFramework>net472</TargetFramework>
-		<LangVersion>latest</LangVersion>
 		<UseWPF>true</UseWPF>
-		<Nullable>Enable</Nullable>
 	</PropertyGroup>
 </Project>

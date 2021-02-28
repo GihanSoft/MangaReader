@@ -3,15 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28531.58
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaReader", "MangaReader\MangaReader.csproj", "{9E686957-082D-4319-94D6-92CF9CC09189}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaReader", "MangaReader\MangaReader.csproj", "{9E686957-082D-4319-94D6-92CF9CC09189}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{31F91668-B298-478A-9F99-E4DC5E1DCEEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaControls", "MangaControls\MangaControls.csproj", "{9FC02021-B0AD-4865-B650-793AA93FD22C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaControls", "MangaControls\MangaControls.csproj", "{9FC02021-B0AD-4865-B650-793AA93FD22C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GihanSoft.Navigation", "GihanSoft.Navigation\GihanSoft.Navigation.csproj", "{4742B52F-E0D5-44D9-854B-5DCEE18DE005}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaReader.Data", "MangaReader.Data\MangaReader.Data.csproj", "{838EBAFD-59B0-4468-9925-5A606205846F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaReader.Data", "MangaReader.Data\MangaReader.Data.csproj", "{838EBAFD-59B0-4468-9925-5A606205846F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{76DF56C6-53B1-4611-A01E-7F36D4225819}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

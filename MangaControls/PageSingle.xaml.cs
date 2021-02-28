@@ -62,14 +62,14 @@ namespace Gihan.Manga.Views.Custom
                     LoadPage(_page);
                 ImageFrameBrd.Child = _images[_page];
                 Offset = 0;
-                Task.Run(() =>
-                {
-                    Thread.Sleep(250);
-                    if (_page + 1 < _images.Length)
-                        LoadPage(_page + 1);
-                    if (_page > 0)
-                        LoadPage(_page - 1);
-                });
+                _ = Task.Run(() =>
+                  {
+                      Thread.Sleep(250);
+                      if (_page + 1 < _images.Length)
+                          LoadPage(_page + 1);
+                      if (_page > 0)
+                          LoadPage(_page - 1);
+                  });
             }
         }
 

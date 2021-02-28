@@ -5,12 +5,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:nav="clr-namespace:GihanSoft.Navigation;assembly=GihanSoft.Navigation"
-    xmlns:local="clr-namespace:MangaReader.Views.Pages"
     xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:attach="clr-namespace:GihanSoft.Views.AttachedProperties"
     mc:Ignorable="d"
     d:DesignHeight="450" d:DesignWidth="800">
     <nav:Page.Resources>
         <RoutedUICommand x:Key="CmdAddManga" />
+        <RoutedUICommand x:Key="CmdAddMangaBatch" />
 
         <StackPanel x:Key="LeftToolBar" Orientation="Horizontal">
             <Button
@@ -33,11 +34,21 @@
     </nav:Page.Resources>
     <nav:Page.CommandBindings>
         <CommandBinding Command="{StaticResource CmdAddManga}" Executed="CmdAddManga_Executed" />
+        <CommandBinding Command="{StaticResource CmdAddMangaBatch}" Executed="CmdAddMangaBatch_Executed" />
     </nav:Page.CommandBindings>
     <nav:Page.InputBindings>
-        <KeyBinding Key="N" Modifiers="Ctrl" Command="{StaticResource CmdAddManga}" />
+        <KeyBinding
+            Key="N"
+            Modifiers="Ctrl"
+            Command="{StaticResource CmdAddManga}"
+            attach:KeyBindingProp.LocalHotKey="True" />
+        <KeyBinding
+            Key="M"
+            Modifiers="Ctrl"
+            Command="{StaticResource CmdAddMangaBatch}"
+            attach:KeyBindingProp.LocalHotKey="True" />
     </nav:Page.InputBindings>
-    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <WrapPanel Name="ListPanel" />
-    </Grid>
+    </ScrollViewer>
 </nav:Page>

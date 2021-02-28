@@ -3,8 +3,6 @@
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

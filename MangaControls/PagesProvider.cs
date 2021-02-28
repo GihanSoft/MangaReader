@@ -6,6 +6,8 @@ namespace OtakuLib.MangaBase
 {
     public abstract class PagesProvider : IDisposable
     {
+        private bool disposedValue;
+
         /// <summary>
         /// give loaded page as <see cref="MemoryStream"/> or <see cref="null"/> if not loaded.
         /// </summary>
@@ -21,7 +23,7 @@ namespace OtakuLib.MangaBase
         /// give loaded page as <see cref="MemoryStream"/> or <see cref="null"/> if not loaded.
         /// </summary>
         /// <param name="page">page number (start from 0).</param>
-        public virtual MemoryStream GetPage(int page) => this[page];
+        public virtual MemoryStream? GetPage(int page) => this[page];
 
         /// <summary>
         /// load page from source (web, storage, etc) to <see cref="MemoryStream"/>.
@@ -35,6 +37,26 @@ namespace OtakuLib.MangaBase
         /// <param name="page">page number (start from 0).</param>
         public abstract Task UnLoadPageAsync(int page);
 
-        public abstract void Dispose();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TO DO: dispose managed state (managed objects)
+                }
+
+                // TO DO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TO DO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

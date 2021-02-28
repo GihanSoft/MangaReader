@@ -117,7 +117,7 @@ namespace MangaReader.Views.Components
         public MangaItem(Manga manga) : this()
         {
             MangaTitle = manga.Name;
-            CoverSource = manga.CoverUri;
+            CoverSource = manga.Cover;
 
             //if (manga.CoverAddress == null || !File.Exists(manga.CoverAddress))
             //{

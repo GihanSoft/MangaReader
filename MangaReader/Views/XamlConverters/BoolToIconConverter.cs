@@ -9,17 +9,17 @@ using System.Windows.Data;
 
 namespace AnimePlayer.Views.XamlConverters
 {
-    public class BoolToIconConverter : IValueConverter,
-        ICollection<BoolToIconConverterItem>, ICollection,
-        IEnumerable<BoolToIconConverterItem>, IEnumerable,
-        IList<BoolToIconConverterItem>, IList
+    public class BoolToIconConverter :
+        IValueConverter,
+        IList,
+        IList<BoolToIconConverterItem>
     {
         private readonly List<BoolToIconConverterItem> items = new();
 
-        public BoolToIconConverterItem this[int index] { get => ((IList<BoolToIconConverterItem>)items)[index]; set => ((IList<BoolToIconConverterItem>)items)[index] = value; }
+        public BoolToIconConverterItem this[int index] { get => items[index]; set => items[index] = value; }
         object IList.this[int index] { get => ((IList)items)[index]; set => ((IList)items)[index] = value; }
 
-        public int Count => ((ICollection<BoolToIconConverterItem>)items).Count;
+        public int Count => items.Count;
 
         public bool IsReadOnly => ((ICollection<BoolToIconConverterItem>)items).IsReadOnly;
 
@@ -31,7 +31,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public void Add(BoolToIconConverterItem item)
         {
-            ((ICollection<BoolToIconConverterItem>)items).Add(item);
+            items.Add(item);
         }
 
         public int Add(object value)
@@ -41,12 +41,12 @@ namespace AnimePlayer.Views.XamlConverters
 
         public void Clear()
         {
-            ((ICollection<BoolToIconConverterItem>)items).Clear();
+            items.Clear();
         }
 
         public bool Contains(BoolToIconConverterItem item)
         {
-            return ((ICollection<BoolToIconConverterItem>)items).Contains(item);
+            return items.Contains(item);
         }
 
         public bool Contains(object value)
@@ -55,11 +55,11 @@ namespace AnimePlayer.Views.XamlConverters
         }
 
         #region IValueConverter
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return items.LastOrDefault(i => i.Value.Equals(value))?.Kind;
         }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is not PackIconMaterialKind) return null;
             return items.LastOrDefault(i => i.Kind == (PackIconMaterialKind)value)?.Value;
@@ -68,7 +68,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public void CopyTo(BoolToIconConverterItem[] array, int arrayIndex)
         {
-            ((ICollection<BoolToIconConverterItem>)items).CopyTo(array, arrayIndex);
+            items.CopyTo(array, arrayIndex);
         }
 
         public void CopyTo(Array array, int index)
@@ -78,12 +78,12 @@ namespace AnimePlayer.Views.XamlConverters
 
         public IEnumerator<BoolToIconConverterItem> GetEnumerator()
         {
-            return ((IEnumerable<BoolToIconConverterItem>)items).GetEnumerator();
+            return items.GetEnumerator();
         }
 
         public int IndexOf(BoolToIconConverterItem item)
         {
-            return ((IList<BoolToIconConverterItem>)items).IndexOf(item);
+            return items.IndexOf(item);
         }
 
         public int IndexOf(object value)
@@ -93,7 +93,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public void Insert(int index, BoolToIconConverterItem item)
         {
-            ((IList<BoolToIconConverterItem>)items).Insert(index, item);
+            items.Insert(index, item);
         }
 
         public void Insert(int index, object value)
@@ -103,7 +103,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public bool Remove(BoolToIconConverterItem item)
         {
-            return ((ICollection<BoolToIconConverterItem>)items).Remove(item);
+            return items.Remove(item);
         }
 
         public void Remove(object value)
@@ -113,7 +113,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public void RemoveAt(int index)
         {
-            ((IList<BoolToIconConverterItem>)items).RemoveAt(index);
+            items.RemoveAt(index);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

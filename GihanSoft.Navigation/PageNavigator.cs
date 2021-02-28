@@ -1,17 +1,20 @@
-﻿using GihanSoft.Navigation.Events;
-
-using Microsoft.Extensions.DependencyInjection;
-
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Windows;
-
-namespace GihanSoft.Navigation
+﻿namespace GihanSoft.Navigation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Threading.Tasks;
+    using System.Windows;
+
+    using GihanSoft.Navigation.Events;
+
+    using Microsoft.Extensions.DependencyInjection;
+
+    /// <summary>
+    /// Page Navigator
+    /// </summary>
     public class PageNavigator : DependencyObject
     {
-
         #region DependencyProperty
         private static readonly DependencyPropertyKey CurrentPropertyKey
             = DependencyProperty.RegisterReadOnly(
@@ -79,9 +82,9 @@ namespace GihanSoft.Navigation
         #region Property
         public bool CanGoBack => (bool)GetValue(CanGoBackProperty);
         public bool CanGoForward => (bool)GetValue(CanGoForwardProperty);
-        public IEnumerable<Page> BackStack => GetValue(BackStackProperty) as IEnumerable<Page>;
-        public IEnumerable<Page> ForwardStack => GetValue(ForwardStackProperty) as IEnumerable<Page>;
-        public Page Current => GetValue(CurrentProperty) as Page;
+        public IEnumerable<Page> BackStack => (IEnumerable<Page>)GetValue(BackStackProperty);
+        public IEnumerable<Page> ForwardStack => (IEnumerable<Page>)GetValue(ForwardStackProperty);
+        public Page Current => (Page)GetValue(CurrentProperty);
         #endregion
 
         public event EventHandler<NavigatedEventArgs>? Navigated;

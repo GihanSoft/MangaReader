@@ -71,18 +71,18 @@ namespace Gihan.Manga.Views.Custom
                     ImageFrameGrd.Children.Add(_images[_page + 1]);
                 }
                 Offset = 0;
-                Task.Run(() =>
-                {
-                    Thread.Sleep(250);
-                    if (_page + 2 < _images.Length)
-                        LoadPage(_page + 2);
-                    if (_page + 1 < _images.Length)
-                        LoadPage(_page + 1);
-                    if (_page > 0)
-                        LoadPage(_page - 1);
-                    if (_page > 1)
-                        LoadPage(_page - 2);
-                });
+                _ = Task.Run(() =>
+                  {
+                      Thread.Sleep(250);
+                      if (_page + 2 < _images.Length)
+                          LoadPage(_page + 2);
+                      if (_page + 1 < _images.Length)
+                          LoadPage(_page + 1);
+                      if (_page > 0)
+                          LoadPage(_page - 1);
+                      if (_page > 1)
+                          LoadPage(_page - 2);
+                  });
             }
         }
 

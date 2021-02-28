@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Gihan.Manga.Reader.Controllers;
 using MahApps.Metro.Controls;
 using System.Windows.Shell;
 using System.Reflection;
@@ -49,7 +48,7 @@ namespace MangaReader.Views
 
             InitializeComponent();
 
-            Task.Run(() => FirstAddMangaItems());
+            FirstAddMangaItems();
         }
 
         /// <summary>
@@ -71,8 +70,8 @@ namespace MangaReader.Views
                         {
                             var mngItem = new MangaItem(item);
                             mngItem.Click += MangaItem_Click;
-                            if (IsManga(item.path) == MangaFolderStastus.not)
-                                throw new Exception($"There is no Manga in \"{item.path}\" .");
+                            if (IsManga(item.Path) == MangaFolderStastus.not)
+                                throw new Exception($"There is no Manga in \"{item.Path}\" .");
                             MangaPanel.Children.Add(mngItem);
                         }
                         catch (Exception err)
@@ -125,7 +124,7 @@ namespace MangaReader.Views
             {
                 SettingApi.This.MangaRoot = folderSelector.SelectedPath;
                 AddManga(folderSelector.SelectedPath);
-                Task.Run(() => FirstAddMangaItems());
+                FirstAddMangaItems();
             }
         }
         private void BtnAddMangaRoot_Click(object sender, RoutedEventArgs e)
@@ -157,7 +156,7 @@ namespace MangaReader.Views
                 {
                     AddManga(item, false);
                 }
-                Task.Run(() => FirstAddMangaItems());
+                FirstAddMangaItems();
             }
         }
 
@@ -202,7 +201,7 @@ namespace MangaReader.Views
                     SettingApi.This.MangaList.Remove(item.Manga);
             }
             SettingApi.This.SortMangaList();
-            Task.Run(() => FirstAddMangaItems());
+            FirstAddMangaItems();
 
             YN_tlb.Visibility = Visibility.Collapsed;
         }
@@ -225,7 +224,7 @@ namespace MangaReader.Views
 
         private void AddManga(String mangaPath, bool showDuplicateError = true)
         {
-            if (SettingApi.This.MangaList.Any(manga => manga.path == mangaPath))
+            if (SettingApi.This.MangaList.Any(manga => manga.Path == mangaPath))
             {
                 if (showDuplicateError)
                     MessageBox.Show("مانگا جدید انتخاب کنید", "خطا مانگا تکراری",
@@ -245,10 +244,10 @@ namespace MangaReader.Views
                     {
                         Id = SettingApi.This.MangaList.Count,
                         Name = mangaPath.Substring(mangaPath.LastIndexOf('\\') + 1),
-                        path = mangaPath,
+                        Path = mangaPath,
                         CurrentChapter = 0,
                         Offset = 0,
-                        CoverUri = null
+                        Cover = null
                     });
                     break;
                 case MangaFolderStastus.chapter:
@@ -261,10 +260,10 @@ namespace MangaReader.Views
                     {
                         Id = SettingApi.This.MangaList.Count,
                         Name = name,
-                        path = rootFolder,
+                        Path = rootFolder,
                         CurrentChapter = currentCh,
                         Offset = 0,
-                        CoverUri = null
+                        Cover = null
                     });
                     break;
             }
@@ -346,7 +345,7 @@ namespace MangaReader.Views
         {
             AllowDrop = true;
         }
-        private void MetroWindow_Drop(object sender, DragEventArgs e)
+        private async void MetroWindow_Drop(object sender, DragEventArgs e)
         {
             var DroppedItems = e.Data.GetData("FileName") as string[];
             foreach (var item in DroppedItems)
@@ -354,7 +353,7 @@ namespace MangaReader.Views
                 if (IsManga(item) == MangaFolderStastus.manga)
                 {
                     AddManga(item, false);
-                    Task.Run(() => FirstAddMangaItems());
+                    await Task.Run(() => FirstAddMangaItems());
                 }
             }
         }

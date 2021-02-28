@@ -39,7 +39,7 @@ namespace MangaReader.Controllers
         }
 
         public CompressedPageProvider(Uri fileUri)
-            : this(fileUri.LocalPath)
+            : this(fileUri?.LocalPath)
         {
         }
 

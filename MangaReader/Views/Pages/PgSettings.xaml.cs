@@ -38,7 +38,7 @@ namespace MangaReader.Views.Pages
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
         }
 
-        public override Task Refresh()
+        public override void Refresh()
         {
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
 
@@ -49,8 +49,6 @@ namespace MangaReader.Views.Pages
 
             CboThemeBase.SelectedItem = ThemeManager.Current.DetectTheme()?.BaseColorScheme;
             CboThemeColor.SelectedItem = ThemeManager.Current.DetectTheme()?.ColorScheme;
-
-            return Task.CompletedTask;
         }
 
         private async void Navigator_Navigating(object sender, GihanSoft.Navigation.Events.NavigatingEventArgs e)

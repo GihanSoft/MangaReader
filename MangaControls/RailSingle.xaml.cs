@@ -112,14 +112,14 @@ namespace Gihan.Manga.Views.Custom
                 if (prePage != currentPage)
                 {
                     LoadPage(currentPage);
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(250);
-                        if (currentPage + 1 < _images.Length)
-                            LoadPage(currentPage + 1);
-                        if (currentPage > 0)
-                            LoadPage(currentPage - 1);
-                    });
+                    _ = Task.Run(() =>
+                      {
+                          Thread.Sleep(250);
+                          if (currentPage + 1 < _images.Length)
+                              LoadPage(currentPage + 1);
+                          if (currentPage > 0)
+                              LoadPage(currentPage - 1);
+                      });
                 }
             }
         }

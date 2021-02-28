@@ -52,14 +52,14 @@ namespace Gihan.Manga.Views.Custom
                 if (value == 1)
                 {
                     LoadPage(0);
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(250);
-                        if (_sourceStreams?.Length > 1)
-                            LoadPage(1);
-                        if (_sourceStreams?.Length > 2)
-                            LoadPage(2);
-                    });
+                    _ = Task.Run(() =>
+                      {
+                          Thread.Sleep(250);
+                          if (_sourceStreams?.Length > 1)
+                              LoadPage(1);
+                          if (_sourceStreams?.Length > 2)
+                              LoadPage(2);
+                      });
                 }
                 Sv.ScrollToVerticalOffset(_images.Take(value - 1).Sum(i => i.ActualHeight));
             }
@@ -123,18 +123,18 @@ namespace Gihan.Manga.Views.Custom
                 if (prePage != currentPage)
                 {
                     LoadPage(currentPage);
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(250);
-                        if (currentPage + 2 < _images.Length)
-                            LoadPage(currentPage + 2);
-                        if (currentPage + 1 < _images.Length)
-                            LoadPage(currentPage + 1);
-                        if (currentPage > 0)
-                            LoadPage(currentPage - 1);
-                        if (currentPage > 1)
-                            LoadPage(currentPage - 2);
-                    });
+                    _ = Task.Run(() =>
+                      {
+                          Thread.Sleep(250);
+                          if (currentPage + 2 < _images.Length)
+                              LoadPage(currentPage + 2);
+                          if (currentPage + 1 < _images.Length)
+                              LoadPage(currentPage + 1);
+                          if (currentPage > 0)
+                              LoadPage(currentPage - 1);
+                          if (currentPage > 1)
+                              LoadPage(currentPage - 2);
+                      });
                 }
             }
         }

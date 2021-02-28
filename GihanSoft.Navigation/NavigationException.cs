@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace GihanSoft.Navigation
 {
     [Serializable]
-    internal class NavigationException : Exception
+    public class NavigationException : Exception
     {
         public NavigationException()
         {

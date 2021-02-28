@@ -1,4 +1,6 @@
-﻿using Gihan.Manga.Views.Custom;
+﻿using ControlzEx;
+
+using Gihan.Manga.Views.Custom;
 
 using GihanSoft.MangaSources.Local;
 using GihanSoft.Navigation;
@@ -30,11 +32,13 @@ namespace MangaReader.Views.Pages
         {
             InitializeComponent();
             this.dataDb = dataDb;
+
+
         }
 
         private IEnumerable<FileSystemInfo> GetChapterList(Manga manga)
         {
-            var dir = new DirectoryInfo(manga.path);
+            var dir = new DirectoryInfo(manga.Path);
             var chapters = dir.EnumerateFileSystemInfos()
                 .Where(item => item is not FileInfo file ||
                 FileTypeList.CompressedType.Any(t => file.Name.EndsWith(t)));
@@ -87,7 +91,8 @@ namespace MangaReader.Views.Pages
                 viewer.Focusable = true;
                 viewer.SetSourceStreams(pagesProvider, 1);
                 Content = viewer;
-                viewer.Focus();
+                KeyboardNavigationEx.Focus(viewer);
+
             }
         }
 

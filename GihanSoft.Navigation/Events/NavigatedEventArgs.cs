@@ -1,6 +1,8 @@
-﻿namespace GihanSoft.Navigation.Events
+﻿using System;
+
+namespace GihanSoft.Navigation.Events
 {
-    public class NavigatedEventArgs
+    public class NavigatedEventArgs : EventArgs
     {
         public NavigatedEventArgs(Page current, Page future)
         {

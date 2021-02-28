@@ -6,22 +6,23 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:nav="clr-namespace:GihanSoft.Navigation;assembly=GihanSoft.Navigation"
     xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:attach="clr-namespace:GihanSoft.Views.AttachedProperties"
     mc:Ignorable="d"
 d:DesignHeight="450" d:DesignWidth="800">
     <nav:Page.Resources>
         <StackPanel x:Key="LeftToolBar" Orientation="Horizontal">
             <Button Name="PreviousBtn" Click="Previous_Click" Content="{icon:Material Kind=ArrowLeft}" />
-            <ComboBox Name="ChapterListCombo" SelectionChanged="ChapterListCombo_SelectionChanged" Margin="2" Width="200" />
+            <ComboBox Name="ChapterListCombo" Focusable="False" SelectionChanged="ChapterListCombo_SelectionChanged" Margin="2" Width="200" />
             <Button Name="NextBtn" Click="Next_Click">
                 <icon:PackIconMaterial Kind="ArrowRight" />
             </Button>
             <!--<Separator Margin="4 0" />-->
-            <TextBox Name="CurrentPage" Margin="2" IsReadOnly="True" FontSize="15" VerticalAlignment="Center" Width="35" Padding="0" VerticalContentAlignment="Center" />
+            <TextBox Name="CurrentPage" Margin="2" Focusable="False" IsReadOnly="True" FontSize="15" VerticalAlignment="Center" Width="35" Padding="0" VerticalContentAlignment="Center" />
             <TextBlock Name="PagesCount" Text="/100" FontSize="15" VerticalAlignment="Center" Width="32" Margin="1 0" />
             <Button Click="ZoomInBtn_Click">
                 <icon:PackIconMaterial Kind="Plus" />
             </Button>
-            <TextBox Name="ZoomPersent" Margin="2" TextChanged="ZoomPersent_TextChanged" Text="100" FontSize="14" Padding="0" VerticalContentAlignment="Center" />
+            <TextBox Name="ZoomPersent" Margin="2" Focusable="False" TextChanged="ZoomPersent_TextChanged" Text="100" FontSize="14" Padding="0" VerticalContentAlignment="Center" />
             <TextBlock Text="%" VerticalAlignment="Center" FontSize="15" Margin="1 0 2 0" />
             <Button Click="ZoomOutBtn_Click">
                 <icon:PackIconMaterial Kind="Minus" />
@@ -34,8 +35,7 @@ d:DesignHeight="450" d:DesignWidth="800">
         <CommandBinding Command="{StaticResource CmdNextPage}" Executed="CmdNextPage_Executed" />
     </nav:Page.CommandBindings>
     <nav:Page.InputBindings>
-        <KeyBinding Key="Left" Command="{StaticResource CmdNextPage}" />
-        <KeyBinding Key="Down" Modifiers="Ctrl" Command="{StaticResource CmdNextPage}" />
+        <KeyBinding Key="Left" Command="{StaticResource CmdNextPage}" Modifiers="Ctrl" attach:KeyBindingProp.LocalHotKey="True" />
     </nav:Page.InputBindings>
     <Grid>
 

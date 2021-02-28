@@ -11,8 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using Gihan.Manga.Reader.Controllers;
-
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.IconPacks;
@@ -151,8 +149,8 @@ namespace MangaReader.Views
         }
         private void LoadImageCompressed(string uri)
         {
-            var path = CompressApi.OpenArchive(uri);
-            LoadImageNormal(path);
+            //var path = CompressApi.OpenArchive(uri);
+            //LoadImageNormal(path);
         }
         private void LoadImageNormal(string uri)
         {
@@ -242,7 +240,7 @@ namespace MangaReader.Views
             Close();
         }
 
-        private void Previous_Click(object sender, RoutedEventArgs e)
+        private async void Previous_Click(object sender, RoutedEventArgs e)
         {
             if (_currentManga.CurrentChapter != 0)
             {
@@ -250,10 +248,10 @@ namespace MangaReader.Views
             }
             else
             {
-                this.ShowMessageAsync("خطا", "این چپتر اول است.", MessageDialogStyle.Affirmative);
+                await this.ShowMessageAsync("خطا", "این چپتر اول است.", MessageDialogStyle.Affirmative);
             }
         }
-        private void Next_Click(object sender, RoutedEventArgs e)
+        private async void Next_Click(object sender, RoutedEventArgs e)
         {
             if (_currentManga.CurrentChapter + 1 != _chapterList.Count)
             {
@@ -271,7 +269,7 @@ namespace MangaReader.Views
                     ChapterListCombo.SelectedIndex = ++_currentManga.CurrentChapter;
                     return;
                 }
-                this.ShowMessageAsync("خطا", "این چپتر آخر است.", MessageDialogStyle.Affirmative);
+                await this.ShowMessageAsync("خطا", "این چپتر آخر است.", MessageDialogStyle.Affirmative);
             }
         }
 
@@ -312,7 +310,7 @@ namespace MangaReader.Views
             {
                 item.StreamSource.Close();
             }
-            CompressApi.CleanExtractPath();
+            //CompressApi.CleanExtractPath();
         }
 
         WindowState _previousState = WindowState.Maximized;
@@ -566,7 +564,7 @@ namespace MangaReader.Views
 
         private IEnumerable<string> GetChapterList(Manga manga)
         {
-            var dir = new DirectoryInfo(manga.path);
+            var dir = new DirectoryInfo(manga.Path);
             var chapters = dir.EnumerateFileSystemInfos()
                 .Where(item => !(item is FileInfo file) ||
                 FileTypeList.CompressedType.Any(t => file.Name.EndsWith(t)));

@@ -1,5 +1,4 @@
-﻿using Gihan.Manga.Reader.Controllers;
-using Gihan.Manga.Reader.Views;
+﻿using ControlzEx;
 
 using GihanSoft.Navigation;
 
@@ -18,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Shell;
 
 namespace MangaReader.Views.Pages
 {
@@ -38,11 +38,12 @@ namespace MangaReader.Views.Pages
             InitializeComponent();
             this.dataDb = dataDb;
             this.settingsManager = settingsManager;
+
         }
 
         public override StackPanel? LeftToolBar => (StackPanel)Resources["LeftToolBar"];
 
-        public override Task Refresh()
+        public override async void Refresh()
         {
             Manga[] mangas = dataDb.Mangas.FindAll().OrderBy(m => m.Name, NaturalStringComparer.Default).ToArray();
             for (int i = 0; i < mangas.Length; i++)
@@ -60,14 +61,22 @@ namespace MangaReader.Views.Pages
                 MangaItem mangaItem = new(manga);
                 mangaItem.Click += MangaItem_Click;
                 ListPanel.Children.Insert(i, mangaItem);
+                await Task.Delay(10);
             }
-            return Task.CompletedTask;
+            KeyboardNavigationEx.Focus(ListPanel.Children[0]);
         }
 
         private void MangaItem_Click(object sender, RoutedEventArgs e)
         {
+            MangaItem clickedManga = sender as MangaItem;
             Navigator.GoTo<PgViewer>();
             ((PgViewer)Navigator.Current).View(((MangaItem)sender).Manga.Id.ToString());
+            JumpList.AddToRecentCategory(new JumpTask()
+            {
+                ApplicationPath = AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName,
+                Arguments = $"{clickedManga.Manga.Id}",
+                Title = clickedManga.Manga.Name
+            });
         }
 
         protected override void Dispose(bool disposing)
@@ -101,7 +110,7 @@ namespace MangaReader.Views.Pages
                 return;
             }
 
-            if (dataDb.Mangas.FindOne(m => m.path == mangaPath) is not null)
+            if (dataDb.Mangas.FindOne(m => m.Path == mangaPath) is not null)
             {
                 MessageBox.Show(
                     "This manga already exist",
@@ -150,16 +159,16 @@ namespace MangaReader.Views.Pages
 
             dataDb.Mangas.Insert(new Manga
             {
-                path = mangaPath,
+                Path = mangaPath,
                 Name = directoryInfo.Name,
-                CoverUri = coverUri,
+                Cover = coverUri,
             });
 
             Manga[] mangas = dataDb.Mangas.FindAll().OrderBy(m => m.Name, NaturalStringComparer.Default).ToArray();
             for (int i = 0; i < mangas.Length; i++)
             {
                 Manga manga = mangas[i];
-                if (manga.path != mangaPath)
+                if (manga.Path != mangaPath)
                 {
                     continue;
                 }
@@ -169,20 +178,6 @@ namespace MangaReader.Views.Pages
             }
         }
 
-        private void BtnAddMangaRoot_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void BtnDeleteManga_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void BtnEditManga_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void CmdAddManga_Executed(object sender, ExecutedRoutedEventArgs? e)
         {
@@ -190,8 +185,9 @@ namespace MangaReader.Views.Pages
             CommonOpenFileDialog dialog = new()
             {
                 IsFolderPicker = true,
-                DefaultDirectory = mainOptions.MangaRootFolder,
-                Multiselect = false
+                Multiselect = false,
+                InitialDirectory = mainOptions.MangaRootFolder,
+                Title = "Please Select Manga Folder"
             };
             CommonFileDialogResult dialogResult = dialog.ShowDialog();
             if (dialogResult != CommonFileDialogResult.Ok)
@@ -207,5 +203,45 @@ namespace MangaReader.Views.Pages
         {
             CmdAddManga_Executed(this, null);
         }
+
+        private void CmdAddMangaBatch_Executed(object? sender, ExecutedRoutedEventArgs? e)
+        {
+            MainOptions mainOptions = settingsManager.GetMainOptions();
+            CommonOpenFileDialog dialog = new()
+            {
+                IsFolderPicker = true,
+                DefaultDirectory = mainOptions.MangaRootFolder,
+                Multiselect = false
+            };
+            CommonFileDialogResult dialogResult = dialog.ShowDialog();
+            if (dialogResult != CommonFileDialogResult.Ok)
+            {
+                return;
+            }
+            mainOptions.MangaRootFolder = dialog.FileName;
+            settingsManager.SaveMainOptions(mainOptions);
+            string[] subDirs = Directory.GetDirectories(dialog.FileName);
+            foreach (var subDir in subDirs)
+            {
+                AddManga(subDir);
+            }
+        }
+
+        private void BtnAddMangaRoot_Click(object sender, RoutedEventArgs e)
+        {
+            CmdAddMangaBatch_Executed(sender, null);
+        }
+
+        private void BtnDeleteManga_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnEditManga_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
     }
 }

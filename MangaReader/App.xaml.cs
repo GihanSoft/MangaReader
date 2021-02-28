@@ -25,6 +25,10 @@ namespace MangaReader
 
         public static void ShowError(Exception err)
         {
+            if (err is null)
+            {
+                throw new ArgumentNullException(nameof(err));
+            }
             MessageBox.Show(err.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
@@ -57,7 +61,8 @@ namespace MangaReader
             services.AddSingleton(new ConnectionString
             {
                 Filename = appDataPath,
-                Upgrade = true
+                Upgrade = true,
+                Connection = ConnectionType.Shared
             });
             services.AddScoped<DataDb>();
             services.AddScoped<SettingsManager>();
@@ -77,25 +82,6 @@ namespace MangaReader
                 mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
             }
             ThemeManager.Current.ChangeTheme(this, mainOptions.Appearance.Theme);
-
-            if (e.Args.Length > 0)
-            {
-                throw new NotSupportedException();
-
-                //var trueType = true;
-                //foreach (var item in e.Args)
-                //{
-                //    var exist = System.IO.File.Exists(item);
-                //    var isCompressedFile = FileTypeList.CompressedType.Any(t => item.ToLower().EndsWith(t));
-                //    if (!exist || !isCompressedFile)
-                //        trueType = false;
-                //}
-                //if (!trueType && !e.Args.Contains("-m"))
-                //{
-                //    Environment.Exit(0);
-                //}
-                //StartupUri = new Uri("Views/WinMain.xaml", UriKind.Relative);
-            }
         }
 
         private void FirstRunBootstraper()

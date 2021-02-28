@@ -12,7 +12,7 @@ namespace GihanSoft.Navigation
             Binding binding = new()
             {
                 Source = Navigator,
-                Path = new PropertyPath(nameof(Navigator.Current))
+                Path = new PropertyPath(nameof(Navigator.Current), null)
             };
             SetBinding(ContentProperty, binding);
         }
