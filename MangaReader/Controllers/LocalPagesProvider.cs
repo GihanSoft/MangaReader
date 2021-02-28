@@ -5,8 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using MangaReader.Controllers;
-
-using OtakuLib.MangaBase;
+using MangaReader.PagesViewer;
 
 namespace GihanSoft.MangaSources.Local
 {
@@ -15,8 +14,6 @@ namespace GihanSoft.MangaSources.Local
         private readonly Dictionary<int, MemoryStream> loadedPages;
         private readonly List<string> pagePathes;
 
-        private readonly DirectoryInfo dir;
-
         public LocalPagesProvider(string path)
         {
             if (!File.GetAttributes(path).HasFlag(FileAttributes.Directory))
@@ -24,7 +21,7 @@ namespace GihanSoft.MangaSources.Local
 
             loadedPages = new Dictionary<int, MemoryStream>();
 
-            dir = new DirectoryInfo(path);
+            DirectoryInfo dir = new(path);
             pagePathes = dir.EnumerateFiles("*", SearchOption.AllDirectories)
                 .Where(f => FileTypeList.ImageTypes.Contains(f.Extension))
                 .Select(f => f.FullName).ToList();
@@ -62,7 +59,7 @@ namespace GihanSoft.MangaSources.Local
             throw new NotImplementedException();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             foreach (var loaded in loadedPages)
             {

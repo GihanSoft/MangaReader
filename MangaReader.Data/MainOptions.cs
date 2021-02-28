@@ -1,4 +1,6 @@
-﻿namespace MangaReader.Data
+﻿using System;
+
+namespace MangaReader.Data
 {
     public class MainOptions
     {
@@ -29,11 +31,19 @@
     {
         public static MainOptions GetMainOptions(this SettingsManager src)
         {
-            return src.Get<MainOptions>(MainOptions.Key);
+            if (src is null)
+            {
+                throw new ArgumentNullException(nameof(src));
+            }
+            return src.Get<MainOptions>(MainOptions.Key)!;
         }
 
         public static void SaveMainOptions(this SettingsManager src, MainOptions mainOptions)
         {
+            if (src is null)
+            {
+                throw new ArgumentNullException(nameof(src));
+            }
             src.Save(MainOptions.Key, mainOptions);
         }
     }

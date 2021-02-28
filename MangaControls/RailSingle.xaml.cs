@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MangaReader.PagesViewer;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -75,7 +77,7 @@ namespace Gihan.Manga.Views.Custom
                 if (_images[page].Source is null)
                 {
                     LoadBitmap(page);
-                    _images[page].Source = _bitmaps[page];
+                    _images[page].Source = bitmaps[page];
                 }
             }, System.Windows.Threading.DispatcherPriority.Normal, default);
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MangaReader.PagesViewer;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +28,7 @@ namespace Gihan.Manga.Views.Custom
 
         public override double Zoom
         {
-            get => (_images.FirstOrDefault(image => image != null)?.GetBindingExpression(MaxWidthProperty)?
+            get => (Array.Find(_images, image => image != null)?.GetBindingExpression(MaxWidthProperty)?
                         .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
             set
             {
@@ -96,7 +98,7 @@ namespace Gihan.Manga.Views.Custom
                         Converter = new ZaribConverter { Zarib = Zoom },
                     };
                     LoadBitmap(page);
-                    _images[page] = new Image { Source = _bitmaps[page] };
+                    _images[page] = new Image { Source = bitmaps[page] };
                     _images[page].SetBinding(MaxWidthProperty, widthBinding);
                     _images[page].SetBinding(MaxHeightProperty, heightBinding);
                     _images[page].SetBinding(HeightProperty, heightBinding);

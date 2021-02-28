@@ -4,9 +4,9 @@ using System.Windows.Data;
 
 namespace GihanSoft.Navigation
 {
-    public class Frame : UserControl
+    public class PageHost : UserControl
     {
-        public Frame(PageNavigator navigator)
+        public PageHost(PageNavigator navigator)
         {
             Navigator = navigator;
             Binding binding = new()

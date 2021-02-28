@@ -6,10 +6,10 @@ using System.Security;
 
 namespace MangaReader.Controllers
 {
-
     [SuppressUnmanagedCodeSecurity]
     internal static class SafeNativeMethods
     {
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
         public static extern int StrCmpLogicalW(string psz1, string psz2);
     }
@@ -18,26 +18,26 @@ namespace MangaReader.Controllers
     {
         public static NaturalStringComparer Default { get; } = new NaturalStringComparer();
 
-        public int Compare(string? a, string? b)
+        public int Compare(string? x, string? y)
         {
-            if (a is null || b is null)
+            if (x is null || y is null)
             {
-                if (a is null && b is null)
+                if (x is null && y is null)
                 {
                     return 0;
                 }
-                if (a is null)
+                if (x is null)
                 {
                     return -1;
                 }
                 return 1;
             }
-            return SafeNativeMethods.StrCmpLogicalW(a, b);
+            return SafeNativeMethods.StrCmpLogicalW(x, y);
         }
 
-        public int Compare(Manga a, Manga b)
+        public int Compare(Manga? a, Manga? b)
         {
-            return Compare(a.Name, b.Name);
+            return Compare(a?.Name, b?.Name);
         }
     }
 }

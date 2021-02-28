@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 
-using Frame = GihanSoft.Navigation.Frame;
+using PageHost = GihanSoft.Navigation.PageHost;
 
 using static Microsoft.Extensions.DependencyInjection.ActivatorUtilities;
 using GihanSoft.Navigation.Events;
@@ -19,34 +19,34 @@ namespace MangaReader
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    internal partial class MainWindow
     {
         private readonly SettingsManager settingsManager;
-        private readonly Frame NavFrame;
+        private readonly PageHost PageHost;
 
         public MainWindow()
         {
             settingsManager = GetServiceOrCreateInstance<SettingsManager>(App.Current.ServiceProvider);
-            NavFrame = CreateInstance<Frame>(App.Current.ServiceProvider);
+            PageHost = CreateInstance<PageHost>(App.Current.ServiceProvider);
             InitializeComponent();
 
-            NavBorder.Child = NavFrame;
+            NavBorder.Child = PageHost;
 
             Binding canGoBackBinding = new Binding
             {
-                Source = NavFrame.Navigator,
-                Path = new PropertyPath(nameof(PageNavigator.CanGoBack))
+                Source = PageHost.Navigator,
+                Path = new PropertyPath(nameof(PageNavigator.CanGoBack), null)
             };
             BtnBack.SetBinding(IsEnabledProperty, canGoBackBinding);
 
             Binding canGoForwardBinding = new Binding
             {
-                Source = NavFrame.Navigator,
-                Path = new PropertyPath(nameof(PageNavigator.CanGoForward))
+                Source = PageHost.Navigator,
+                Path = new PropertyPath(nameof(PageNavigator.CanGoForward), null)
             };
             BtnForward.SetBinding(IsEnabledProperty, canGoForwardBinding);
 
-            NavFrame.Navigator.Navigated += Navigator_Navigated;
+            PageHost.Navigator.Navigated += Navigator_Navigated;
 
             MainOptions mainOptions = settingsManager.GetMainOptions();
             Top = mainOptions.Appearance.WindowPosition.Top;
@@ -58,12 +58,12 @@ namespace MangaReader
             string[] commandLineArgs = Environment.GetCommandLineArgs();
             if (commandLineArgs.Length > 1)
             {
-                NavFrame.Navigator.GoTo<PgViewer>();
-                ((PgViewer)NavFrame.Navigator.Current).View(commandLineArgs[1]); //TODO: what?
+                PageHost.Navigator.GoTo<PgViewer>();
+                ((PgViewer)PageHost.Navigator.Current).View(commandLineArgs[1]); //TO DO: what?
             }
             else
             {
-                NavFrame.Navigator.GoTo<PgLibrary>();
+                PageHost.Navigator.GoTo<PgLibrary>();
             }
         }
 
@@ -74,12 +74,12 @@ namespace MangaReader
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
-            NavFrame.Navigator.GoBack();
+            PageHost.Navigator.GoBack();
         }
 
         private void BtnForward_Click(object sender, RoutedEventArgs e)
         {
-            NavFrame.Navigator.GoFroward();
+            PageHost.Navigator.GoFroward();
         }
 
         private void FlyoutCancelBtn_Click(object sender, RoutedEventArgs e)
@@ -89,13 +89,13 @@ namespace MangaReader
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            NavFrame.Navigator.GoTo<PgSettings>();
+            PageHost.Navigator.GoTo<PgSettings>();
             FlyoutCancelBtn_Click(sender, e);
         }
 
         private void BtnAbout_Click(object sender, RoutedEventArgs e)
         {
-
+            PageHost.Navigator.GoTo<PgHelp>();
         }
 
         private void BtnMenu_Click(object sender, RoutedEventArgs e)
@@ -123,7 +123,7 @@ namespace MangaReader
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            MainOptions mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
+            MainOptions mainOptions = settingsManager.GetMainOptions();
             Rect restoreBounds;
             WindowState windowState;
             if (this.GetFullScreen())
@@ -148,12 +148,12 @@ namespace MangaReader
 
         private void CmdGoBack_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            NavFrame.Navigator.GoBack();
+            PageHost.Navigator.GoBack();
         }
 
         private void CmdGoForward_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            NavFrame.Navigator.GoFroward();
+            PageHost.Navigator.GoFroward();
         }
 
         private void CmdOpenMenu_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)

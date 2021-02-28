@@ -1,8 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace OtakuLib.MangaBase
+namespace MangaReader.PagesViewer
 {
     public abstract class PagesProvider : IDisposable
     {

@@ -6,12 +6,17 @@ using MangaReader.Data.Models;
 
 namespace MangaReader.Data
 {
+    [CLSCompliant(false)]
     public class DataDb : IDisposable
     {
         private bool disposedValue;
 
         public DataDb(ConnectionString connectionString)
         {
+            if (connectionString is null)
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
             Database = new LiteDatabase(connectionString);
             Init();
         }

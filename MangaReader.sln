@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaReader", "MangaReader\
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{31F91668-B298-478A-9F99-E4DC5E1DCEEF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaControls", "MangaControls\MangaControls.csproj", "{9FC02021-B0AD-4865-B650-793AA93FD22C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MangaReader.PagesViewer", "MangaControls\MangaReader.PagesViewer.csproj", "{9FC02021-B0AD-4865-B650-793AA93FD22C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GihanSoft.Navigation", "GihanSoft.Navigation\GihanSoft.Navigation.csproj", "{4742B52F-E0D5-44D9-854B-5DCEE18DE005}"
 EndProject

@@ -19,7 +19,7 @@ namespace MangaReader
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App
+    public partial class App : IDisposable
     {
         public static new App Current => (App)Application.Current;
 
@@ -32,8 +32,10 @@ namespace MangaReader
             MessageBox.Show(err.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        private readonly ServiceProvider mainServiceProvider;
         private readonly IServiceProvider serviceProvider;
         private readonly IServiceScope serviceScope;
+        private bool disposedValue;
 
         public App()
         {
@@ -41,7 +43,8 @@ namespace MangaReader
 
             IServiceCollection services = new ServiceCollection();
             ConfigureServices(services);
-            serviceScope = services.BuildServiceProvider().CreateScope();
+            mainServiceProvider = services.BuildServiceProvider();
+            serviceScope = mainServiceProvider.CreateScope();
             serviceProvider = serviceScope.ServiceProvider;
             services.AddSingleton(ServiceProvider);
 
@@ -75,13 +78,13 @@ namespace MangaReader
             base.OnStartup(e);
             SettingsManager settingsManager
                 = ActivatorUtilities.GetServiceOrCreateInstance<SettingsManager>(ServiceProvider);
-            MainOptions mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
+            MainOptions? mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
             if (mainOptions is null)
             {
                 FirstRunBootstraper();
                 mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
             }
-            ThemeManager.Current.ChangeTheme(this, mainOptions.Appearance.Theme);
+            ThemeManager.Current.ChangeTheme(this, mainOptions!.Appearance.Theme!);
         }
 
         private void FirstRunBootstraper()
@@ -114,9 +117,31 @@ namespace MangaReader
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            serviceScope.Dispose();
-            //SettingApi.This.Dispose();
-            //CompressApi.CleanExtractPath();
+            Dispose();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    serviceScope.Dispose();
+                    mainServiceProvider.Dispose();
+                    // TO DO: dispose managed state (managed objects)
+                }
+
+                // TO DO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TO DO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

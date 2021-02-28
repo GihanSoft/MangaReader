@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using OtakuLib.MangaBase;
+using MangaReader.PagesViewer;
 
 using SharpCompress.Readers;
 
@@ -30,7 +30,7 @@ namespace MangaReader.Controllers
             Initialize(compressedStream);
         }
 
-        public CompressedPageProvider(string filePath) : this()
+        public CompressedPageProvider(string? filePath) : this()
         {
             this.filePath = filePath;
 
@@ -101,7 +101,7 @@ namespace MangaReader.Controllers
             throw new NotImplementedException();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             foreach (var loaded in loadedPages)
             {

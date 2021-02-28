@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using MangaReader.PagesViewer;
+
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -15,25 +17,21 @@ namespace Gihan.Manga.Views.Custom
 
         public override double Zoom
         {
-            get => (_images.FirstOrDefault(image => image != null)?.GetBindingExpression(MaxHeightProperty)?
+            get => (System.Array.Find(_images, image => image != null)?.GetBindingExpression(MaxHeightProperty)?
                         .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
             set
             {
-                (BindingOperations.GetBinding(ImageFrameGrd, MaxWidthProperty)
-                    .Converter as ZaribConverter).Zarib = value;
+                ((ZaribConverter)BindingOperations.GetBinding(ImageFrameGrd, MaxWidthProperty).Converter).Zarib = value;
                 ImageFrameGrd.SetBinding(MaxWidthProperty, BindingOperations
                     .GetBinding(ImageFrameGrd, MaxWidthProperty));
                 foreach (var image in _images)
                 {
                     if (image is null) continue;
-                    (BindingOperations.GetBinding(image, MaxHeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
-                    (BindingOperations.GetBinding(image, HeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
+                    ((ZaribConverter)BindingOperations.GetBinding(image, MaxHeightProperty).Converter).Zarib = value;
+                    ((ZaribConverter)BindingOperations.GetBinding(image, HeightProperty).Converter).Zarib = value;
                     image.SetBinding(MaxHeightProperty, BindingOperations.GetBinding(image, MaxHeightProperty));
                     image.SetBinding(HeightProperty, BindingOperations.GetBinding(image, HeightProperty));
                 }
-
             }
         }
         public override double Offset
@@ -109,7 +107,7 @@ namespace Gihan.Manga.Views.Custom
                         Converter = new ZaribConverter { Zarib = Zoom },
                     };
                     LoadBitmap(page);
-                    _images[page] = new Image { Source = _bitmaps[page] };
+                    _images[page] = new Image { Source = bitmaps[page] };
                     ImageFrameGrd.SetBinding(MaxWidthProperty, widthBinding);
                     _images[page].SetBinding(MaxHeightProperty, heightBinding);
                     _images[page].SetBinding(HeightProperty, heightBinding);

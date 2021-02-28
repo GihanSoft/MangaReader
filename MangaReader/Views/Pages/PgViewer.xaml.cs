@@ -1,15 +1,12 @@
 ﻿using ControlzEx;
 
-using Gihan.Manga.Views.Custom;
-
 using GihanSoft.MangaSources.Local;
 using GihanSoft.Navigation;
 
 using MangaReader.Controllers;
 using MangaReader.Data;
 using MangaReader.Data.Models;
-
-using OtakuLib.MangaBase;
+using MangaReader.PagesViewer;
 
 using System;
 using System.Collections.Generic;
@@ -86,10 +83,10 @@ namespace MangaReader.Views.Pages
                 (LeftToolBar.Children[4] as TextBlock).Text = pagesProvider.Count.ToString();
                 (LeftToolBar.Children[6] as TextBox).Text = (manga.Zoom * 100).ToString();
 
-                var viewer = PagesViewerFactory.GetPagesViewer(Gihan.Manga.ViewMode.PageSingle);
+                var viewer = PagesViewerFactory.GetPagesViewer(ViewMode.PageSingle);
                 viewer.IsTabStop = true;
                 viewer.Focusable = true;
-                viewer.SetSourceStreams(pagesProvider, 1);
+                viewer.View(pagesProvider, 1);
                 Content = viewer;
                 KeyboardNavigationEx.Focus(viewer);
 
