@@ -22,8 +22,7 @@ namespace MangaReader.Views.Pages
     /// </summary>
     public partial class PgHelp
     {
-        public PgHelp(PageNavigator navigator)
-            : base(navigator)
+        public PgHelp()
         {
             InitializeComponent();
         }

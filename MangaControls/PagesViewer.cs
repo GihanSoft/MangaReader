@@ -1,6 +1,4 @@
-﻿using Gihan.Manga.Views.Custom;
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -24,7 +22,8 @@ namespace MangaReader.PagesViewer
 
         private PagesProvider? pagesProvider;
 
-        private BitmapImage[]? bitmaps;
+        protected BitmapImage[]? bitmaps;
+        protected Image[]? images;
 
         public abstract double Zoom { get; set; }
         public abstract double Offset { get; set; }
@@ -41,7 +40,7 @@ namespace MangaReader.PagesViewer
             bitmaps[page] = new();
             await pagesProvider.LoadPageAsync(page).ConfigureAwait(false);
             bitmaps[page].BeginInit();
-            bitmaps[page].StreamSource = pagesProvider[page];
+            bitmaps[page].SetCurrentValue(BitmapImage.StreamSourceProperty, pagesProvider[page]);
             bitmaps[page].EndInit();
         }
 
@@ -53,6 +52,7 @@ namespace MangaReader.PagesViewer
             }
             this.pagesProvider = pagesProvider;
             bitmaps = new BitmapImage[pagesProvider.Count];
+            images = new Image[pagesProvider.Count];
             Page = page;
         }
     }

@@ -1,4 +1,5 @@
-﻿using ControlzEx;
+﻿using System.Windows;
+using ControlzEx;
 
 using GihanSoft.MangaSources.Local;
 using GihanSoft.Navigation;
@@ -10,103 +11,163 @@ using MangaReader.PagesViewer;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Controls.Primitives;
 
 namespace MangaReader.Views.Pages
 {
     /// <summary>
     /// Interaction logic for PgViewer.xaml
     /// </summary>
+    [CLSCompliant(false)]
     public partial class PgViewer
     {
-        private readonly DataDb dataDb;
-
-        public PgViewer(
-            PageNavigator navigator,
-            DataDb dataDb) : base(navigator)
-        {
-            InitializeComponent();
-            this.dataDb = dataDb;
-
-
-        }
-
-        private IEnumerable<FileSystemInfo> GetChapterList(Manga manga)
-        {
-            var dir = new DirectoryInfo(manga.Path);
-            var chapters = dir.EnumerateFileSystemInfos()
-                .Where(item => item is not FileInfo file ||
-                FileTypeList.CompressedType.Any(t => file.Name.EndsWith(t)));
-            chapters = chapters.OrderBy(item => item is FileInfo file ?
-                Path.GetFileNameWithoutExtension(file.Name) : item.Name,
-                    NaturalStringComparer.Default);
-            return chapters;
-        }
-
-        public void View(string path)
-        {
-            if (char.IsNumber(path[0]))
+        /// <summary>Identifies the <see cref="CurrentChapter"/> dependency property.</summary>
+        public static readonly DependencyProperty CurrentChapterProperty = DependencyProperty.Register(
+            nameof(CurrentChapter),
+            typeof(FileSystemInfo),
+            typeof(PgViewer),
+            new PropertyMetadata(default(FileSystemInfo), (d, e) =>
             {
-                var manga = dataDb.Mangas.FindById(int.Parse(path));
-                //var win = new WinMain(manga);
-                //win.MetroWindow_Loaded(null, null);
-                ////win.Show();
-                //var content = win.Content;
-                //win.Content = null;
-                //win.Close();
-                //Content = content;
-                var chapters = GetChapterList(manga).ToArray();
-                FileSystemInfo chapter = chapters[manga.CurrentChapter];
-
-                PagesProvider pagesProvider;
-                if (chapter is DirectoryInfo directory)
+                if (d is not PgViewer pgViewer || e.NewValue is not FileSystemInfo currentChapter)
                 {
-                    var x = directory.GetFiles("*", SearchOption.AllDirectories);
-                    if (x.Any(x => FileTypeList.CompressedType.Contains(x.Extension, StringComparer.InvariantCultureIgnoreCase)))
+                    return;
+                }
+                //TODO: chane chapter
+                if (pgViewer.currentPagesProvider is not null)
+                {
+                    pgViewer.currentPagesProvider.Dispose();
+                }
+                if (currentChapter is DirectoryInfo directory)
+                {
+                    FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
+                    if (files.Any(file => FileTypeList.CompressedType.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
                     {
-                        pagesProvider = new CompressedPageProvider(x.First(x => FileTypeList.CompressedType.Contains(x.Extension, StringComparer.InvariantCultureIgnoreCase)).FullName);
+                        pgViewer.currentPagesProvider = new CompressedPageProvider(files.First(x => FileTypeList.CompressedType.Contains(x.Extension, StringComparer.InvariantCultureIgnoreCase)).FullName);
                     }
                     else
                     {
-                        pagesProvider = new LocalPagesProvider(chapter.FullName);
+                        pgViewer.currentPagesProvider = new LocalPagesProvider(currentChapter.FullName);
                     }
                 }
                 else
                 {
-                    pagesProvider = new CompressedPageProvider(chapter.FullName);
+                    pgViewer.currentPagesProvider = new CompressedPageProvider(currentChapter.FullName);
                 }
-                (LeftToolBar.Children[1] as ComboBox).ItemsSource = chapters;
-                (LeftToolBar.Children[1] as ComboBox).SelectedIndex = manga.CurrentChapter;
-                (LeftToolBar.Children[3] as TextBox).Text = manga.CurrentPage.ToString();
-                (LeftToolBar.Children[4] as TextBlock).Text = pagesProvider.Count.ToString();
-                (LeftToolBar.Children[6] as TextBox).Text = (manga.Zoom * 100).ToString();
+                //PagesCount.Text = pagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture);
+                //ZoomPersent.Text = (manga.Zoom * 100).ToString();
 
-                var viewer = PagesViewerFactory.GetPagesViewer(ViewMode.PageSingle);
-                viewer.IsTabStop = true;
-                viewer.Focusable = true;
-                viewer.View(pagesProvider, 1);
-                Content = viewer;
+                Components.PagesViewer viewer = new Components.PageSingle();
+                viewer.SetBinding(PageProperty, new Binding()
+                {
+                    Source = pgViewer,
+                    Path = new(nameof(Page), null),
+                    Mode = BindingMode.TwoWay
+                });
+                // Components.PagesViewer.GetPagesViewer(ViewMode.PageSingle);
+                //viewer.IsTabStop = true;
+                //viewer.Focusable = true;
+                viewer.View(pgViewer.currentPagesProvider, 0);
+                pgViewer.Content = viewer;
                 KeyboardNavigationEx.Focus(viewer);
+            }));
+
+        /// <summary>Identifies the <see cref="Page"/> dependency property.</summary>
+        public static readonly DependencyProperty PageProperty = DependencyProperty.Register(
+            nameof(Page),
+            typeof(int),
+            typeof(PgViewer),
+            new PropertyMetadata(default(int), (d, e) =>
+            {
+            }));
+
+        private static readonly DependencyPropertyKey ChaptersPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Chapters),
+            typeof(ObservableCollection<FileSystemInfo>),
+            typeof(PgViewer),
+            new PropertyMetadata(default(ObservableCollection<FileSystemInfo>)));
+        /// <summary>Identifies the <see cref="Chapters"/> dependency property.</summary>
+        public static readonly DependencyProperty ChaptersProperty = ChaptersPropertyKey.DependencyProperty;
+
+        private static IEnumerable<FileSystemInfo> GetChapterList(Manga manga)
+        {
+            if (manga.Path is null)
+            {
+                return Enumerable.Empty<FileSystemInfo>();
+            }
+
+            DirectoryInfo dir = new(manga.Path);
+
+            return dir.EnumerateDirectories().Cast<FileSystemInfo>()
+                    .Concat(dir.EnumerateFiles().Where(f => FileTypeList.CompressedType.Contains(f.Extension, StringComparer.InvariantCultureIgnoreCase)))
+                    .OrderBy(f => f.Name, NaturalStringComparer.Default);
+        }
+
+        private PagesProvider? currentPagesProvider;
+        private readonly DataDb dataDb;
+
+        public PgViewer(DataDb dataDb)
+        {
+            this.dataDb = dataDb;
+
+            InitializeComponent();
+            SetValue(ChaptersPropertyKey, new ObservableCollection<FileSystemInfo>());
+            CboChapters.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
+            {
+                Source = this,
+                Path = new PropertyPath(nameof(Chapters), null)
+            });
+            CboChapters.SetBinding(Selector.SelectedItemProperty, new Binding
+            {
+                Source = this,
+                Path = new PropertyPath(nameof(CurrentChapter), null),
+                Mode = BindingMode.TwoWay
+            });
+            //TxtPage.SetBinding(TextBox.TextProperty, new Binding
+            //{
+            //    Source = this,
+            //    Path = new PropertyPath(nameof(Page), null),
+            //    Mode = BindingMode.TwoWay
+            //});
+        }
+
+        public ObservableCollection<FileSystemInfo>? Chapters
+        {
+            get => (ObservableCollection<FileSystemInfo>?)GetValue(ChaptersProperty);
+        }
+
+        public FileSystemInfo? CurrentChapter
+        {
+            get => (FileSystemInfo?)GetValue(CurrentChapterProperty);
+            set => SetValue(CurrentChapterProperty, value);
+        }
+
+        public int Page
+        {
+            get => (int)GetValue(PageProperty);
+            set => SetValue(PageProperty, value);
+        }
+
+        public void View(string path)
+        {
+            if (path.StartsWith("manga://", StringComparison.OrdinalIgnoreCase))
+            {
+                Manga manga = dataDb.Mangas.FindById(int.Parse(path.Split('/').Last(), CultureInfo.InvariantCulture));
+                Chapters!.Clear();
+                foreach (var chapter in GetChapterList(manga))
+                {
+                    Chapters.Add(chapter);
+                }
+                SetCurrentValue(CurrentChapterProperty, Chapters[manga.CurrentChapter]);
+
+
 
             }
-        }
-
-        public override StackPanel? LeftToolBar => (StackPanel)Resources["LeftToolBar"];
-
-        protected override void Dispose(bool disposing)
-        {
-        }
-
-        private void HomeMenu_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void Previous_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
         }
 
         private void ChapterListCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -114,34 +175,9 @@ namespace MangaReader.Views.Pages
 
         }
 
-        private void ZoomInBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void ZoomOutBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void ZoomPersent_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void FullScreenBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void Next_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
         private void CmdNextPage_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            (Content as PagesViewer).Page++;
+            (Content as Components.PagesViewer).Page++;
         }
     }
 }

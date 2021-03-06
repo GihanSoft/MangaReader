@@ -5,11 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 
 namespace AnimePlayer.Views.XamlConverters
 {
+    [ValueConversion(typeof(object), typeof(PackIconMaterialKind))]
     public class BoolToIconConverter :
+        DependencyObject,
         IValueConverter,
         IList,
         IList<BoolToIconConverterItem>
@@ -17,7 +20,11 @@ namespace AnimePlayer.Views.XamlConverters
         private readonly List<BoolToIconConverterItem> items = new();
 
         public BoolToIconConverterItem this[int index] { get => items[index]; set => items[index] = value; }
-        object IList.this[int index] { get => ((IList)items)[index]; set => ((IList)items)[index] = value; }
+        object? IList.this[int index]
+        {
+            get => items[index];
+            set => items[index] = (BoolToIconConverterItem)value;
+        }
 
         public int Count => items.Count;
 

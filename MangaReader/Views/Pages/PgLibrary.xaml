@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:nav="clr-namespace:GihanSoft.Navigation;assembly=GihanSoft.Navigation"
+    xmlns:nav="http://gihansoft.ir/netfx/xaml/navigation"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:attach="clr-namespace:GihanSoft.Views.AttachedProperties"
     mc:Ignorable="d"
@@ -12,43 +13,82 @@
     <nav:Page.Resources>
         <RoutedUICommand x:Key="CmdAddManga" />
         <RoutedUICommand x:Key="CmdAddMangaBatch" />
+        <RoutedUICommand x:Key="CmdToggleDeleteState" />
 
-        <StackPanel x:Key="LeftToolBar" Orientation="Horizontal">
-            <Button
-                ToolTip="Add Manga&#10;HotKey : Ctrl+N"
-                Content="{icon:Material Kind=BookPlus}"
-                Click="BtnAddManga_Click" />
-            <Button
-                Content="{icon:Material Kind=FolderPlus}"
-                ToolTip="Add Manga&#10;HotKey : Ctrl+M"
-                Click="BtnAddMangaRoot_Click" />
-            <Button
-                Content="{icon:Material Kind=Delete}"
-                ToolTip="Add Manga&#10;HotKey : Ctrl+Delete"
-                Click="BtnDeleteManga_Click" />
-            <Button
-                Content="{icon:Material Kind=TooltipEdit}"
-                ToolTip="Add Manga&#10;HotKey : Ctrl+E"
-                Click="BtnDeleteManga_Click" />
-        </StackPanel>
+        <RoutedUICommand x:Key="CmdSelectAll" />
+        <RoutedUICommand x:Key="CmdDeselectAll" />
+        <RoutedUICommand x:Key="CmdDeleteForever" />
     </nav:Page.Resources>
     <nav:Page.CommandBindings>
-        <CommandBinding Command="{StaticResource CmdAddManga}" Executed="CmdAddManga_Executed" />
+        <CommandBinding Command="{StaticResource CmdAddManga}" Executed = "CmdAddManga_Executed" />
         <CommandBinding Command="{StaticResource CmdAddMangaBatch}" Executed="CmdAddMangaBatch_Executed" />
+        <CommandBinding Command="{StaticResource CmdToggleDeleteState}" Executed="CmdToggleDeleteState_Executed" />
+
+        <CommandBinding Command="{StaticResource CmdSelectAll}" Executed="CmdSelectAll_Executed" />
+        <CommandBinding Command="{StaticResource CmdDeselectAll}" Executed="CmdDeselectAll_Executed" />
+        <CommandBinding Command="{StaticResource CmdDeleteForever}" Executed="CmdDeleteForever_Executed" />
     </nav:Page.CommandBindings>
     <nav:Page.InputBindings>
         <KeyBinding
-            Key="N"
-            Modifiers="Ctrl"
-            Command="{StaticResource CmdAddManga}"
-            attach:KeyBindingProp.LocalHotKey="True" />
+            Key="N" Modifiers="Ctrl"
+            Command="{StaticResource CmdAddManga}" />
         <KeyBinding
-            Key="M"
-            Modifiers="Ctrl"
-            Command="{StaticResource CmdAddMangaBatch}"
-            attach:KeyBindingProp.LocalHotKey="True" />
+            Key="M" Modifiers="Ctrl"
+            Command="{StaticResource CmdAddMangaBatch}" />
+        <KeyBinding
+            Key="Delete"
+            Command="{StaticResource CmdToggleDeleteState}" />
+
+        <KeyBinding
+            Key="A" Modifiers="Ctrl"
+            Command="{StaticResource CmdSelectAll}" />
+        <KeyBinding
+            Key="D" Modifiers="Ctrl"
+            Command="{StaticResource CmdDeselectAll}" />
+        <KeyBinding
+            Key="Delete" Modifiers="Shift"
+            Command="{StaticResource CmdDeleteForever}" />
     </nav:Page.InputBindings>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <nav:Page.LeftToolBar>
+        <ToolBar>
+            <Button
+                ToolTip="Add Manga&#10;HotKey : Ctrl+N"
+                Content="{icon:Material Kind=BookPlusOutline}"
+                Command="{StaticResource CmdAddManga}" />
+            <Button
+                Content="{icon:Material Kind=BookPlusMultipleOutline}"
+                ToolTip="Add Manga Collection&#10;HotKey : Ctrl+M"
+                Command="{StaticResource  CmdAddMangaBatch}" />
+            <Button
+                Content="{icon:Material Kind=DeleteOutline}"
+                ToolTip="Delete&#10;HotKey : Delete"
+                Command="{StaticResource  CmdToggleDeleteState}" />
+            <Button
+                Content="{icon:Material Kind=BookEditOutline}"
+                ToolTip="Edit&#10;HotKey : Ctrl+E" />
+            <StackPanel
+                Name="SpDelete"
+                Margin="5 0"
+                Orientation="Horizontal">
+                <StackPanel.Background>
+                    <SolidColorBrush Opacity="0.1" Color="{DynamicResource MahApps.Colors.ThemeForeground}" />
+                </StackPanel.Background>
+                <Button
+                    Content="{icon:Material Kind=SelectAll}"
+                    ToolTip="Select All&#10;HotKey : Ctrl+A"
+                    Command="{StaticResource CmdSelectAll}" />
+                <Button
+                    Content="{icon:Material Kind=SelectOff}"
+                    ToolTip="Deselect All&#10;HotKey : Ctrl+D"
+                    Command="{StaticResource CmdDeselectAll}" />
+                <Button
+                    Content="{icon:Material Kind=DeleteForever}"
+                    ToolTip="Delete Selected Forever&#10;HotKey : Shift+Delete"
+                    Command="{StaticResource CmdDeleteForever}" />
+            </StackPanel>
+        </ToolBar>
+    </nav:Page.LeftToolBar>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
         <WrapPanel Name="ListPanel" />
     </ScrollViewer>
 </nav:Page>

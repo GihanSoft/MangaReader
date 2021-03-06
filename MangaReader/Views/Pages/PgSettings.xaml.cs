@@ -24,21 +24,25 @@ namespace MangaReader.Views.Pages
         private MainOptions mainOptions;
 
         public PgSettings(
-            PageNavigator navigator,
             Version version,
             SettingsManager settingsManager)
-            : base(navigator)
         {
             InitializeComponent();
 
-            Navigator.Navigating += Navigator_Navigating;
             this.version = version;
             this.settingsManager = settingsManager;
 
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
+
+            Refresh += RefreshMethod;
         }
 
-        public override void Refresh()
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            PageNavigator.Navigating += Navigator_Navigating;
+        }
+
+        public void RefreshMethod()
         {
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
 
@@ -91,7 +95,7 @@ namespace MangaReader.Views.Pages
         private void BtnOk_Click(object sender, RoutedEventArgs e)
         {
             BtnApply_Click(sender, e);
-            Navigator.GoBack();
+            PageNavigator.GoBack();
         }
 
         private void Cancel() {
@@ -103,7 +107,7 @@ namespace MangaReader.Views.Pages
         private void BtnCancel_Click(object? sender, RoutedEventArgs? e)
         {
             Cancel();
-            Navigator.GoBack();
+            PageNavigator.GoBack();
         }
 
         private void BtnApply_Click(object sender, RoutedEventArgs e)

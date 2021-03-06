@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
+using System.Security.Cryptography.Xml;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -11,32 +14,43 @@ namespace MangaReader.Views.Components
     /// <summary>
     /// Interaction logic for MangaItem.xaml
     /// </summary>
-    public partial class MangaItem : UserControl
+    public partial class MangaItem
     {
-        public event RoutedEventHandler Click;
+        /// <summary>Identifies the <see cref="IsCheckActive"/> dependency property.</summary>
+        public static readonly DependencyProperty IsCheckActiveProperty = DependencyProperty.Register(
+            nameof(IsCheckActive),
+            typeof(bool),
+            typeof(MangaItem),
+            new PropertyMetadata(default(bool), (d, _) =>
+            {
+                d.SetCurrentValue(IsCheckedProperty, false);
+            }));
+
+        /// <summary>Identifies the <see cref="IsChecked"/> dependency property.</summary>
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
+            nameof(IsChecked),
+            typeof(bool),
+            typeof(MangaItem),
+            new PropertyMetadata(default(bool)));
+
+        public event EventHandler<RoutedEventArgs> Click;
 
         public bool IsCheckActive
         {
-            get
-            {
-                if (CheckerBorder.Visibility == Visibility.Collapsed)
-                    return false;
-                else
-                    return true;
-            }
-            set
-            {
-                if (value == true)
-                    CheckerBorder.Visibility = Visibility.Visible;
-                else
-                    CheckerBorder.Visibility = Visibility.Collapsed;
-            }
+            get => (bool)GetValue(IsCheckActiveProperty);
+            set => SetValue(IsCheckActiveProperty, value);
         }
-        public bool? IsChecked
+
+        public bool IsChecked
         {
-            get { return Checker.IsChecked; }
-            set { Checker.IsChecked = value; }
+            get => (bool)GetValue(IsCheckedProperty);
+            set => SetValue(IsCheckedProperty, value);
         }
+        //public bool? IsChecked
+        //{
+        //    get { return Checker.IsChecked; }
+        //    set { Checker.IsChecked = value; }
+        //}
 
         private string mangaTitle;
         public string MangaTitle
@@ -49,44 +63,37 @@ namespace MangaReader.Views.Components
             }
         }
 
-        private string coverSource;
-        public string CoverSource
+        public void SetCoverSource(string? cover)
         {
-            get { return coverSource; }
-            set
+            if (cover is null)
             {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    coverSource = value;
-                    BitmapImage bitmap;
-                    if (value.StartsWith("data:"))
-                    {
-                        var dataStr = value.Split(new[] { ',' }, 2)[1];
-                        var data = Convert.FromBase64String(dataStr);
-                        MemoryStream memStream = new(data)
-                        {
-                            Position = 0
-                        };
-                        bitmap = new();
-                        bitmap.BeginInit();
-                        bitmap.StreamSource = memStream;
-                        bitmap.EndInit();
-                    }
-                    else
-                    {
-                        bitmap = new(new Uri(value));
-                    }
-                    Cover.Source = bitmap;
-                }
+                Cover.Source = null;
+                return;
             }
-        }
-
-        public Button MangaButton
-        {
-            get
+            NetVips.Image image;
+            if (cover.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
             {
-                return SelectButton;
+                var dataStr = cover.Split(new[] { ',' }, 2)[1];
+                var data = Convert.FromBase64String(dataStr);
+                image = NetVips.Image.NewFromBuffer(data);
             }
+            else
+            {
+                image = NetVips.Image.NewFromFile(cover);
+            }
+            cover = null;
+            NetVips.Image thumbImage = image.ThumbnailImage((int)MaxWidth * 3);
+            image.Dispose();
+            MemoryStream memoryStream = new();
+            thumbImage.PngsaveStream(memoryStream, 0);
+            thumbImage.Dispose();
+            memoryStream.Position = 0;
+            BitmapImage bitmap = new();
+            bitmap.BeginInit();
+            bitmap.StreamSource = memoryStream;
+            bitmap.EndInit();
+            Cover.Source = bitmap;
+            GC.Collect();
         }
 
         public bool IsEditActive
@@ -117,7 +124,7 @@ namespace MangaReader.Views.Components
         public MangaItem(Manga manga) : this()
         {
             MangaTitle = manga.Name;
-            CoverSource = manga.Cover;
+            SetCoverSource(manga.Cover);
 
             //if (manga.CoverAddress == null || !File.Exists(manga.CoverAddress))
             //{
@@ -167,11 +174,6 @@ namespace MangaReader.Views.Components
             Manga = manga;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Click?.Invoke(this, e);
-        }
-
         private void EditNameBtn_Click(object sender, RoutedEventArgs e)
         {
             NameEntryBorder.Visibility = Visibility.Visible;
@@ -207,6 +209,18 @@ namespace MangaReader.Views.Components
         {
             //SettingApi.This.MangaList[Manga.Id].Name = MangaTitle = Manga.Name = NameEntry.Text;
             //NameEntryBorder.Visibility = Visibility.Collapsed;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsCheckActive)
+            {
+                SetCurrentValue(IsCheckedProperty, !IsChecked);
+            }
+            else
+            {
+                Click?.Invoke(this, e);
+            }
         }
     }
 }

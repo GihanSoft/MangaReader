@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Gihan.Manga.Views.Custom
+namespace MangaReader.PagesViewer
 {
     /// <summary>
     /// Interaction logic for PageSingle.xaml
@@ -28,11 +28,11 @@ namespace Gihan.Manga.Views.Custom
 
         public override double Zoom
         {
-            get => (Array.Find(_images, image => image != null)?.GetBindingExpression(MaxWidthProperty)?
+            get => (Array.Find(images, image => image != null)?.GetBindingExpression(MaxWidthProperty)?
                         .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
             set
             {
-                foreach (var image in _images)
+                foreach (var image in images)
                 {
                     if (image is null) continue;
                     (BindingOperations.GetBinding(image, MaxWidthProperty)
@@ -58,16 +58,16 @@ namespace Gihan.Manga.Views.Custom
             get => _page + 1;
             set
             {
-                if (value > _images.Length || value < 1) return;
-                _page = value - 1;
-                if (_images[_page] is null)
-                    LoadPage(_page);
-                ImageFrameBrd.Child = _images[_page];
+                if (value >= images.Length || value < 0) return;
+                _page = value;
+                if (images[_page] is null)
+                    LoadPage(_page).GetAwaiter().GetResult();
+                ImageFrameBrd.Child = images[_page];
                 Offset = 0;
                 _ = Task.Run(() =>
                   {
                       Thread.Sleep(250);
-                      if (_page + 1 < _images.Length)
+                      if (_page + 1 < images.Length)
                           LoadPage(_page + 1);
                       if (_page > 0)
                           LoadPage(_page - 1);
@@ -80,29 +80,31 @@ namespace Gihan.Manga.Views.Custom
             InitializeComponent();
         }
 
-        private void LoadPage(int page)
+        private async Task LoadPage(int page)
         {
-            LoadPageStream(page);
-            if (_images[page] is null)
+            if (images[page] is null)
             {
-                Dispatcher.Invoke(() =>
+                var (widthBinding, heightBinding) = Dispatcher.Invoke(() =>
                 {
-                    var widthBinding = new Binding(nameof(Sv.ViewportWidth))
+                    var widthBinding = new Binding()
                     {
+                        Path = new PropertyPath(nameof(Sv.ViewportWidth), null),
                         Source = Sv,
                         Converter = new ZaribConverter { Zarib = Zoom },
                     };
-                    var heightBinding = new Binding(nameof(Sv.ViewportHeight))
+                    var heightBinding = new Binding()
                     {
+                        Path = new PropertyPath(nameof(Sv.ViewportHeight), null),
                         Source = Sv,
                         Converter = new ZaribConverter { Zarib = Zoom },
                     };
-                    LoadBitmap(page);
-                    _images[page] = new Image { Source = bitmaps[page] };
-                    _images[page].SetBinding(MaxWidthProperty, widthBinding);
-                    _images[page].SetBinding(MaxHeightProperty, heightBinding);
-                    _images[page].SetBinding(HeightProperty, heightBinding);
+                    return (widthBinding, heightBinding);
                 });
+                await LoadBitmap(page).ConfigureAwait(false);
+                images[page] = new Image { Source = bitmaps[page] };
+                images[page].SetBinding(MaxWidthProperty, widthBinding);
+                images[page].SetBinding(MaxHeightProperty, heightBinding);
+                images[page].SetBinding(HeightProperty, heightBinding);
             }
         }
     }

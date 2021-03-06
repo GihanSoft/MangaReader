@@ -1,74 +1,77 @@
-﻿<UserControl x:Class="MangaReader.Views.Components.MangaItem"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             mc:Ignorable="d"
-             d:DesignHeight="100" d:DesignWidth="80"
-             Name="MainControl" Background="{DynamicResource WhiteColorBrush}"
-             IsTabStop="True" Focusable="True"
-             MaxHeight="160" MinHeight="160" MaxWidth="90" MinWidth="90" Margin="5">
-    <UserControl.BitmapEffect>
-        <DropShadowBitmapEffect Color="{DynamicResource BlackColor}" Opacity="0.2" />
-    </UserControl.BitmapEffect>
-    <Border>
-        <Grid>
-            <Button Name="SelectButton" Focusable="False" IsTabStop="False"
-                    Background="{x:Null}"
-                    Controls:ControlsHelper.CornerRadius="0"
-                    Click="Button_Click" Padding="0" BorderThickness="0"
-                    ToolTip="{Binding Path=Text, ElementName=Title}" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Image Name="Cover" Grid.Row="0" VerticalAlignment="Center" Height="150" />
-                    <TextBlock Name="Title" Grid.Row="1" Padding="2.5 0" Margin="0 1" TextAlignment="Center" />
-                </Grid>
-            </Button>
-            <Grid Name="CheckerBorder" Visibility="Collapsed">
-                <Border Background="Black" Opacity="0.5" />
-                <CheckBox Name="Checker" VerticalAlignment="Top" HorizontalAlignment="Left" >
-                    <CheckBox.Background>
-                        <SolidColorBrush Color="White" Opacity="0.5"/>
-                    </CheckBox.Background>
-                </CheckBox>
+﻿<Border
+    x:Class="MangaReader.Views.Components.MangaItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    mc:Ignorable="d"
+    Name="This"
+    d:DesignHeight="100" d:DesignWidth="80"
+    Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+    MaxHeight="160" MinHeight="160"
+    MaxWidth="90" MinWidth="90"
+    Margin="5">
+    <Grid>
+        <Button FocusVisualStyle="{x:Null}" mah:ControlsHelper.CornerRadius="0"
+                BorderThickness="0" Padding="2"
+            Click="Button_Click" ToolTip="{Binding Path=Text, ElementName=Title}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Image Name="Cover" Grid.Row="0" VerticalAlignment="Center" Height="150" />
+                <TextBlock Name="Title" Grid.Row="1" Padding="2.5 0" Margin="0 1" TextAlignment="Center" />
             </Grid>
-            <Grid Name="EditBorder" Visibility="Collapsed">
-                <Border Background="Black" Opacity="0.3" />
-                <Grid Name="NameEntryBorder" Visibility="Collapsed" VerticalAlignment="Center">
-                    <TextBox Name="NameEntry" Margin="0 0 17 0" />
-                    <Button Name="NameEditOK" Click="NameEditOK_Click" HorizontalAlignment="Right" BorderThickness="0.5"
-                            Controls:ControlsHelper.CornerRadius="0" Padding="0" Style="{x:Null}" Background="White" >
-                        <iconPacks:PackIconMaterial Kind="Check" />
-                    </Button>
-                </Grid>
-                <Grid VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Name="EditNameBtn" Click="EditNameBtn_Click"
-                        Grid.Column="0" Controls:ControlsHelper.CornerRadius="0" BorderThickness="0" Margin="3"
+        </Button>
+        <Grid mah:VisibilityHelper.IsVisible="{Binding IsCheckActive, ElementName=This}">
+            <Border Background="Black" Opacity="0.5" Margin="2" />
+            <CheckBox
+                BorderThickness="8"
+                mah:CheckBoxHelper.CheckSize="0"
+                mah:CheckBoxHelper.BorderBrushChecked="{DynamicResource MahApps.Brushes.Accent3}"
+                mah:CheckBoxHelper.BorderBrushCheckedMouseOver="{DynamicResource MahApps.Brushes.Accent}"
+                IsChecked="{Binding IsChecked, ElementName=This, Mode=TwoWay}"
+                Focusable="False" IsTabStop="False"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch">
+                <CheckBox.Resources>
+                </CheckBox.Resources>
+            </CheckBox>
+        </Grid>
+        <Grid Name="EditBorder" Visibility="Collapsed">
+            <Border Background="Black" Opacity="0.3" />
+            <Grid Name="NameEntryBorder" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBox Name="NameEntry" Margin="0 0 17 0" />
+                <Button Name="NameEditOK" Click="NameEditOK_Click" HorizontalAlignment="Right" BorderThickness="0.5"
+                            mah:ControlsHelper.CornerRadius="0" Padding="0" Style="{x:Null}" Background="White" >
+                    <iconPacks:PackIconMaterial Kind="Check" />
+                </Button>
+            </Grid>
+            <Grid VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Name="EditNameBtn" Click="EditNameBtn_Click"
+                        Grid.Column="0" mah:ControlsHelper.CornerRadius="0" BorderThickness="0" Margin="3"
                             HorizontalAlignment="Center" VerticalAlignment="Center" Style="{x:Null}">
-                        <Button.Background>
-                            <SolidColorBrush Color="White" Opacity="0.5"/>
-                        </Button.Background>
-                        <iconPacks:PackIconMaterial Kind="RenameBox" Height="25" Width="25" />
-                    </Button>
-                    <Button Name="EditCoverBtn" Click="EditCoverBtn_Click"
-                        Grid.Column="1" Controls:ControlsHelper.CornerRadius="0" BorderThickness="0" Margin="3"
+                    <Button.Background>
+                        <SolidColorBrush Color="White" Opacity="0.5"/>
+                    </Button.Background>
+                    <iconPacks:PackIconMaterial Kind="RenameBox" Height="25" Width="25" />
+                </Button>
+                <Button Name="EditCoverBtn" Click="EditCoverBtn_Click"
+                        Grid.Column="1" mah:ControlsHelper.CornerRadius="0" BorderThickness="0" Margin="3"
                             HorizontalAlignment="Center" VerticalAlignment="Center" Style="{x:Null}">
-                        <Button.Background>
-                            <SolidColorBrush Color="White" Opacity="0.5"/>
-                        </Button.Background>
-                        <iconPacks:PackIconMaterial Kind="Image" Height="25" Width="25" />
-                    </Button>
-                </Grid>
+                    <Button.Background>
+                        <SolidColorBrush Color="White" Opacity="0.5"/>
+                    </Button.Background>
+                    <iconPacks:PackIconMaterial Kind="Image" Height="25" Width="25" />
+                </Button>
             </Grid>
         </Grid>
-    </Border>
-</UserControl>
+    </Grid>
+</Border>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0-windows</TargetFramework>
@@ -6,13 +6,25 @@
 		<ApplicationIcon>OtakuLib.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="MahApps.Metro" Version="2.4.3" />
+	  <PackageReference Include="GihanSoft.Navigation" Version="0.1.1-beta" />
+	  <PackageReference Include="MahApps.Metro" Version="2.4.4" />
 	  <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.8.0" />
 	  <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+	  <PackageReference Include="NetVips" Version="1.2.4" />
+	  <PackageReference Include="NetVips.Native.win-x64" Version="8.10.5.1" />
+	  <PackageReference Include="NetVips.Native.win-x86" Version="8.10.5.1" />
 	  <PackageReference Include="SharpCompress" Version="0.28.1" />
 	</ItemGroup>
+
 	<ItemGroup>
-	  <ProjectReference Include="..\GihanSoft.Navigation\GihanSoft.Navigation.csproj" />
+		<PackageReference Include="WpfAnalyzers" Version="3.5.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\MangaControls\MangaReader.PagesViewer.csproj" />
 	  <ProjectReference Include="..\MangaReader.Data\MangaReader.Data.csproj" />
 	</ItemGroup>
@@ -20,5 +32,10 @@
 	  <None Update="OtakuLib.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\Components\PageSingle.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	  </Page>
 	</ItemGroup>
 </Project>

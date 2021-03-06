@@ -82,7 +82,7 @@ namespace MangaReader.Controllers
             stream.Position = 0;
 
             using var reader = ReaderFactory.Open(stream);
-            var memStream = await Task.Run(() =>
+            loadedPages[page] = await Task.Run(() =>
             {
                 do
                 {
@@ -93,7 +93,6 @@ namespace MangaReader.Controllers
                 memStream.Position = 0;
                 return memStream;
             }).ConfigureAwait(false);
-            loadedPages[page] = memStream;
         }
 
         public override Task UnLoadPageAsync(int page)

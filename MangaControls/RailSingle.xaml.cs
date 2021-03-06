@@ -11,7 +11,7 @@ using System.Windows.Data;
 
 using static System.Windows.Data.BindingOperations;
 
-namespace Gihan.Manga.Views.Custom
+namespace MangaReader.PagesViewer
 {
     /// <summary>
     /// Interaction logic for RailSingle.xaml
@@ -20,14 +20,14 @@ namespace Gihan.Manga.Views.Custom
     {
         public override double Zoom
         {
-            get => (_images.First()?.GetBindingExpression(MaxHeightProperty)?
+            get => (images.First()?.GetBindingExpression(MaxHeightProperty)?
                         .ParentBinding?.Converter as ZaribConverter)?.Zarib ?? 1;
             set
             {
                 var page = Page;
                 var offset = Offset;
                 double? dZoom = null;
-                foreach (var image in _images)
+                foreach (var image in images)
                 {
                     if (image is null) continue;
                     if (dZoom is null)
@@ -43,10 +43,10 @@ namespace Gihan.Manga.Views.Custom
         }
         public override double Offset
         {
-            get => Sv.VerticalOffset - (_images.First()?.Height ?? Sv.ViewportHeight) * (Page - 1);
+            get => Sv.VerticalOffset - (images.First()?.Height ?? Sv.ViewportHeight) * (Page - 1);
             set
             {
-                var re = (_images.First()?.Height ?? Sv.ViewportHeight) * (Page - 1) + value;
+                var re = (images.First()?.Height ?? Sv.ViewportHeight) * (Page - 1) + value;
                 Sv.ScrollToVerticalOffset(re);
             }
         }
@@ -54,13 +54,13 @@ namespace Gihan.Manga.Views.Custom
         {
             get
             {
-                return (int)Math.Round(Sv.VerticalOffset / (_images?.First()?.Height ?? 1)) + 1;
+                return (int)Math.Round(Sv.VerticalOffset / (images?.First()?.Height ?? 1)) + 1;
             }
             set
             {
                 if (value == 1)
                     LoadPage(0);
-                Sv.ScrollToVerticalOffset(_images.First().Height * (value - 1));
+                Sv.ScrollToVerticalOffset(images.First().Height * (value - 1));
             }
         }
 
@@ -71,30 +71,29 @@ namespace Gihan.Manga.Views.Custom
 
         private void LoadPage(int page)
         {
-            LoadPageStream(page);
             Dispatcher.Invoke(() =>
             {
-                if (_images[page].Source is null)
+                if (images[page].Source is null)
                 {
                     LoadBitmap(page);
-                    _images[page].Source = bitmaps[page];
+                    images[page].Source = bitmaps[page];
                 }
             }, System.Windows.Threading.DispatcherPriority.Normal, default);
         }
-        protected override void SetSourceStreams(IEnumerable<Stream> streams)
+        public override void View(PagesProvider pagesProvider, int page)
         {
-            base.SetSourceStreams(streams);
-            for (int i = 0; i < _images.Length; i++)
+            base.View(pagesProvider, page);
+            for (int i = 0; i < images.Length; i++)
             {
                 var heightBinding = new Binding(nameof(Sv.ViewportHeight))
                 {
                     Source = Sv,
                     Converter = new ZaribConverter { Zarib = Zoom },
                 };
-                _images[i] = new Image();
-                _images[i].SetBinding(MaxHeightProperty, heightBinding);
-                _images[i].SetBinding(HeightProperty, heightBinding);
-                ImagesRailSp.Children.Add(_images[i]);
+                images[i] = new Image();
+                images[i].SetBinding(MaxHeightProperty, heightBinding);
+                images[i].SetBinding(HeightProperty, heightBinding);
+                ImagesRailSp.Children.Add(images[i]);
             }
         }
 
@@ -117,7 +116,7 @@ namespace Gihan.Manga.Views.Custom
                     _ = Task.Run(() =>
                       {
                           Thread.Sleep(250);
-                          if (currentPage + 1 < _images.Length)
+                          if (currentPage + 1 < images.Length)
                               LoadPage(currentPage + 1);
                           if (currentPage > 0)
                               LoadPage(currentPage - 1);

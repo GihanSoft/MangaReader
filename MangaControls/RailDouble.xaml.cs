@@ -1,24 +1,14 @@
-﻿using MangaReader.PagesViewer;
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using static System.Windows.Data.BindingOperations;
 
-namespace Gihan.Manga.Views.Custom
+namespace MangaReader.PagesViewer
 {
     /// <summary>
     /// Interaction logic for RailDouble.xaml
@@ -39,9 +29,12 @@ namespace Gihan.Manga.Views.Custom
                 {
                     if (rowDef is null) continue;
                     if (dZoom is null)
+                    {
+
                         dZoom = value / (GetBinding(rowDef, HeightProperty).Converter as ZaribConverter).Zarib;
-                    (GetBinding(rowDef, MaxHeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
+                            (GetBinding(rowDef, MaxHeightProperty)
+                                .Converter as ZaribConverter).Zarib = value;
+                    }
                     (GetBinding(rowDef, HeightProperty)
                         .Converter as ZaribConverter).Zarib = value;
                     rowDef.SetBinding(MaxHeightProperty, GetBinding(rowDef, MaxHeightProperty));
@@ -65,7 +58,7 @@ namespace Gihan.Manga.Views.Custom
             get => (int)Math.Round(Sv.VerticalOffset / Sv.ViewportHeight > 0 ? Sv.ViewportHeight : 1) + 1;
             set
             {
-                if (value > _images.Length || value < 1) return;
+                if (value > images.Length || value < 1) return;
 
             }
         }
@@ -75,10 +68,10 @@ namespace Gihan.Manga.Views.Custom
             InitializeComponent();
         }
 
-        protected override void SetSourceStreams(IEnumerable<Stream> streams)
+        public override void View(PagesProvider pagesProvider, int page)
         {
-            base.SetSourceStreams(streams);
-            for (int i = 0; i < Math.Floor(_sourceStreams.Length / 2.0); i++)
+            base.View(pagesProvider, page);
+            for (int i = 0; i < Math.Floor(pagesProvider.Count / 2.0); i++)
             {
                 var heightBinding = new Binding(nameof(Sv.ViewportHeight))
                 {
@@ -90,9 +83,9 @@ namespace Gihan.Manga.Views.Custom
                 rowDef.SetBinding(MaxHeightProperty, heightBinding);
                 ImagesRailGrd.RowDefinitions.Add(rowDef);
             }
-            for (int i = 0; i < _sourceStreams.Length; i++)
+            for (int i = 0; i < pagesProvider.Count; i++)
             {
-                _images[i] = new Image();
+                images[i] = new Image();
             }
         }
 

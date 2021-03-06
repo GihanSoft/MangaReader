@@ -44,6 +44,9 @@
     <Page Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Components\PageSingle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Pages\PgHelp.xaml">
       <SubType>Designer</SubType>
     </Page>

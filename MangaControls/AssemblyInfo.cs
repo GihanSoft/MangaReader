@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Markup;
 
 [assembly: CLSCompliant(true)]
 
@@ -11,3 +12,7 @@ using System.Windows;
                                               //(used if a resource is not found in the page,
                                               // app, or any theme specific resource dictionaries)
 )]
+
+[assembly: XmlnsDefinition(
+    "http://gihansoft.ir/netfx/xaml/mangareader/pagesviewer",
+    "MangaReader.PagesViewer")]

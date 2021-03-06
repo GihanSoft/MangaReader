@@ -7,79 +7,45 @@ using MangaReader.Views.Pages;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Data;
 
 using PageHost = GihanSoft.Navigation.PageHost;
 
 using static Microsoft.Extensions.DependencyInjection.ActivatorUtilities;
-using GihanSoft.Navigation.Events;
 
 namespace MangaReader
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    internal partial class MainWindow
+    [CLSCompliant(false)]
+    public partial class MainWindow
     {
         private readonly SettingsManager settingsManager;
-        private readonly PageHost PageHost;
 
         public MainWindow()
         {
-            settingsManager = GetServiceOrCreateInstance<SettingsManager>(App.Current.ServiceProvider);
-            PageHost = CreateInstance<PageHost>(App.Current.ServiceProvider);
             InitializeComponent();
-
-            NavBorder.Child = PageHost;
-
-            Binding canGoBackBinding = new Binding
-            {
-                Source = PageHost.Navigator,
-                Path = new PropertyPath(nameof(PageNavigator.CanGoBack), null)
-            };
-            BtnBack.SetBinding(IsEnabledProperty, canGoBackBinding);
-
-            Binding canGoForwardBinding = new Binding
-            {
-                Source = PageHost.Navigator,
-                Path = new PropertyPath(nameof(PageNavigator.CanGoForward), null)
-            };
-            BtnForward.SetBinding(IsEnabledProperty, canGoForwardBinding);
-
-            PageHost.Navigator.Navigated += Navigator_Navigated;
-
+            settingsManager = GetServiceOrCreateInstance<SettingsManager>(App.Current.ServiceProvider);
             MainOptions mainOptions = settingsManager.GetMainOptions();
+
             Top = mainOptions.Appearance.WindowPosition.Top;
             Left = mainOptions.Appearance.WindowPosition.Left;
             Width = mainOptions.Appearance.WindowPosition.Width;
             Height = mainOptions.Appearance.WindowPosition.Height;
             WindowState = (WindowState)mainOptions.Appearance.WindowPosition.WindowsState;
 
+            PageHost.PageNavigator = new PageNavigator(App.Current.ServiceProvider);
+
             string[] commandLineArgs = Environment.GetCommandLineArgs();
             if (commandLineArgs.Length > 1)
             {
-                PageHost.Navigator.GoTo<PgViewer>();
-                ((PgViewer)PageHost.Navigator.Current).View(commandLineArgs[1]); //TO DO: what?
+                PageHost.PageNavigator.GoTo<PgViewer>();
+                ((PgViewer)PageHost.PageNavigator.Current).View(commandLineArgs[1]); //TO DO: what?
             }
             else
             {
-                PageHost.Navigator.GoTo<PgLibrary>();
+                PageHost.PageNavigator.GoTo<PgLibrary>();
             }
-        }
-
-        private void Navigator_Navigated(object sender, NavigatedEventArgs e)
-        {
-            PageToolBar.Child = e.Future.LeftToolBar;
-        }
-
-        private void BtnBack_Click(object sender, RoutedEventArgs e)
-        {
-            PageHost.Navigator.GoBack();
-        }
-
-        private void BtnForward_Click(object sender, RoutedEventArgs e)
-        {
-            PageHost.Navigator.GoFroward();
         }
 
         private void FlyoutCancelBtn_Click(object sender, RoutedEventArgs e)
@@ -89,18 +55,13 @@ namespace MangaReader
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            PageHost.Navigator.GoTo<PgSettings>();
+            PageHost.PageNavigator!.GoTo<PgSettings>();
             FlyoutCancelBtn_Click(sender, e);
         }
 
         private void BtnAbout_Click(object sender, RoutedEventArgs e)
         {
-            PageHost.Navigator.GoTo<PgHelp>();
-        }
-
-        private void BtnMenu_Click(object sender, RoutedEventArgs e)
-        {
-            MenuFlyout.IsOpen = true;
+            PageHost.PageNavigator!.GoTo<PgHelp>();
         }
 
         private void CmdToggleFullScreen_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -110,12 +71,17 @@ namespace MangaReader
 
         private void This_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (!this.GetFullScreen())
+            {
+                return;
+            }
+
             double y = e.GetPosition(this).Y;
             if (y < 30)
             {
                 ShowTitleBar = true;
             }
-            else if (y > 60 && this.GetFullScreen())
+            else if (y > 60 && !ToolBar.IsMouseOver)
             {
                 ShowTitleBar = false;
             }
@@ -148,17 +114,26 @@ namespace MangaReader
 
         private void CmdGoBack_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            PageHost.Navigator.GoBack();
+            if (PageHost.PageNavigator!.CanGoBack)
+            {
+                PageHost.PageNavigator.GoBack();
+            }
         }
 
         private void CmdGoForward_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            PageHost.Navigator.GoFroward();
+            PageHost.PageNavigator!.GoFroward();
         }
 
         private void CmdOpenMenu_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
             MenuFlyout.IsOpen = true;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            PageHost.PageNavigator!.GoTo<PgLibrary>();
+            MenuFlyout.IsOpen = false;
         }
     }
 }

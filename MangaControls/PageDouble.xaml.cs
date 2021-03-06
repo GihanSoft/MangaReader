@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Gihan.Manga.Views.Custom
+namespace MangaReader.PagesViewer
 {
     /// <summary>
     /// Interaction logic for PageDouble.xaml
@@ -17,14 +17,26 @@ namespace Gihan.Manga.Views.Custom
 
         public override double Zoom
         {
-            get => (System.Array.Find(_images, image => image != null)?.GetBindingExpression(MaxHeightProperty)?
-                        .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
+            get
+            {
+                if (images is null)
+                {
+                    return 1;
+                }
+                return (System.Array.Find(images, image => image != null)?.GetBindingExpression(MaxHeightProperty)?
+                       .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
+            }
+
             set
             {
                 ((ZaribConverter)BindingOperations.GetBinding(ImageFrameGrd, MaxWidthProperty).Converter).Zarib = value;
                 ImageFrameGrd.SetBinding(MaxWidthProperty, BindingOperations
                     .GetBinding(ImageFrameGrd, MaxWidthProperty));
-                foreach (var image in _images)
+                if (images is null)
+                {
+                    return;
+                }
+                foreach (var image in images)
                 {
                     if (image is null) continue;
                     ((ZaribConverter)BindingOperations.GetBinding(image, MaxHeightProperty).Converter).Zarib = value;
@@ -44,37 +56,41 @@ namespace Gihan.Manga.Views.Custom
             get => _page + 1;
             set
             {
-                if (value > _images.Length || value < 1) return;
+                if (images is null)
+                {
+                    return;
+                }
+                if (value > images.Length || value < 1) return;
                 _page = value - 1;
-                if (_images[_page] is null)
+                if (images[_page] is null)
                     LoadPage(_page);
-                if (_page + 1 < _images.Length && _images[_page + 1] is null)
+                if (_page + 1 < images.Length && images[_page + 1] is null)
                     LoadPage(_page + 1);
                 ImageFrameGrd.Children.Clear();
-                if (_images[_page].Source.Width > _images[_page].Source.Height ||
-                   _page + 1 == _images.Length ||
-                   _images[_page + 1].Source.Width > _images[_page + 1].Source.Height)
+                if (images[_page].Source.Width > images[_page].Source.Height ||
+                   _page + 1 == images.Length ||
+                   images[_page + 1].Source.Width > images[_page + 1].Source.Height)
                 {
-                    Grid.SetColumn(_images[_page], 0);
-                    Grid.SetColumnSpan(_images[_page], 2);
-                    ImageFrameGrd.Children.Add(_images[_page]);
+                    Grid.SetColumn(images[_page], 0);
+                    Grid.SetColumnSpan(images[_page], 2);
+                    ImageFrameGrd.Children.Add(images[_page]);
                 }
                 else
                 {
-                    Grid.SetColumn(_images[_page], 0);
-                    Grid.SetColumn(_images[_page + 1], 1);
-                    Grid.SetColumnSpan(_images[_page], 1);
-                    Grid.SetColumnSpan(_images[_page + 1], 1);
-                    ImageFrameGrd.Children.Add(_images[_page]);
-                    ImageFrameGrd.Children.Add(_images[_page + 1]);
+                    Grid.SetColumn(images[_page], 0);
+                    Grid.SetColumn(images[_page + 1], 1);
+                    Grid.SetColumnSpan(images[_page], 1);
+                    Grid.SetColumnSpan(images[_page + 1], 1);
+                    ImageFrameGrd.Children.Add(images[_page]);
+                    ImageFrameGrd.Children.Add(images[_page + 1]);
                 }
                 Offset = 0;
                 _ = Task.Run(() =>
                   {
                       Thread.Sleep(250);
-                      if (_page + 2 < _images.Length)
+                      if (_page + 2 < images.Length)
                           LoadPage(_page + 2);
-                      if (_page + 1 < _images.Length)
+                      if (_page + 1 < images.Length)
                           LoadPage(_page + 1);
                       if (_page > 0)
                           LoadPage(_page - 1);
@@ -91,10 +107,13 @@ namespace Gihan.Manga.Views.Custom
 
         private void LoadPage(int page)
         {
-            LoadPageStream(page);
-            if (_images[page] is null)
+            if (images is null)
             {
-                Dispatcher.Invoke(() =>
+                return;
+            }
+            if (images[page] is null)
+            {
+                Dispatcher.Invoke(async () =>
                 {
                     var widthBinding = new Binding(nameof(Sv.ViewportWidth))
                     {
@@ -106,11 +125,11 @@ namespace Gihan.Manga.Views.Custom
                         Source = Sv,
                         Converter = new ZaribConverter { Zarib = Zoom },
                     };
-                    LoadBitmap(page);
-                    _images[page] = new Image { Source = bitmaps[page] };
+                    await LoadBitmap(page).ConfigureAwait(false);
+                    images[page] = new Image { Source = bitmaps![page] };
                     ImageFrameGrd.SetBinding(MaxWidthProperty, widthBinding);
-                    _images[page].SetBinding(MaxHeightProperty, heightBinding);
-                    _images[page].SetBinding(HeightProperty, heightBinding);
+                    images[page].SetBinding(MaxHeightProperty, heightBinding);
+                    images[page].SetBinding(HeightProperty, heightBinding);
                 });
             }
         }

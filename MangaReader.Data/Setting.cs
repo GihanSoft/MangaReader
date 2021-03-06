@@ -11,5 +11,11 @@
             Key = key;
             Options = options;
         }
+
+        private Setting()
+        {
+            Key = "";
+            Options = Key;
+        }
     }
 }
