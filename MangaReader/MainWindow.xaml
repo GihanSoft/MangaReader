@@ -35,26 +35,18 @@
         <KeyBinding
             Key="Esc"
             Modifiers="Shift"
-            Command="{StaticResource CmdOpenMenu}"
-            attach:KeyBindingProp.LocalHotKey="True"
-            CommandTarget="{Binding ElementName=This}" />
+            Command="{StaticResource CmdOpenMenu}" />
         <KeyBinding
             Key="F11"
-            Command="{StaticResource CmdToggleFullScreen}"
-            attach:KeyBindingProp.LocalHotKey="True"
-            CommandTarget="{Binding ElementName=This}" />
+            Command="{StaticResource CmdToggleFullScreen}" />
         <KeyBinding
             Key="Left"
             Modifiers="Alt"
-            Command="{StaticResource CmdGoBack}"
-            attach:KeyBindingProp.LocalHotKey="True"
-            CommandTarget="{Binding ElementName=This}" />
+            Command="{StaticResource CmdGoBack}" />
         <KeyBinding
             Key="Right"
             Modifiers="Alt"
-            Command="{StaticResource CmdGoForward}"
-            attach:KeyBindingProp.LocalHotKey="True"
-            CommandTarget="{Binding ElementName=This}" />
+            Command="{StaticResource CmdGoForward}" />
     </mah:MetroWindow.InputBindings>
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
