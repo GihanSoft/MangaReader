@@ -14,7 +14,6 @@ using GihanSoft.MangaSources.Local;
 using MangaReader.Controllers;
 using MangaReader.Data;
 using MangaReader.Data.Models;
-using MangaReader.PagesViewer;
 using MangaReader.Views.Components;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -217,12 +216,22 @@ namespace MangaReader.Views.Pages
 
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex + 1);
+            int chapter = CboChapters.SelectedIndex + 1;
+            if (chapter > Chapters!.Count)
+            {
+                return;
+            }
+            SetCurrentValue(CurrentChapterProperty, Chapters[chapter]);
         }
 
         private void CmdPreviousChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex - 1);
+            int chapter = CboChapters.SelectedIndex - 1;
+            if (chapter < 0)
+            {
+                return;
+            }
+            SetCurrentValue(CurrentChapterProperty, Chapters![chapter]);
         }
 
         private void CmdZoomIn_Executed(object sender, ExecutedRoutedEventArgs e)

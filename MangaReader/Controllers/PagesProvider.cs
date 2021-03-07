@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MangaReader.PagesViewer
+namespace MangaReader.Controllers
 {
     public abstract class PagesProvider : IDisposable
     {
