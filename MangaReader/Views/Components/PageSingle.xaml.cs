@@ -25,6 +25,10 @@ namespace MangaReader.Views.Components
             {
                 return;
             }
+            if (page is < 0 || page >= PagesProvider.Count)
+            {
+                return;
+            }
             MemoryStream? memoryStream = PagesProvider[page];
             if (memoryStream is null)
             {

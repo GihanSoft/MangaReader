@@ -217,12 +217,22 @@ namespace MangaReader.Views.Pages
 
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex + 1);
+            int chapter = CboChapters.SelectedIndex + 1;
+            if (chapter > Chapters!.Count)
+            {
+                return;
+            }
+            SetCurrentValue(CurrentChapterProperty, Chapters[chapter]);
         }
 
         private void CmdPreviousChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex - 1);
+            int chapter = CboChapters.SelectedIndex - 1;
+            if (chapter < 0)
+            {
+                return;
+            }
+            SetCurrentValue(CurrentChapterProperty, Chapters![chapter]);
         }
 
         private void CmdZoomIn_Executed(object sender, ExecutedRoutedEventArgs e)
