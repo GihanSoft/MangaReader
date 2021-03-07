@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using MangaReader.Controllers;
+using MangaReader.PagesViewer;
 
 using System;
 using System.Windows.Controls;
@@ -18,7 +18,8 @@ namespace MangaReader.Views.Components
                 {
                     return;
                 }
-                pagesViewer.OnPageChanged((int)e.NewValue, (int)e.OldValue);
+
+                pagesViewer.OnPageChanged((int)e.NewValue);
             }));
 
         /// <summary>Identifies the <see cref="Zoom"/> dependency property.</summary>
@@ -49,6 +50,7 @@ namespace MangaReader.Views.Components
             get => (double)GetValue(ZoomProperty);
             set => SetValue(ZoomProperty, value);
         }
+        //public abstract double Offset { get; set; }
 
         public virtual void View(PagesProvider pagesProvider, int page)
         {
@@ -59,15 +61,15 @@ namespace MangaReader.Views.Components
             this.PagesProvider = pagesProvider;
             if (this.Page == page)
             {
-                OnPageChanged(page, 0);
+                OnPageChanged(page);
             }
             else
             {
-                this.SetCurrentValue(PageProperty, page);
+                this.Page = page;
             }
         }
 
-        protected abstract void OnPageChanged(int page, int previousPage);
+        protected abstract void OnPageChanged(int page);
         protected abstract void OnZoomChanged(double zoom);
     }
 }

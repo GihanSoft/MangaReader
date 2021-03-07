@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using MangaReader.PagesViewer;
+
 using SharpCompress.Readers;
 
 namespace MangaReader.Controllers

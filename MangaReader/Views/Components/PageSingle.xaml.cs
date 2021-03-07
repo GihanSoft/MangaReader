@@ -19,15 +19,10 @@ namespace MangaReader.Views.Components
             InitializeComponent();
         }
 
-        protected override void OnPageChanged(int page, int previousPage)
+        protected override void OnPageChanged(int page)
         {
             if (PagesProvider is null)
             {
-                return;
-            }
-            if (page is < 0 || page >= PagesProvider.Count)
-            {
-                SetCurrentValue(PageProperty, previousPage);
                 return;
             }
             MemoryStream? memoryStream = PagesProvider[page];
