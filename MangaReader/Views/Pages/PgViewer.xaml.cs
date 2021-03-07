@@ -9,8 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Controls.Primitives;
 
-using ControlzEx;
-
 using GihanSoft.MangaSources.Local;
 
 using MangaReader.Controllers;
@@ -21,7 +19,6 @@ using MangaReader.Views.Components;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MangaReader.Views.XamlConverters;
-using System.Windows.Documents;
 
 namespace MangaReader.Views.Pages
 {
@@ -68,7 +65,16 @@ namespace MangaReader.Views.Pages
                 {
                     Task.Delay(10);
                 }
-                pgViewer.PagesViewer.View(pgViewer.currentPagesProvider, 0);
+                int page = 0;
+                if (e.OldValue is not null)
+                {
+                    pgViewer.Save();
+                }
+                else
+                {
+                    page = pgViewer.manga!.CurrentPage;
+                }
+                pgViewer.PagesViewer.View(pgViewer.currentPagesProvider, page);
             }));
 
         /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
@@ -108,6 +114,8 @@ namespace MangaReader.Views.Pages
 
         private PagesProvider? currentPagesProvider;
         private readonly DataDb dataDb;
+
+        private Manga? manga;
 
         public PgViewer(DataDb dataDb)
         {
@@ -161,24 +169,50 @@ namespace MangaReader.Views.Pages
             get => (Components.PagesViewer?)GetValue(PagesViewerProperty);
         }
 
+        private void Save()
+        {
+            manga!.CurrentChapter = Chapters!.IndexOf(CurrentChapter!);
+            manga.CurrentPage = PagesViewer!.Page;
+            manga.Zoom = PagesViewer.Zoom;
+
+            dataDb.Mangas.Update(manga);
+        }
+
         public void View(string path)
         {
-            if(path is null)
+            if (path is null)
             {
                 throw new ArgumentNullException(nameof(path));
             }
 
             if (path.StartsWith("manga://", StringComparison.OrdinalIgnoreCase))
             {
-                Manga manga = dataDb.Mangas.FindById(int.Parse(path.Split('/').Last(), CultureInfo.InvariantCulture));
+                if (!int.TryParse(path.Split('/').Last(), NumberStyles.Any, CultureInfo.InvariantCulture, out int mangaId))
+                {
+                    throw new ArgumentException("Manga Id is not valid.", nameof(path));
+                }
+                manga = dataDb.Mangas.FindAll().FirstOrDefault(m => m.Id == mangaId);
+                if (manga is null)
+                {
+                    throw new ArgumentException("Manga not found.", nameof(path));
+                }
                 Chapters!.Clear();
-                foreach (var chapter in GetChapterList(manga))
+                foreach (FileSystemInfo chapter in GetChapterList(manga))
                 {
                     Chapters.Add(chapter);
                 }
                 SetCurrentValue(CurrentChapterProperty, Chapters[manga.CurrentChapter]);
+                PagesViewer!.SetCurrentValue(Components.PagesViewer.ZoomProperty, manga.Zoom);
             }
             ControlzEx.KeyboardNavigationEx.Focus(PagesViewer);
+
+            PageNavigator!.Navigated += (sender, e) =>
+            {
+                if (e.Previous == this)
+                {
+                    Save();
+                }
+            };
         }
 
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
