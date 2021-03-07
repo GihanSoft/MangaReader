@@ -126,7 +126,7 @@ namespace MangaReader.Views.Pages
             JumpList.AddToRecentCategory(new JumpTask()
             {
                 ApplicationPath = AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName,
-                Arguments = $"{mangaItem.Manga.Id}",
+                Arguments = $"manga://{mangaItem.Manga.Id}",
                 Title = mangaItem.Manga.Name
             });
         }
