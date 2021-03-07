@@ -11,6 +11,7 @@ using System.Windows;
 using PageHost = GihanSoft.Navigation.PageHost;
 
 using static Microsoft.Extensions.DependencyInjection.ActivatorUtilities;
+using System.Linq;
 
 namespace MangaReader
 {
@@ -89,6 +90,14 @@ namespace MangaReader
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
+            foreach (Page page in PageHost.PageNavigator!
+                .ForwardStack.Append(
+                PageHost.PageNavigator.Current).Concat(
+                PageHost.PageNavigator.BackStack))
+            {
+                page.Dispose();
+            }
+
             MainOptions mainOptions = settingsManager.GetMainOptions();
             Rect restoreBounds;
             WindowState windowState;

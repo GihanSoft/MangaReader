@@ -169,6 +169,15 @@ namespace MangaReader.Views.Pages
             get => (Components.PagesViewer?)GetValue(PagesViewerProperty);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                Save();
+            }
+        }
+
         private void Save()
         {
             manga!.CurrentChapter = Chapters!.IndexOf(CurrentChapter!);
