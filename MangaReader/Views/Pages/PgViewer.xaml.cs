@@ -1,23 +1,25 @@
-﻿using System.Windows;
-using ControlzEx;
-
-using GihanSoft.MangaSources.Local;
-using GihanSoft.Navigation;
-
-using MangaReader.Controllers;
-using MangaReader.Data;
-using MangaReader.Data.Models;
-using MangaReader.PagesViewer;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Controls.Primitives;
+
+using ControlzEx;
+
+using GihanSoft.MangaSources.Local;
+
+using MangaReader.Controllers;
+using MangaReader.Data;
+using MangaReader.Data.Models;
+using MangaReader.PagesViewer;
+using MangaReader.Views.Components;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MangaReader.Views.Pages
 {
@@ -38,7 +40,6 @@ namespace MangaReader.Views.Pages
                 {
                     return;
                 }
-                //TODO: chane chapter
                 if (pgViewer.currentPagesProvider is not null)
                 {
                     pgViewer.currentPagesProvider.Dispose();
@@ -62,29 +63,26 @@ namespace MangaReader.Views.Pages
                 //PagesCount.Text = pagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture);
                 //ZoomPersent.Text = (manga.Zoom * 100).ToString();
 
-                Components.PagesViewer viewer = new Components.PageSingle();
-                viewer.SetBinding(PageProperty, new Binding()
-                {
-                    Source = pgViewer,
-                    Path = new(nameof(Page), null),
-                    Mode = BindingMode.TwoWay
-                });
                 // Components.PagesViewer.GetPagesViewer(ViewMode.PageSingle);
                 //viewer.IsTabStop = true;
                 //viewer.Focusable = true;
-                viewer.View(pgViewer.currentPagesProvider, 0);
-                pgViewer.Content = viewer;
-                KeyboardNavigationEx.Focus(viewer);
+                while (pgViewer.PagesViewer is null)
+                {
+                    Task.Delay(10);
+                }
+                pgViewer.PagesViewer.View(pgViewer.currentPagesProvider, 0);
+                KeyboardNavigationEx.Focus(pgViewer.PagesViewer);
             }));
 
-        /// <summary>Identifies the <see cref="Page"/> dependency property.</summary>
-        public static readonly DependencyProperty PageProperty = DependencyProperty.Register(
-            nameof(Page),
-            typeof(int),
+        /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
+        public static readonly DependencyPropertyKey PagesViewerPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(PagesViewer),
+            typeof(Components.PagesViewer),
             typeof(PgViewer),
-            new PropertyMetadata(default(int), (d, e) =>
-            {
-            }));
+            new PropertyMetadata(default(Components.PagesViewer)));
+
+        /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
+        public static readonly DependencyProperty PagesViewerProperty = PagesViewerPropertyKey.DependencyProperty;
 
         private static readonly DependencyPropertyKey ChaptersPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(Chapters),
@@ -114,8 +112,9 @@ namespace MangaReader.Views.Pages
         public PgViewer(DataDb dataDb)
         {
             this.dataDb = dataDb;
-
+            SetValue(PagesViewerPropertyKey, new PageSingle());
             InitializeComponent();
+
             SetValue(ChaptersPropertyKey, new ObservableCollection<FileSystemInfo>());
             CboChapters.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
             {
@@ -128,12 +127,12 @@ namespace MangaReader.Views.Pages
                 Path = new PropertyPath(nameof(CurrentChapter), null),
                 Mode = BindingMode.TwoWay
             });
-            //TxtPage.SetBinding(TextBox.TextProperty, new Binding
-            //{
-            //    Source = this,
-            //    Path = new PropertyPath(nameof(Page), null),
-            //    Mode = BindingMode.TwoWay
-            //});
+            TxtPage.SetBinding(TextBox.TextProperty, new Binding
+            {
+                Source = PagesViewer,
+                Path = new PropertyPath(nameof(PagesViewer.Page), null),
+                Mode = BindingMode.TwoWay,
+            });
         }
 
         public ObservableCollection<FileSystemInfo>? Chapters
@@ -147,10 +146,9 @@ namespace MangaReader.Views.Pages
             set => SetValue(CurrentChapterProperty, value);
         }
 
-        public int Page
+        public Components.PagesViewer? PagesViewer
         {
-            get => (int)GetValue(PageProperty);
-            set => SetValue(PageProperty, value);
+            get => (Components.PagesViewer?)GetValue(PagesViewerProperty);
         }
 
         public void View(string path)
@@ -164,20 +162,12 @@ namespace MangaReader.Views.Pages
                     Chapters.Add(chapter);
                 }
                 SetCurrentValue(CurrentChapterProperty, Chapters[manga.CurrentChapter]);
-
-
-
             }
         }
 
-        private void ChapterListCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
-        }
-
-        private void CmdNextPage_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
-        {
-            (Content as Components.PagesViewer).Page++;
+            CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex + 1);
         }
     }
 }

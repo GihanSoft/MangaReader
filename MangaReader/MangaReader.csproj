@@ -25,7 +25,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\MangaControls\MangaReader.PagesViewer.csproj" />
 	  <ProjectReference Include="..\MangaReader.Data\MangaReader.Data.csproj" />
 	</ItemGroup>
 	<ItemGroup>

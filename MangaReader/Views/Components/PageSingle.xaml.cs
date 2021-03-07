@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -100,37 +101,39 @@ namespace MangaReader.Views.Components
                 return;
             }
 
+            int rtl = this.FlowDirection == FlowDirection.LeftToRight ? 1 : -1;
+
             switch (e.Key)
             {
                 case Key.Left:
                     if (ScrollViewer.HorizontalOffset == 0)
                     {
-                        SetCurrentValue(PageProperty, Page - 1);
+                        SetCurrentValue(PageProperty, Page - 1 * rtl);
                     }
                     break;
                 case Key.Right:
                     if (ScrollViewer.HorizontalOffset == ScrollViewer.ScrollableWidth)
                     {
-                        SetCurrentValue(PageProperty, Page + 1);
+                        SetCurrentValue(PageProperty, Page + 1 * rtl);
                     }
                     break;
                 case Key.Up:
                     if (ScrollViewer.VerticalOffset == 0)
                     {
-                        SetCurrentValue(PageProperty, Page - 1);
+                        SetCurrentValue(PageProperty, Page - 1 * rtl);
                     }
                     break;
                 case Key.Down:
                     if (ScrollViewer.VerticalOffset == ScrollViewer.ScrollableHeight)
                     {
-                        SetCurrentValue(PageProperty, Page + 1);
+                        SetCurrentValue(PageProperty, Page + 1 * rtl);
                     }
                     break;
                 case Key.PageUp:
-                    SetCurrentValue(PageProperty, Page - 1);
+                    SetCurrentValue(PageProperty, Page - 1 * rtl);
                     break;
                 case Key.PageDown:
-                    SetCurrentValue(PageProperty, Page + 1);
+                    SetCurrentValue(PageProperty, Page + 1 * rtl);
                     break;
                 default:
                     break;
