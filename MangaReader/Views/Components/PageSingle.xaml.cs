@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -92,12 +93,33 @@ namespace MangaReader.Views.Components
         {
             ((ZaribConverter)Resources[nameof(ZaribConverter)]).SetCurrentValue(ZaribConverter.ZaribProperty, zoom);
             Img.GetBindingExpression(HeightProperty).UpdateTarget();
+            if (ScrollViewer.ScrollableWidth is 0d && zoom is > 1)
+            {
+                Task.Run(async () =>
+                {
+                    while (Dispatcher.Invoke(() => ScrollViewer.ScrollableWidth) is 0d)
+                    {
+                        await Task.Delay(10).ConfigureAwait(false);
+                    }
+                    Dispatcher.Invoke(() => ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.ScrollableWidth / 2));
+                });
+            }
+            else
+            {
+                ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.ScrollableWidth / 2);
+            }
         }
 
         private void ScrollViewer_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.Modifiers != ModifierKeys.None)
             {
+                if (e.Key is Key.Up or Key.Down or Key.Left or Key.Right or Key.PageUp or Key.PageDown)
+                {
+                    KeyEventArgs args = new(Keyboard.PrimaryDevice, e.InputSource, e.Timestamp, e.Key);
+                    args.RoutedEvent = KeyDownEvent;
+                    ((FrameworkElement)Parent).RaiseEvent(args);
+                }
                 return;
             }
 
@@ -138,6 +160,11 @@ namespace MangaReader.Views.Components
                 default:
                     break;
             }
+        }
+
+        private void PagesViewer_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ControlzEx.KeyboardNavigationEx.Focus(ScrollViewer);
         }
 
         //private async Task LoadPage(int page)

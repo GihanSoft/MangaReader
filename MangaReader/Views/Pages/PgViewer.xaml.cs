@@ -20,6 +20,8 @@ using MangaReader.PagesViewer;
 using MangaReader.Views.Components;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MangaReader.Views.XamlConverters;
+using System.Windows.Documents;
 
 namespace MangaReader.Views.Pages
 {
@@ -60,18 +62,13 @@ namespace MangaReader.Views.Pages
                 {
                     pgViewer.currentPagesProvider = new CompressedPageProvider(currentChapter.FullName);
                 }
-                //PagesCount.Text = pagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture);
-                //ZoomPersent.Text = (manga.Zoom * 100).ToString();
+                pgViewer.TbPagesCount.SetCurrentValue(TextBlock.TextProperty, pgViewer.currentPagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture));
 
-                // Components.PagesViewer.GetPagesViewer(ViewMode.PageSingle);
-                //viewer.IsTabStop = true;
-                //viewer.Focusable = true;
                 while (pgViewer.PagesViewer is null)
                 {
                     Task.Delay(10);
                 }
                 pgViewer.PagesViewer.View(pgViewer.currentPagesProvider, 0);
-                KeyboardNavigationEx.Focus(pgViewer.PagesViewer);
             }));
 
         /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
@@ -106,11 +103,16 @@ namespace MangaReader.Views.Pages
                     .OrderBy(f => f.Name, NaturalStringComparer.Default);
         }
 
+        private readonly IValueConverter zaribConverter100;
+        private readonly IValueConverter incrementalConverter;
+
         private PagesProvider? currentPagesProvider;
         private readonly DataDb dataDb;
 
         public PgViewer(DataDb dataDb)
         {
+            zaribConverter100 = new ZaribConverter() { Zarib = 100 };
+            incrementalConverter = new IncrementalConverter() { Increment = 1 };
             this.dataDb = dataDb;
             SetValue(PagesViewerPropertyKey, new PageSingle());
             InitializeComponent();
@@ -132,6 +134,14 @@ namespace MangaReader.Views.Pages
                 Source = PagesViewer,
                 Path = new PropertyPath(nameof(PagesViewer.Page), null),
                 Mode = BindingMode.TwoWay,
+                Converter = incrementalConverter
+            });
+            TxtZoom.SetBinding(TextBox.TextProperty, new Binding
+            {
+                Source = PagesViewer,
+                Path = new PropertyPath(nameof(PagesViewer.Zoom), null),
+                Mode = BindingMode.TwoWay,
+                Converter = zaribConverter100
             });
         }
 
@@ -153,6 +163,11 @@ namespace MangaReader.Views.Pages
 
         public void View(string path)
         {
+            if(path is null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
             if (path.StartsWith("manga://", StringComparison.OrdinalIgnoreCase))
             {
                 Manga manga = dataDb.Mangas.FindById(int.Parse(path.Split('/').Last(), CultureInfo.InvariantCulture));
@@ -163,11 +178,27 @@ namespace MangaReader.Views.Pages
                 }
                 SetCurrentValue(CurrentChapterProperty, Chapters[manga.CurrentChapter]);
             }
+            ControlzEx.KeyboardNavigationEx.Focus(PagesViewer);
         }
 
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex + 1);
+        }
+
+        private void CmdPreviousChapter_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            CboChapters.SetCurrentValue(Selector.SelectedIndexProperty, CboChapters.SelectedIndex - 1);
+        }
+
+        private void CmdZoomIn_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            PagesViewer!.SetCurrentValue(Components.PagesViewer.ZoomProperty, PagesViewer.Zoom + 0.1);
+        }
+
+        private void CmdZoomOut_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            PagesViewer!.SetCurrentValue(Components.PagesViewer.ZoomProperty, PagesViewer.Zoom - 0.1);
         }
     }
 }
