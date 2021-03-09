@@ -25,6 +25,7 @@ namespace MangaReader.Data
         public AppearanceClass Appearance { get; set; } = new AppearanceClass();
 
         public string? MangaRootFolder { get; set; }
+        public string? Version { get; set; }
     }
 
     public static class MainOptionsExtensions

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+using System.Xml.Linq;
 
 using ControlzEx.Theming;
 
@@ -10,6 +13,7 @@ using GihanSoft.Navigation;
 using LiteDB;
 
 using MangaReader.Data;
+using MangaReader.Data.Models;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -60,7 +64,7 @@ namespace MangaReader
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     @"GihanSoft\MangaReader",
                     "data.litedb");
-            Directory.CreateDirectory(Path.GetDirectoryName(appDataPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(appDataPath)!);
             services.AddSingleton(new ConnectionString
             {
                 Filename = appDataPath,
@@ -84,7 +88,29 @@ namespace MangaReader
                 FirstRunBootstraper();
                 mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
             }
-            ThemeManager.Current.ChangeTheme(this, mainOptions!.Appearance.Theme!);
+
+            Version currentVersion = serviceProvider.GetService<Version>()!;
+            if (mainOptions!.Version != currentVersion.ToString())
+            {
+                OnVersionChange(Version.Parse(mainOptions.Version ?? "0.0"), currentVersion);
+            }
+            ThemeManager.Current.ChangeTheme(this, mainOptions.Appearance.Theme!);
+        }
+
+        private void OnVersionChange(Version preVersion, Version currentVersion)
+        {
+            if (preVersion.Major is 0 && currentVersion!.Major == 3)
+            {
+                Old.OldUpdate.UpdateSetting(Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Data",
+                    "setting.ini"));
+                SettingsManager settingsManager = ActivatorUtilities
+                    .GetServiceOrCreateInstance<SettingsManager>(ServiceProvider);
+                MainOptions? mainOptions = settingsManager.GetMainOptions();
+                mainOptions.Version = currentVersion.ToString();
+                settingsManager.SaveMainOptions(mainOptions);
+            }
         }
 
         private void FirstRunBootstraper()

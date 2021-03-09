@@ -72,7 +72,10 @@ namespace MangaReader.Views.Pages
                 }
                 else
                 {
-                    page = pgViewer.manga!.CurrentPage;
+                    int currentPage = pgViewer.manga!.CurrentPage;
+                    page =  currentPage < pgViewer.currentPagesProvider.Count ?
+                        currentPage :
+                        pgViewer.currentPagesProvider.Count - 1;
                 }
                 pgViewer.PagesViewer.View(pgViewer.currentPagesProvider, page);
             }));
