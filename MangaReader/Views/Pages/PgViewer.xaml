@@ -1,0 +1,82 @@
+﻿<nav:Page
+    x:Class="MangaReader.Views.Pages.PgViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:nav="clr-namespace:GihanSoft.Navigation;assembly=GihanSoft.Navigation"
+    xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="800"
+    Name="This"
+    Content="{Binding PagesViewer, RelativeSource={RelativeSource Mode=Self}}">
+    <nav:Page.Resources>
+        <RoutedUICommand x:Key="CmdNextChapter" />
+        <RoutedUICommand x:Key="CmdPreviousChapter" />
+        <RoutedUICommand x:Key="CmdZoomIn" />
+        <RoutedUICommand x:Key="CmdZoomOut" />
+    </nav:Page.Resources>
+    <nav:Page.CommandBindings>
+        <CommandBinding Command="{StaticResource CmdNextChapter}" Executed="CmdNextChapter_Executed" />
+        <CommandBinding Command="{StaticResource CmdPreviousChapter}" Executed="CmdPreviousChapter_Executed" />
+        <CommandBinding Command="{StaticResource CmdZoomIn}" Executed="CmdZoomIn_Executed" />
+        <CommandBinding Command="{StaticResource CmdZoomOut}" Executed="CmdZoomOut_Executed" />
+    </nav:Page.CommandBindings>
+    <nav:Page.InputBindings>
+        <KeyBinding Key="Right" Modifiers="Ctrl" Command="{StaticResource CmdNextChapter}" />
+        <KeyBinding Key="Left" Modifiers="Ctrl" Command="{StaticResource CmdPreviousChapter}" />
+        <KeyBinding Key="Add" Modifiers="Ctrl" Command="{StaticResource CmdZoomIn}" />
+        <KeyBinding Key="Subtract" Modifiers="Ctrl" Command="{StaticResource CmdZoomOut}" />
+    </nav:Page.InputBindings>
+    <nav:Page.LeftToolBar>
+        <ToolBar>
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Content="{icon:Material Kind=ArrowLeft}"
+                    Command="{StaticResource CmdPreviousChapter}"
+                    ToolTip="Previous Chapter&#10;HotKey : Ctrl+Left" />
+                <ComboBox
+                    Name="CboChapters"
+                    ItemsSource="{Binding Chapters, ElementName=This}"
+                    DisplayMemberPath="Name"
+                    Focusable="False"
+                    Margin="2"
+                    Width="200" />
+                <Button
+                    Content="{icon:Material Kind=ArrowRight}"
+                    Command="{StaticResource CmdNextChapter}"
+                    ToolTip="Next Chapter&#10;HotKey : Ctrl+Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBox
+                    Name="TxtPage"
+                    Focusable="True"
+                    Margin="2"
+                    Padding="0"
+                    Width="35"
+                    FontSize="15"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center" />
+                <TextBlock
+                    Name="TbPagesCount"
+                    FontSize="15"
+                    VerticalAlignment="Center"
+                    Width="32"
+                    Margin="1 0" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Content="{icon:Material Kind=Plus}"
+                    Command="{StaticResource CmdZoomIn}"
+                    ToolTip="ZoomIn&#10;HotKey : Ctrl+'+'" />
+                <TextBox Name="TxtZoom" Margin="2" Focusable="True" FontSize="14" Padding="0" VerticalContentAlignment="Center" />
+                <TextBlock Text="%" VerticalAlignment="Center" FontSize="15" Margin="1 0 2 0" />
+                <Button
+                    Content="{icon:Material Kind=Minus}"
+                    Command="{StaticResource CmdZoomOut}"
+                    ToolTip="ZoomOut&#10;HotKey : Ctrl+'-'" />
+            </StackPanel>
+        </ToolBar>
+    </nav:Page.LeftToolBar>
+</nav:Page>

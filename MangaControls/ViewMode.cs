@@ -1,4 +1,4 @@
-﻿namespace Gihan.Manga
+﻿namespace MangaReader.PagesViewer
 {
     public enum ViewMode
     {

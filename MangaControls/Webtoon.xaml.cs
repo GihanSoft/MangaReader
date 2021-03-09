@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using MangaReader.PagesViewer;
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Gihan.Manga.Views.Custom
+namespace MangaReader.PagesViewer
 {
     /// <summary>
     /// Interaction logic for Webtoon.xaml
@@ -20,7 +22,7 @@ namespace Gihan.Manga.Views.Custom
             set
             {
                 var dZoom = value / _zoom;
-                foreach (var image in _images)
+                foreach (var image in images)
                 {
                     image.Width *= dZoom;
                 }
@@ -28,40 +30,40 @@ namespace Gihan.Manga.Views.Custom
         }
         public override double Offset
         {
-            get => Sv.VerticalOffset - _images.Take(Page - 1).Sum(i => i.ActualHeight);
+            get => Sv.VerticalOffset - images.Take(Page - 1).Sum(i => i.ActualHeight);
             set => Sv.ScrollToVerticalOffset(Sv.VerticalOffset + (value - Offset));
         }
         public override int Page
         {
             get
             {
-                if (_images is null) return 0;
+                if (images is null) return 0;
                 double offset = 0;
-                for (int i = 0; i < _images.Length; i++)
+                for (int i = 0; i < images.Length; i++)
                 {
-                    offset += _images[i].ActualHeight;
+                    offset += images[i].ActualHeight;
                     if (Sv.VerticalOffset < offset)
                     {
                         return i + 1;
                     }
                 }
-                return _images.Length;
+                return images.Length;
             }
             set
             {
                 if (value == 1)
                 {
                     LoadPage(0);
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(250);
-                        if (_sourceStreams?.Length > 1)
-                            LoadPage(1);
-                        if (_sourceStreams?.Length > 2)
-                            LoadPage(2);
-                    });
+                    _ = Task.Run(() =>
+                      {
+                          Thread.Sleep(250);
+                          if (bitmaps?.Length > 1)
+                              LoadPage(1);
+                          if (bitmaps?.Length > 2)
+                              LoadPage(2);
+                      });
                 }
-                Sv.ScrollToVerticalOffset(_images.Take(value - 1).Sum(i => i.ActualHeight));
+                Sv.ScrollToVerticalOffset(images.Take(value - 1).Sum(i => i.ActualHeight));
             }
         }
 
@@ -71,26 +73,25 @@ namespace Gihan.Manga.Views.Custom
             _zoom = 1;
         }
 
-        protected override void SetSourceStreams(IEnumerable<Stream> streams)
+        public override void View(PagesProvider pagesProvider, int page)
         {
-            base.SetSourceStreams(streams);
-            for (int i = 0; i < _images.Length; i++)
+            base.View(pagesProvider, page);
+            for (int i = 0; i < images.Length; i++)
             {
-                _images[i] = new Image { Width = 700 * Zoom, Height = 1000 };
-                ImagesRailSp.Children.Add(_images[i]);
+                images[i] = new Image { Width = 700 * Zoom, Height = 1000 };
+                ImagesRailSp.Children.Add(images[i]);
             }
         }
 
         private void LoadPage(int page)
         {
-            LoadPageStream(page);
             Dispatcher.Invoke(() =>
             {
-                if (_images[page].Source is null)
+                if (images[page].Source is null)
                 {
                     LoadBitmap(page);
-                    _images[page].Source = _bitmaps[page];
-                    _images[page].Height = double.NaN;
+                    images[page].Source = bitmaps[page];
+                    images[page].Height = double.NaN;
                 }
             }, System.Windows.Threading.DispatcherPriority.Normal, default);
         }
@@ -105,17 +106,17 @@ namespace Gihan.Manga.Views.Custom
             if (e.VerticalChange != 0)
             {
                 var prePage = 0;
-                for (double offset = 0; prePage < _images.Length; prePage++)
+                for (double offset = 0; prePage < images.Length; prePage++)
                 {
-                    offset += _images[prePage].ActualHeight;
+                    offset += images[prePage].ActualHeight;
                     if ((e.VerticalOffset - e.VerticalChange) < offset)
                         break;
                 }
                 var currentPage = 0;
-                for (double offset = 0; currentPage < _images.Length - 1; currentPage++)
+                for (double offset = 0; currentPage < images.Length - 1; currentPage++)
                 {
-                    offset += _images[currentPage].ActualHeight != 0 ?
-                        _images[currentPage].ActualHeight : _images[currentPage].Height;
+                    offset += images[currentPage].ActualHeight != 0 ?
+                        images[currentPage].ActualHeight : images[currentPage].Height;
                     if (e.VerticalOffset < offset)
                         break;
                 }
@@ -123,18 +124,18 @@ namespace Gihan.Manga.Views.Custom
                 if (prePage != currentPage)
                 {
                     LoadPage(currentPage);
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(250);
-                        if (currentPage + 2 < _images.Length)
-                            LoadPage(currentPage + 2);
-                        if (currentPage + 1 < _images.Length)
-                            LoadPage(currentPage + 1);
-                        if (currentPage > 0)
-                            LoadPage(currentPage - 1);
-                        if (currentPage > 1)
-                            LoadPage(currentPage - 2);
-                    });
+                    _ = Task.Run(() =>
+                      {
+                          Thread.Sleep(250);
+                          if (currentPage + 2 < images.Length)
+                              LoadPage(currentPage + 2);
+                          if (currentPage + 1 < images.Length)
+                              LoadPage(currentPage + 1);
+                          if (currentPage > 0)
+                              LoadPage(currentPage - 1);
+                          if (currentPage > 1)
+                              LoadPage(currentPage - 2);
+                      });
                 }
             }
         }
