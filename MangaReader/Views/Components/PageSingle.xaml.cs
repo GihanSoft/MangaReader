@@ -121,5 +121,20 @@ namespace MangaReader.Views.Components
         {
             ControlzEx.KeyboardNavigationEx.Focus(ScrollViewer);
         }
+
+        private void ScrollViewer_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if(Keyboard.Modifiers is ModifierKeys.Control)
+            {
+                if (e.Delta > 0)
+                {
+                    Zoom += 0.05;
+                }
+                else
+                {
+                    Zoom -= 0.05;
+                }
+            }
+        }
     }
 }
