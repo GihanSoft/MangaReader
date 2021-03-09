@@ -11,6 +11,7 @@
     xmlns:nav="http://gihansoft.ir/netfx/xaml/navigation"
     mc:Ignorable="d"
     Name="This"
+    DataContext="{Binding ElementName=This}"
     Title="GihanSoft Manga Reader" TitleCharacterCasing="Normal"
     Height="450" Width="800"
     MouseMove="This_MouseMove"

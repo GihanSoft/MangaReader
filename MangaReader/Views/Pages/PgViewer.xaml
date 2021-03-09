@@ -5,11 +5,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:nav="clr-namespace:GihanSoft.Navigation;assembly=GihanSoft.Navigation"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:attach="clr-namespace:GihanSoft.Views.AttachedProperties"
     mc:Ignorable="d"
     d:DesignHeight="450" d:DesignWidth="800"
-    Name="This"
-    Content="{Binding PagesViewer, RelativeSource={RelativeSource Mode=Self}}">
+    Name="This">
     <nav:Page.Resources>
         <RoutedUICommand x:Key="CmdNextChapter" />
         <RoutedUICommand x:Key="CmdPreviousChapter" />
@@ -79,4 +80,27 @@
             </StackPanel>
         </ToolBar>
     </nav:Page.LeftToolBar>
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="FontSize" Value="14" />
+            </Style>
+        </Grid.Resources>
+        <ContentControl Content="{Binding PagesViewer, ElementName=This}" />
+        <TextBlock
+            mah:VisibilityHelper.IsVisible="{Binding (attach:WindowProp.FullScreen)}"
+            Text="{Binding Time, ElementName=This, StringFormat=hh:mm}"
+            Margin="10 5"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right" />
+        <StackPanel
+            mah:VisibilityHelper.IsVisible="{Binding (attach:WindowProp.FullScreen)}"
+            Orientation="Horizontal"
+            Margin="10 5"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Left">
+            <TextBlock Text="{Binding Text, ElementName=TxtPage}" />
+            <TextBlock Text="{Binding Text, ElementName=TbPagesCount}" />
+        </StackPanel>
+    </Grid>
 </nav:Page>

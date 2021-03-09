@@ -19,6 +19,7 @@ using MangaReader.Views.Components;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MangaReader.Views.XamlConverters;
+using System.Timers;
 
 namespace MangaReader.Views.Pages
 {
@@ -39,27 +40,27 @@ namespace MangaReader.Views.Pages
                 {
                     return;
                 }
-                if (pgViewer.currentPagesProvider is not null)
+                if (pgViewer.CurrentPagesProvider is not null)
                 {
-                    pgViewer.currentPagesProvider.Dispose();
+                    pgViewer.CurrentPagesProvider.Dispose();
                 }
                 if (currentChapter is DirectoryInfo directory)
                 {
                     FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
                     if (files.Any(file => FileTypeList.CompressedType.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
                     {
-                        pgViewer.currentPagesProvider = new CompressedPageProvider(files.First(x => FileTypeList.CompressedType.Contains(x.Extension, StringComparer.InvariantCultureIgnoreCase)).FullName);
+                        pgViewer.CurrentPagesProvider = new CompressedPageProvider(files.First(x => FileTypeList.CompressedType.Contains(x.Extension, StringComparer.InvariantCultureIgnoreCase)).FullName);
                     }
                     else
                     {
-                        pgViewer.currentPagesProvider = new LocalPagesProvider(currentChapter.FullName);
+                        pgViewer.CurrentPagesProvider = new LocalPagesProvider(currentChapter.FullName);
                     }
                 }
                 else
                 {
-                    pgViewer.currentPagesProvider = new CompressedPageProvider(currentChapter.FullName);
+                    pgViewer.CurrentPagesProvider = new CompressedPageProvider(currentChapter.FullName);
                 }
-                pgViewer.TbPagesCount.SetCurrentValue(TextBlock.TextProperty, pgViewer.currentPagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture));
+                pgViewer.TbPagesCount.SetCurrentValue(TextBlock.TextProperty, pgViewer.CurrentPagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture));
 
                 while (pgViewer.PagesViewer is null)
                 {
@@ -73,11 +74,11 @@ namespace MangaReader.Views.Pages
                 else
                 {
                     int currentPage = pgViewer.manga!.CurrentPage;
-                    page =  currentPage < pgViewer.currentPagesProvider.Count ?
+                    page =  currentPage < pgViewer.CurrentPagesProvider.Count ?
                         currentPage :
-                        pgViewer.currentPagesProvider.Count - 1;
+                        pgViewer.CurrentPagesProvider.Count - 1;
                 }
-                pgViewer.PagesViewer.View(pgViewer.currentPagesProvider, page);
+                pgViewer.PagesViewer.View(pgViewer.CurrentPagesProvider, page);
             }));
 
         /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
@@ -89,6 +90,13 @@ namespace MangaReader.Views.Pages
 
         /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
         public static readonly DependencyProperty PagesViewerProperty = PagesViewerPropertyKey.DependencyProperty;
+
+        /// <summary>Identifies the <see cref="Time"/> dependency property.</summary>
+        public static readonly DependencyProperty TimeProperty = DependencyProperty.Register(
+            nameof(Time),
+            typeof(DateTime),
+            typeof(PgViewer),
+            new PropertyMetadata(default(DateTime)));
 
         private static readonly DependencyPropertyKey ChaptersPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(Chapters),
@@ -114,10 +122,8 @@ namespace MangaReader.Views.Pages
 
         private readonly IValueConverter zaribConverter100;
         private readonly IValueConverter incrementalConverter;
-
-        private PagesProvider? currentPagesProvider;
         private readonly DataDb dataDb;
-
+        private readonly Timer timer;
         private Manga? manga;
 
         public PgViewer(DataDb dataDb)
@@ -154,6 +160,14 @@ namespace MangaReader.Views.Pages
                 Mode = BindingMode.TwoWay,
                 Converter = zaribConverter100
             });
+
+            timer = new()
+            {
+                AutoReset = true,
+                Interval = 1000,
+            };
+            timer.Elapsed += (sender, e) => Dispatcher.Invoke(() => SetCurrentValue(TimeProperty, DateTime.Now));
+            timer.Start();
         }
 
         public ObservableCollection<FileSystemInfo>? Chapters
@@ -172,11 +186,19 @@ namespace MangaReader.Views.Pages
             get => (Components.PagesViewer?)GetValue(PagesViewerProperty);
         }
 
+        public DateTime Time
+        {
+            get => (DateTime)GetValue(TimeProperty);
+            set => SetValue(TimeProperty, value);
+        }
+        public PagesProvider? CurrentPagesProvider { get; set; }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
             if (disposing)
             {
+                timer.Dispose();
                 Save();
             }
         }
@@ -230,7 +252,7 @@ namespace MangaReader.Views.Pages
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             int chapter = CboChapters.SelectedIndex + 1;
-            if (chapter > Chapters!.Count)
+            if (chapter >= Chapters!.Count)
             {
                 return;
             }
