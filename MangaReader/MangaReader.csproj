@@ -6,35 +6,34 @@
 		<ApplicationIcon>OtakuLib.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="GihanSoft.Navigation" Version="0.1.1-beta" />
-	  <PackageReference Include="MahApps.Metro" Version="2.4.4" />
-	  <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.8.0" />
-	  <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-	  <PackageReference Include="NetVips" Version="1.2.4" />
-	  <PackageReference Include="NetVips.Native.win-x64" Version="8.10.5.1" />
-	  <PackageReference Include="NetVips.Native.win-x86" Version="8.10.5.1" />
-	  <PackageReference Include="SharpCompress" Version="0.28.1" />
+		<PackageReference Include="GihanSoft.Navigation" Version="0.1.1-beta" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.4" />
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+		<PackageReference Include="SharpCompress" Version="0.28.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="WpfAnalyzers" Version="3.5.4">
+	<ItemGroup Condition="'$(Configuration)'=='Debug'">
+		<PackageReference Include="WpfAnalyzers">
+			<Version>3.5.4</Version>
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\MangaReader.Data\MangaReader.Data.csproj" />
+		<ProjectReference Include="..\MahApps.Metro.IconPacks\src\MahApps.Metro.IconPacks.Core\MahApps.Metro.IconPacks.Core.csproj" />
+		<ProjectReference Include="..\MahApps.Metro.IconPacks\src\MahApps.Metro.IconPacks\MahApps.Metro.IconPacks.Material.csproj" />
+		<ProjectReference Include="..\MangaReader.Data\MangaReader.Data.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="OtakuLib.ico">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="OtakuLib.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Views\Components\PageSingle.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	  </Page>
+		<Page Update="Views\Components\PageSingle.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
 	</ItemGroup>
 </Project>

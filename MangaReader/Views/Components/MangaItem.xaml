@@ -7,33 +7,35 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     mc:Ignorable="d"
-    Name="This"
     d:DesignHeight="100" d:DesignWidth="80"
     Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
-    MaxHeight="160" MinHeight="160"
-    MaxWidth="90" MinWidth="90"
-    Margin="5">
+    Height="160" Width="90" Margin="5"
+    DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
     <Grid>
-        <Button FocusVisualStyle="{x:Null}" mah:ControlsHelper.CornerRadius="0"
-                BorderThickness="0" Padding="2"
-            Click="Button_Click" ToolTip="{Binding Path=Text, ElementName=Title}">
+        <Button
+            FocusVisualStyle="{x:Null}"
+            mah:ControlsHelper.CornerRadius="0"
+            BorderThickness="0"
+            Padding="2"
+            Click="Button_Click"
+            ToolTip="{Binding Manga.Name}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Image Name="Cover" Grid.Row="0" VerticalAlignment="Center" Height="150" />
-                <TextBlock Name="Title" Grid.Row="1" Padding="2.5 0" Margin="0 1" TextAlignment="Center" />
+                <Image Name="Cover" Grid.Row="0" Stretch="Uniform" Height="150" />
+                <TextBlock Grid.Row="1" Text="{Binding Manga.Name}" TextAlignment="Center" />
             </Grid>
         </Button>
-        <Grid mah:VisibilityHelper.IsVisible="{Binding IsCheckActive, ElementName=This}">
+        <Grid mah:VisibilityHelper.IsVisible="{Binding IsCheckActive}">
             <Border Background="Black" Opacity="0.5" Margin="2" />
             <CheckBox
                 BorderThickness="8"
                 mah:CheckBoxHelper.CheckSize="0"
                 mah:CheckBoxHelper.BorderBrushChecked="{DynamicResource MahApps.Brushes.Accent3}"
                 mah:CheckBoxHelper.BorderBrushCheckedMouseOver="{DynamicResource MahApps.Brushes.Accent}"
-                IsChecked="{Binding IsChecked, ElementName=This, Mode=TwoWay}"
+                IsChecked="{Binding IsChecked, Mode=TwoWay}"
                 Focusable="False" IsTabStop="False"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Stretch">

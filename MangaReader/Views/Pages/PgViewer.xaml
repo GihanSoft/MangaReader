@@ -97,7 +97,7 @@
             mah:VisibilityHelper.IsVisible="{Binding (attach:WindowProp.FullScreen)}"
             Orientation="Horizontal"
             Margin="10 5"
-            VerticalAlignment="Bottom"
+            VerticalAlignment="Top"
             HorizontalAlignment="Left">
             <TextBlock Text="{Binding Text, ElementName=TxtPage}" />
             <TextBlock Text="{Binding Text, ElementName=TbPagesCount}" />

@@ -19,6 +19,8 @@ using System.Windows.Input;
 using System.Windows.Shell;
 using System.Windows.Data;
 using MahApps.Metro.Controls;
+using System.Windows.Controls;
+using System.Text;
 
 namespace MangaReader.Views.Pages
 {
@@ -87,7 +89,8 @@ namespace MangaReader.Views.Pages
                             }
                             ListPanel.Children.RemoveAt(i);
                         }
-                        MangaItem mangaItem = new(manga);
+                        MangaItem mangaItem = new();
+                        mangaItem.Manga = manga;
                         Binding binding = new()
                         {
                             Source = this,
@@ -241,7 +244,8 @@ namespace MangaReader.Views.Pages
                 }
                 Dispatcher.Invoke(() =>
                 {
-                    MangaItem mangaItem = new(manga);
+                    MangaItem mangaItem = new();
+                    mangaItem.Manga = manga;
                     Binding binding = new()
                     {
                         Source = this,
@@ -339,6 +343,24 @@ namespace MangaReader.Views.Pages
             dataDb.Mangas.DeleteMany(m => toDeleteMangaIds.Contains(m.Id));
             SetCurrentValue(IsCheckActiveProperty, false);
             RefreshMethod();
+        }
+
+        private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key is Key.Back)
+            {
+                var txt = TxtSearch.Text.Length > 0 ? TxtSearch.Text[..^1] : null;
+                TxtSearch.SetCurrentValue(TextBox.TextProperty, txt);
+                return;
+            }
+
+            var ch = KeyboardHelper.GetCharFromKey(e.Key);
+            var x = ch > 0 && !char.IsControl(ch);
+            if (x)
+            {
+                TxtSearch.Text += ch;
+                e.Handled = true;
+            }
         }
     }
 }

@@ -9,7 +9,8 @@
     xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:attach="clr-namespace:GihanSoft.Views.AttachedProperties"
     mc:Ignorable="d"
-    d:DesignHeight="450" d:DesignWidth="800">
+    d:DesignHeight="450" d:DesignWidth="800"
+    PreviewKeyDown="Page_PreviewKeyDown">
     <nav:Page.Resources>
         <RoutedUICommand x:Key="CmdAddManga" />
         <RoutedUICommand x:Key="CmdAddMangaBatch" />
@@ -64,6 +65,7 @@
                 ToolTip="Delete&#10;HotKey : Delete"
                 Command="{StaticResource  CmdToggleDeleteState}" />
             <Button
+                Visibility="Collapsed"
                 Content="{icon:Material Kind=BookEditOutline}"
                 ToolTip="Edit&#10;HotKey : Ctrl+E" />
             <StackPanel
@@ -88,6 +90,24 @@
             </StackPanel>
         </ToolBar>
     </nav:Page.LeftToolBar>
+    <nav:Page.RightToolBar>
+        <ToolBar>
+            <Viewbox Margin="5">
+                <TextBox
+                    Name="TxtSearch"
+                    mah:TextBoxHelper.Watermark="Search"
+                    Background="{DynamicResource MahApps.Brushes.Gray10}"
+                    Padding="2 0 2 4"
+                    FontSize="20"
+                    VerticalContentAlignment="Center"
+                    Margin="0"
+                    Width="300"
+                    Focusable="False"
+                    IsTabStop="False"
+                    Style="{DynamicResource MahApps.Styles.TextBox.Search}" />
+            </Viewbox>
+        </ToolBar>
+    </nav:Page.RightToolBar>
     <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
         <WrapPanel Name="ListPanel" />
     </ScrollViewer>

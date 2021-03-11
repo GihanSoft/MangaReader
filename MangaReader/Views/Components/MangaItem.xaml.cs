@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Security.Cryptography.Xml;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 using MangaReader.Data.Models;
@@ -33,7 +30,21 @@ namespace MangaReader.Views.Components
             typeof(MangaItem),
             new PropertyMetadata(default(bool)));
 
-        public event EventHandler<RoutedEventArgs> Click;
+        /// <summary>Identifies the <see cref="Manga"/> dependency property.</summary>
+        public static readonly DependencyProperty MangaProperty = DependencyProperty.Register(
+            nameof(Manga),
+            typeof(Manga),
+            typeof(MangaItem),
+            new PropertyMetadata(default(Manga?), (d, e) =>
+            {
+                if (d is not MangaItem mangaItem || e.NewValue is not Manga manga)
+                {
+                    return;
+                }
+                mangaItem.SetCover(manga.Cover);
+            }));
+
+        public event EventHandler<RoutedEventArgs>? Click;
 
         public bool IsCheckActive
         {
@@ -46,53 +57,53 @@ namespace MangaReader.Views.Components
             get => (bool)GetValue(IsCheckedProperty);
             set => SetValue(IsCheckedProperty, value);
         }
-        //public bool? IsChecked
-        //{
-        //    get { return Checker.IsChecked; }
-        //    set { Checker.IsChecked = value; }
-        //}
 
-        private string mangaTitle;
-        public string MangaTitle
-        {
-            get { return mangaTitle; }
-            set
-            {
-                mangaTitle = value;
-                Title.Text = value;
-            }
-        }
-
-        public void SetCoverSource(string? cover)
+        private void SetCover(string? cover)
         {
             if (cover is null)
             {
                 Cover.Source = null;
                 return;
             }
-            NetVips.Image image;
+            Bitmap bitmap;
+            //NetVips.Image image;
             if (cover.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
             {
                 var dataStr = cover.Split(new[] { ',' }, 2)[1];
                 var data = Convert.FromBase64String(dataStr);
-                image = NetVips.Image.NewFromBuffer(data);
+                MemoryStream? memStreamMain = new(data)
+                {
+                    Position = 0
+                };
+                bitmap = new Bitmap(memStreamMain);
+                //image = NetVips.Image.NewFromBuffer(data);
             }
             else
             {
-                image = NetVips.Image.NewFromFile(cover);
+                bitmap = new Bitmap(cover);
+                //image = NetVips.Image.NewFromFile(cover);
             }
             cover = null;
-            NetVips.Image thumbImage = image.ThumbnailImage((int)MaxWidth * 3);
-            image.Dispose();
+            var nesbat = bitmap.Height / (double)bitmap.Width;
+            var thumbImage = bitmap.GetThumbnailImage(
+                (int)Width * 3,
+                (int)(Width * 3 * nesbat),
+                null,
+                IntPtr.Zero);
+            //NetVips.Image thumbImage = image.ThumbnailImage((int)MaxWidth * 3);
+
+            bitmap.Dispose();
+            //image.Dispose();
             MemoryStream memoryStream = new();
-            thumbImage.PngsaveStream(memoryStream, 0);
+            thumbImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            //thumbImage.PngsaveStream(memoryStream, 0);
             thumbImage.Dispose();
             memoryStream.Position = 0;
-            BitmapImage bitmap = new();
-            bitmap.BeginInit();
-            bitmap.StreamSource = memoryStream;
-            bitmap.EndInit();
-            Cover.Source = bitmap;
+            BitmapImage bitmapImage = new();
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.EndInit();
+            Cover.Source = bitmapImage;
             GC.Collect();
         }
 
@@ -114,65 +125,23 @@ namespace MangaReader.Views.Components
             }
         }
 
-        public Manga Manga { get; set; }
+        public Manga? Manga
+        {
+            get => (Manga?)GetValue(MangaProperty);
+            set => SetValue(MangaProperty, value);
+        }
 
         public MangaItem()
         {
             InitializeComponent();
         }
 
-        public MangaItem(Manga manga) : this()
-        {
-            MangaTitle = manga.Name;
-            SetCoverSource(manga.Cover);
-
-            //if (manga.CoverAddress == null || !File.Exists(manga.CoverAddress))
-            //{
-            //    try
-            //    {
-            //        var chapters = Directory.EnumerateDirectories(manga.Address).ToList();
-            //        if (chapters.Count > 0)
-            //        {
-            //            chapters.Sort(NaturalStringComparer.Default.Compare);
-            //            var pages = Directory.EnumerateFiles(chapters[0], "*.*", SearchOption.AllDirectories).ToList();
-            //            pages.Sort(NaturalStringComparer.Default.Compare);
-            //            CoverSource = pages.Find(file =>
-            //                FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
-            //        }
-            //        else if (Directory.EnumerateFiles(manga.Address).
-            //            FirstOrDefault(f => FileTypeList.ImageTypes.Any(t => f.EndsWith(t))) != null)
-            //        {
-            //            CoverSource = Directory.EnumerateFiles(manga.Address).
-            //                FirstOrDefault(f => FileTypeList.ImageTypes.Any(t => f.EndsWith(t)));
-            //        }
-            //        {
-            //            chapters = Directory.EnumerateFiles(manga.Address).
-            //                Where(ch => FileTypeList.CompressedType.Any(t => ch.EndsWith(t))).ToList();
-            //            chapters.Sort(NaturalStringComparer.Default.Compare);
-            //            var exPath = CompressApi.OpenArchive(chapters[0]);
-            //            var pages = Directory.EnumerateFiles(exPath, "*.*", SearchOption.AllDirectories).ToList();
-            //            pages.Sort(NaturalStringComparer.Default.Compare);
-            //            CoverSource = pages.Find(file =>
-            //                FileTypeList.ImageTypes.Any(t => file.ToLower().EndsWith(t)));
-            //        }
-            //        SettingApi.This.MangaList[manga.Id].CoverAddress = CoverSource;
-            //        CoverMaker.CoverConvert(manga);
-            //        CoverSource = SettingApi.This.MangaList[manga.Id].CoverAddress;
-            //        CompressApi.CleanExtractPath();
-            //    }
-            //    catch (Exception err)
-            //    {
-            //        var x = err.Message;
-            //    }
-            //}
-            //else
-            //{
-            //    if (!manga.CoverAddress.StartsWith(CoverMaker.AbsoluteCoversPath))
-            //        CoverMaker.CoverConvert(manga);
-            //    CoverSource = manga.CoverAddress;
-            //}
-            Manga = manga;
-        }
+        //public MangaItem(Manga manga) : this()
+        //{
+        //    MangaTitle = manga.Name;
+        //    SetCoverSource(manga.Cover);
+        //    Manga = manga;
+        //}
 
         private void EditNameBtn_Click(object sender, RoutedEventArgs e)
         {
