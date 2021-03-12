@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace MangaReader.Views.Components
+namespace MangaReader.Views.Components.PagesViewers
 {
     /// <summary>
     /// Interaction logic for PageSingle.xaml
