@@ -68,13 +68,13 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button
-                    Content="{icon:Material Kind=Plus}"
+                    Content="{icon:Material Kind=MagnifyPlusOutline}"
                     Command="{StaticResource CmdZoomIn}"
                     ToolTip="ZoomIn&#10;HotKey : Ctrl+'+'" />
                 <TextBox Name="TxtZoom" Margin="2" Focusable="True" FontSize="14" Padding="0" VerticalContentAlignment="Center" />
                 <TextBlock Text="%" VerticalAlignment="Center" FontSize="15" Margin="1 0 2 0" />
                 <Button
-                    Content="{icon:Material Kind=Minus}"
+                    Content="{icon:Material Kind=MagnifyMinusOutline}"
                     Command="{StaticResource CmdZoomOut}"
                     ToolTip="ZoomOut&#10;HotKey : Ctrl+'-'" />
             </StackPanel>

@@ -107,7 +107,7 @@ namespace MangaReader.Old
                 coverDir.Delete(true);
             }
 #if !DEBUG
-            DirectoryInfo? refDir = settingsFileInfo.Directory?.Parent?.EnumerateDirectories("ref").FirstOrDefault();
+            DirectoryInfo? refDir = preSettingFileInfo.Directory?.Parent?.EnumerateDirectories("ref").FirstOrDefault();
             if (refDir is not null && refDir.Exists)
             {
                 refDir.Delete(true);
