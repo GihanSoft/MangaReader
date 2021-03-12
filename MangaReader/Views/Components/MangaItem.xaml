@@ -13,6 +13,7 @@
     DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
     <Grid>
         <Button
+            Name="Btn"
             FocusVisualStyle="{x:Null}"
             mah:ControlsHelper.CornerRadius="0"
             BorderThickness="0"

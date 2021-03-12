@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
+using ControlzEx;
+
 using MangaReader.Data.Models;
 
 namespace MangaReader.Views.Components
@@ -134,6 +136,11 @@ namespace MangaReader.Views.Components
         public MangaItem()
         {
             InitializeComponent();
+        }
+
+        public void WorkingFocus()
+        {
+            KeyboardNavigationEx.Focus(Btn);
         }
 
         //public MangaItem(Manga manga) : this()

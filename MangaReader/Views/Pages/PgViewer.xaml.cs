@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MangaReader.Views.XamlConverters;
 using System.Timers;
+using GihanSoft.Navigation;
 
 namespace MangaReader.Views.Pages
 {
@@ -74,7 +75,7 @@ namespace MangaReader.Views.Pages
                 else
                 {
                     int currentPage = pgViewer.manga!.CurrentPage;
-                    page =  currentPage < pgViewer.CurrentPagesProvider.Count ?
+                    page = currentPage < pgViewer.CurrentPagesProvider.Count ?
                         currentPage :
                         pgViewer.CurrentPagesProvider.Count - 1;
                 }
@@ -123,14 +124,18 @@ namespace MangaReader.Views.Pages
         private readonly IValueConverter zaribConverter100;
         private readonly IValueConverter incrementalConverter;
         private readonly DataDb dataDb;
+        private readonly PageNavigator pageNavigator;
         private readonly Timer timer;
         private Manga? manga;
 
-        public PgViewer(DataDb dataDb)
+        public PgViewer(
+            DataDb dataDb,
+            PageNavigator pageNavigator)
         {
             zaribConverter100 = new ZaribConverter() { Zarib = 100 };
             incrementalConverter = new IncrementalConverter() { Increment = 1 };
             this.dataDb = dataDb;
+            this.pageNavigator = pageNavigator;
             SetValue(PagesViewerPropertyKey, new PageSingle());
             InitializeComponent();
 
@@ -240,11 +245,14 @@ namespace MangaReader.Views.Pages
             }
             ControlzEx.KeyboardNavigationEx.Focus(PagesViewer);
 
-            PageNavigator!.Navigated += (sender, e) =>
+            pageNavigator!.Navigated += (sender, e) =>
             {
                 if (e.Previous == this)
                 {
-                    Save();
+                    Dispatcher.Invoke(() =>
+                    {
+                        Save();
+                    });
                 }
             };
         }

@@ -39,17 +39,17 @@ namespace MangaReader.Views.Pages
 
         private readonly DataDb dataDb;
         private readonly SettingsManager settingsManager;
+        private readonly PageNavigator pageNavigator;
 
         public PgLibrary(
             DataDb dataDb,
-            SettingsManager settingsManager
+            SettingsManager settingsManager,
+            PageNavigator pageNavigator
             )
         {
             this.dataDb = dataDb;
             this.settingsManager = settingsManager;
-
-            Refresh += RefreshMethod;
-
+            this.pageNavigator = pageNavigator;
             InitializeComponent();
 
             SpDelete.SetBinding(VisibilityHelper.IsVisibleProperty, new Binding()
@@ -65,56 +65,55 @@ namespace MangaReader.Views.Pages
             set => SetValue(IsCheckActiveProperty, value);
         }
 
-        public void RefreshMethod()
+        public override async Task RefreshAsync()
         {
-            Task.Run(async () =>
-            {
-                Dispatcher.Invoke(() => this.SetCurrentValue(FocusableProperty, false));
+            Dispatcher.Invoke(() => this.SetCurrentValue(FocusableProperty, false));
 
-                Manga[] mangas = dataDb.Mangas.FindAll().OrderBy(m => m.Name, NaturalStringComparer.Default).ToArray();
-                for (int i = 0; i < mangas.Length; i++)
+            Manga[] mangas = dataDb.Mangas.FindAll().OrderBy(m => m.Name, NaturalStringComparer.Default).ToArray();
+            for (int i = 0; i < mangas.Length; i++)
+            {
+                Manga manga = mangas[i];
+                Dispatcher.Invoke(() =>
                 {
-                    Manga manga = mangas[i];
-                    Dispatcher.Invoke(() =>
+                    if (ListPanel.Children.Count >= i + 1)
                     {
-                        if (ListPanel.Children.Count >= i + 1)
+                        var mangaItemI = ListPanel.Children.OfType<MangaItem>().ElementAt(i);
+                        if (mangaItemI.Manga.Id == manga.Id)
                         {
-                            if (((MangaItem)ListPanel.Children[i]).Manga.Id == manga.Id)
+                            if (i is 0)
                             {
-                                if (i is 0)
-                                {
-                                    MoveFocus(new(FocusNavigationDirection.Next));
-                                }
-                                return;
+                                mangaItemI.WorkingFocus();
                             }
-                            ListPanel.Children.RemoveAt(i);
+                            return;
                         }
-                        MangaItem mangaItem = new();
-                        mangaItem.Manga = manga;
-                        Binding binding = new()
-                        {
-                            Source = this,
-                            Path = new PropertyPath(nameof(IsCheckActive), null),
-                        };
-                        mangaItem.SetBinding(MangaItem.IsCheckActiveProperty, binding);
-                        mangaItem.Click += MangaItem_Click;
-                        ListPanel.Children.Insert(i, mangaItem);
-                        if (i is 0)
-                        {
-                            MoveFocus(new(FocusNavigationDirection.Next));
-                        }
-                    });
-                    await Task.Delay(10).ConfigureAwait(false);
-                }
-                if (mangas.Length is 0)
-                {
-                    Dispatcher.Invoke(() =>
+                        ListPanel.Children.RemoveAt(i);
+                    }
+                    MangaItem mangaItem = new();
+                    mangaItem.Manga = manga;
+                    Binding binding = new()
                     {
-                        this.SetCurrentValue(FocusableProperty, true);
-                        KeyboardNavigationEx.Focus(this);
-                    });
-                }
-            });
+                        Source = this,
+                        Path = new PropertyPath(nameof(IsCheckActive), null),
+                    };
+                    mangaItem.SetBinding(MangaItem.IsCheckActiveProperty, binding);
+                    mangaItem.Click += MangaItem_Click;
+                    ListPanel.Children.Insert(i, mangaItem);
+                    if (i is 0)
+                    {
+                        mangaItem.WorkingFocus();
+                    }
+                });
+                await Task.Delay(10).ConfigureAwait(false);
+            }
+            if (mangas.Length is 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    //this.Focusable
+                    this.SetCurrentValue(FocusableProperty, true);
+                    KeyboardNavigationEx.Focus(this);
+                });
+            }
         }
 
         private void MangaItem_Click(object? sender, RoutedEventArgs e)
@@ -124,8 +123,8 @@ namespace MangaReader.Views.Pages
                 return;
             }
 
-            PageNavigator!.GoTo<PgViewer>();
-            ((PgViewer)PageNavigator.Current).View("manga://" + ((MangaItem)sender).Manga.Id);
+            pageNavigator!.GoToAsync<PgViewer>();
+            ((PgViewer)pageNavigator.CurrentPage).View("manga://" + ((MangaItem)sender).Manga.Id);
             JumpList.AddToRecentCategory(new JumpTask()
             {
                 ApplicationPath = AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName,
@@ -284,7 +283,7 @@ namespace MangaReader.Views.Pages
             {
                 await AddManga(mangaDirectory).ConfigureAwait(false);
             }
-            RefreshMethod();
+            await RefreshAsync().ConfigureAwait(false);
         }
 
         private async void CmdAddMangaBatch_Executed(object? sender, ExecutedRoutedEventArgs? e)
@@ -294,7 +293,7 @@ namespace MangaReader.Views.Pages
                 await AddManga(mangaDirectory).ConfigureAwait(false);
                 await Task.Delay(10).ConfigureAwait(false);
             }
-            RefreshMethod();
+            await RefreshAsync().ConfigureAwait(false);
         }
 
         private void CmdToggleDeleteState_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -342,7 +341,7 @@ namespace MangaReader.Views.Pages
             }
             dataDb.Mangas.DeleteMany(m => toDeleteMangaIds.Contains(m.Id));
             SetCurrentValue(IsCheckActiveProperty, false);
-            RefreshMethod();
+            RefreshAsync();
         }
 
         private void Page_PreviewKeyDown(object sender, KeyEventArgs e)

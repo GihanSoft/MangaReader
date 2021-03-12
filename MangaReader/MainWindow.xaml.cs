@@ -8,10 +8,9 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 
-using PageHost = GihanSoft.Navigation.PageHost;
-
-using static Microsoft.Extensions.DependencyInjection.ActivatorUtilities;
 using System.Linq;
+using System.Threading.Tasks;
+using MahApps.Metro.Controls;
 
 namespace MangaReader
 {
@@ -21,12 +20,23 @@ namespace MangaReader
     [CLSCompliant(false)]
     public partial class MainWindow
     {
+        private static readonly DependencyPropertyKey PageNavigatorPropertyKey = DependencyProperty.RegisterReadOnly(
+                    nameof(PageNavigator),
+                    typeof(PageNavigator),
+                    typeof(MainWindow),
+                    new PropertyMetadata(default(PageNavigator)));
+
+        /// <summary>Identifies the <see cref="PageNavigator"/> dependency property.</summary>
+        public static readonly DependencyProperty PageNavigatorProperty = PageNavigatorPropertyKey.DependencyProperty;
+
         private readonly SettingsManager settingsManager;
 
-        public MainWindow()
+        public MainWindow(
+            SettingsManager settingsManager,
+            PageNavigator pageNavigator)
         {
             InitializeComponent();
-            settingsManager = GetServiceOrCreateInstance<SettingsManager>(App.Current.ServiceProvider);
+            this.settingsManager = settingsManager;
             MainOptions mainOptions = settingsManager.GetMainOptions();
 
             Top = mainOptions.Appearance.WindowPosition.Top;
@@ -35,34 +45,58 @@ namespace MangaReader
             Height = mainOptions.Appearance.WindowPosition.Height;
             WindowState = (WindowState)mainOptions.Appearance.WindowPosition.WindowsState;
 
-            PageHost.PageNavigator = new PageNavigator(App.Current.ServiceProvider);
+            PageNavigator = pageNavigator;
 
-            string[] commandLineArgs = Environment.GetCommandLineArgs();
-            if (commandLineArgs.Length > 1)
+            this.Loaded += OnLoaded;
+        }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (App.Current.Properties.Contains(App.ArgumentsKey))
             {
-                PageHost.PageNavigator.GoTo<PgViewer>();
-                ((PgViewer)PageHost.PageNavigator.Current).View(commandLineArgs[1]); //TO DO: what?
+                await PageNavigator.GoToAsync<PgViewer>().ConfigureAwait(false);
+                if (PageNavigator.CurrentPage is PgViewer pgViewer &&
+                    App.Current.Properties[App.ArgumentsKey] is string[] args)
+                {
+                    pgViewer.View(args[0]);
+                }
             }
             else
             {
-                PageHost.PageNavigator.GoTo<PgLibrary>();
+                try
+                {
+                    await PageNavigator.GoToAsync<PgLibrary>().ConfigureAwait(false);
+                }
+                catch (TaskCanceledException)
+                {
+                }
             }
+        }
+
+        /// <summary>
+        /// Gets Page Navigator.
+        /// </summary>
+        public PageNavigator? PageNavigator
+        {
+            get => (PageNavigator?)this.GetValue(PageNavigatorProperty);
+            private set => this.SetValue(PageNavigatorPropertyKey, value);
         }
 
         private void FlyoutCancelBtn_Click(object sender, RoutedEventArgs e)
         {
-            MenuFlyout.IsOpen = false;
+            MenuFlyout.SetCurrentValue(Flyout.IsOpenProperty, false);
         }
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            PageHost.PageNavigator!.GoTo<PgSettings>();
+            PageNavigator!.GoToAsync<PgSettings>();
             FlyoutCancelBtn_Click(sender, e);
         }
 
         private void BtnAbout_Click(object sender, RoutedEventArgs e)
         {
-            PageHost.PageNavigator!.GoTo<PgHelp>();
+            PageNavigator!.GoToAsync<PgHelp>();
+            FlyoutCancelBtn_Click(sender, e);
         }
 
         private void CmdToggleFullScreen_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -90,14 +124,6 @@ namespace MangaReader
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            foreach (Page page in PageHost.PageNavigator!
-                .ForwardStack.Append(
-                PageHost.PageNavigator.Current).Concat(
-                PageHost.PageNavigator.BackStack))
-            {
-                page.Dispose();
-            }
-
             MainOptions mainOptions = settingsManager.GetMainOptions();
             Rect restoreBounds;
             WindowState windowState;
@@ -123,15 +149,18 @@ namespace MangaReader
 
         private void CmdGoBack_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (PageHost.PageNavigator!.CanGoBack)
+            if (PageNavigator!.CanGoBack)
             {
-                PageHost.PageNavigator.GoBack();
+                PageNavigator.GoBackAsync();
             }
         }
 
         private void CmdGoForward_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            PageHost.PageNavigator!.GoFroward();
+            if (PageNavigator!.CanGoForward)
+            {
+                PageNavigator!.GoFrowardAsync();
+            }
         }
 
         private void CmdOpenMenu_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -141,7 +170,7 @@ namespace MangaReader
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            PageHost.PageNavigator!.GoTo<PgLibrary>();
+            PageNavigator!.GoToAsync<PgLibrary>();
             MenuFlyout.IsOpen = false;
         }
     }

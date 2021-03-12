@@ -21,28 +21,29 @@ namespace MangaReader.Views.Pages
     {
         private readonly Version version;
         private readonly SettingsManager settingsManager;
+        private readonly PageNavigator pageNavigator;
         private MainOptions mainOptions;
 
         public PgSettings(
             Version version,
-            SettingsManager settingsManager)
+            SettingsManager settingsManager,
+            PageNavigator pageNavigator
+            )
         {
             InitializeComponent();
 
             this.version = version;
             this.settingsManager = settingsManager;
-
+            this.pageNavigator = pageNavigator;
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
-
-            Refresh += RefreshMethod;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            PageNavigator.Navigating += Navigator_Navigating;
+            pageNavigator.Navigating += Navigator_Navigating;
         }
 
-        public void RefreshMethod()
+        public override Task RefreshAsync()
         {
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
 
@@ -53,6 +54,7 @@ namespace MangaReader.Views.Pages
 
             CboThemeBase.SelectedItem = ThemeManager.Current.DetectTheme()?.BaseColorScheme;
             CboThemeColor.SelectedItem = ThemeManager.Current.DetectTheme()?.ColorScheme;
+            return base.RefreshAsync();
         }
 
         private async void Navigator_Navigating(object sender, GihanSoft.Navigation.Events.NavigatingEventArgs e)
@@ -95,10 +97,11 @@ namespace MangaReader.Views.Pages
         private void BtnOk_Click(object sender, RoutedEventArgs e)
         {
             BtnApply_Click(sender, e);
-            PageNavigator.GoBack();
+            pageNavigator.GoBackAsync();
         }
 
-        private void Cancel() {
+        private void Cancel()
+        {
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
 
             ThemeManager.Current.ChangeTheme(App.Current, mainOptions.Appearance.Theme);
@@ -107,7 +110,7 @@ namespace MangaReader.Views.Pages
         private void BtnCancel_Click(object? sender, RoutedEventArgs? e)
         {
             Cancel();
-            PageNavigator.GoBack();
+            pageNavigator.GoBackAsync();
         }
 
         private void BtnApply_Click(object sender, RoutedEventArgs e)
@@ -117,7 +120,11 @@ namespace MangaReader.Views.Pages
 
         protected override void Dispose(bool disposing)
         {
-            Cancel();
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                Cancel();
+            }
         }
     }
 }
