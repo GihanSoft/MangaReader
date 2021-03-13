@@ -20,7 +20,7 @@ using System.Windows.Shell;
 using System.Windows.Data;
 using MahApps.Metro.Controls;
 using System.Windows.Controls;
-using System.Text;
+using System.Collections.ObjectModel;
 
 namespace MangaReader.Views.Pages
 {
@@ -69,43 +69,65 @@ namespace MangaReader.Views.Pages
         {
             Dispatcher.Invoke(() => this.SetCurrentValue(FocusableProperty, false));
 
-            Manga[] mangas = dataDb.Mangas.FindAll().OrderBy(m => m.Name, NaturalStringComparer.Default).ToArray();
-            for (int i = 0; i < mangas.Length; i++)
+            var resultMangas = dataDb.Mangas.FindAll()
+                .Where(manga => (manga.Name?.Contains(TxtSearch.Text, StringComparison.OrdinalIgnoreCase)).GetValueOrDefault(false))
+                .OrderBy(m => m.Name, NaturalStringComparer.Default)
+                .ToArray();
+
+            var panelCount = Dispatcher.Invoke(() => ListPanel.Children.Count);
+            for (int i = 0; i < Math.Max(resultMangas.Length, panelCount); i++)
             {
-                Manga manga = mangas[i];
-                Dispatcher.Invoke(() =>
+                var delay = Dispatcher.Invoke(() =>
                 {
-                    if (ListPanel.Children.Count >= i + 1)
+                    Manga? mangaI = i < resultMangas.Length ? resultMangas[i] : null;
+                    MangaItem? mangaItemI = i < ListPanel.Children.Count ? ListPanel.Children[i] as MangaItem : null;
+
+                    if (mangaI is null)
                     {
-                        var mangaItemI = ListPanel.Children.OfType<MangaItem>().ElementAt(i);
-                        if (mangaItemI.Manga.Id == manga.Id)
+                        if (i < ListPanel.Children.Count)
                         {
-                            if (i is 0)
-                            {
-                                mangaItemI.WorkingFocus();
-                            }
-                            return;
+                            ListPanel.Children.RemoveAt(i);
+                            i--;
                         }
-                        ListPanel.Children.RemoveAt(i);
+                        return false;
                     }
-                    MangaItem mangaItem = new();
-                    mangaItem.Manga = manga;
-                    Binding binding = new()
+                    if (mangaItemI is null || mangaItemI.Manga!.Id != mangaI.Id)
                     {
-                        Source = this,
-                        Path = new PropertyPath(nameof(IsCheckActive), null),
-                    };
-                    mangaItem.SetBinding(MangaItem.IsCheckActiveProperty, binding);
-                    mangaItem.Click += MangaItem_Click;
-                    ListPanel.Children.Insert(i, mangaItem);
+                        if (mangaItemI is not null &&
+                            NaturalStringComparer.Default.Compare(mangaI, mangaItemI.Manga) >= 0)
+                        {
+                            ListPanel.Children.Remove(mangaItemI);
+                            i--;
+                            return false;
+                        }
+                        mangaItemI = new();
+                        mangaItemI.Manga = mangaI;
+                        Binding binding = new()
+                        {
+                            Source = this,
+                            Path = new PropertyPath(nameof(IsCheckActive), null),
+                        };
+                        mangaItemI.SetBinding(MangaItem.IsCheckActiveProperty, binding);
+                        mangaItemI.Click += MangaItem_Click;
+                        ListPanel.Children.Insert(i, mangaItemI);
+                        if (i is 0)
+                        {
+                            mangaItemI.WorkingFocus();
+                        }
+                        return true;
+                    }
                     if (i is 0)
                     {
-                        mangaItem.WorkingFocus();
+                        mangaItemI.WorkingFocus();
                     }
+                    return false;
                 });
-                await Task.Delay(10).ConfigureAwait(false);
+                if (delay)
+                {
+                    await Task.Delay(1).ConfigureAwait(false);
+                }
             }
-            if (mangas.Length is 0)
+            if (resultMangas.Length is 0)
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -341,7 +363,7 @@ namespace MangaReader.Views.Pages
             }
             dataDb.Mangas.DeleteMany(m => toDeleteMangaIds.Contains(m.Id));
             SetCurrentValue(IsCheckActiveProperty, false);
-            RefreshAsync();
+            RefreshAsync().ConfigureAwait(false);
         }
 
         private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -350,6 +372,7 @@ namespace MangaReader.Views.Pages
             {
                 var txt = TxtSearch.Text.Length > 0 ? TxtSearch.Text[..^1] : null;
                 TxtSearch.SetCurrentValue(TextBox.TextProperty, txt);
+                RefreshAsync().ConfigureAwait(false);
                 return;
             }
 
@@ -358,6 +381,7 @@ namespace MangaReader.Views.Pages
             if (x)
             {
                 TxtSearch.Text += ch;
+                RefreshAsync().ConfigureAwait(false);
                 e.Handled = true;
             }
         }

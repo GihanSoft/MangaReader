@@ -21,6 +21,7 @@ using System.Windows.Input;
 using MangaReader.Views.XamlConverters;
 using System.Timers;
 using GihanSoft.Navigation;
+using MangaReader.Views.Components.PagesViewers;
 
 namespace MangaReader.Views.Pages
 {
@@ -85,9 +86,9 @@ namespace MangaReader.Views.Pages
         /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
         public static readonly DependencyPropertyKey PagesViewerPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(PagesViewer),
-            typeof(Components.PagesViewer),
+            typeof(Components.PagesViewers.PagesViewer),
             typeof(PgViewer),
-            new PropertyMetadata(default(Components.PagesViewer)));
+            new PropertyMetadata(default(Components.PagesViewers.PagesViewer)));
 
         /// <summary>Identifies the <see cref="PagesViewer"/> dependency property.</summary>
         public static readonly DependencyProperty PagesViewerProperty = PagesViewerPropertyKey.DependencyProperty;
@@ -186,9 +187,9 @@ namespace MangaReader.Views.Pages
             set => SetValue(CurrentChapterProperty, value);
         }
 
-        public Components.PagesViewer? PagesViewer
+        public Components.PagesViewers.PagesViewer? PagesViewer
         {
-            get => (Components.PagesViewer?)GetValue(PagesViewerProperty);
+            get => (Components.PagesViewers.PagesViewer?)GetValue(PagesViewerProperty);
         }
 
         public DateTime Time
@@ -241,7 +242,7 @@ namespace MangaReader.Views.Pages
                     Chapters.Add(chapter);
                 }
                 SetCurrentValue(CurrentChapterProperty, Chapters[manga.CurrentChapter]);
-                PagesViewer!.SetCurrentValue(Components.PagesViewer.ZoomProperty, manga.Zoom);
+                PagesViewer!.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, manga.Zoom);
             }
             ControlzEx.KeyboardNavigationEx.Focus(PagesViewer);
 
@@ -279,12 +280,12 @@ namespace MangaReader.Views.Pages
 
         private void CmdZoomIn_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            PagesViewer!.SetCurrentValue(Components.PagesViewer.ZoomProperty, PagesViewer.Zoom + 0.1);
+            PagesViewer!.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, PagesViewer.Zoom + 0.1);
         }
 
         private void CmdZoomOut_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            PagesViewer!.SetCurrentValue(Components.PagesViewer.ZoomProperty, PagesViewer.Zoom - 0.1);
+            PagesViewer!.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, PagesViewer.Zoom - 0.1);
         }
     }
 }
