@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_C4FFA529324945EA893B58F7A07973F4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E7054B980B8F48F6B90BBB4D66C9FAC3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -86,10 +92,40 @@
         {
             "LaunchCondition"
             {
+                "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_241B003C35D74EB38D47385907D99F63"
+                {
+                "Name" = "8:.NET Core"
+                "Message" = "8:[VSDNETCOREMSG]"
+                "AllowLaterVersions" = "11:FALSE"
+                "InstallUrl" = "8:https://dotnet.microsoft.com/download/dotnet-core/[NetCoreVerMajorDotMinor]"
+                "IsNETCore" = "11:TRUE"
+                "Architecture" = "2:0"
+                "Runtime" = "2:0"
+                }
             }
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C4FFA529324945EA893B58F7A07973F4"
+            {
+            "SourcePath" = "8:..\\MangaReader\\OtakuLib.ico"
+            "TargetName" = "8:OtakuLib.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_FC336C826271404998D47022050EE70A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:TRUE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -147,7 +183,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MangaReader"
         "ProductCode" = "8:{06D9E4E7-0A1E-4917-B4B1-839AEA236AED}"
-        "PackageCode" = "8:{883B4612-6397-4056-A7BE-A9A0B5C011A4}"
+        "PackageCode" = "8:{4AF850E9-2BEE-4075-8B9A-20DE721741E6}"
         "UpgradeCode" = "8:{69154F09-396D-4C77-8942-141CA5C0EB65}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -164,8 +200,8 @@
         "Keywords" = "8:manga"
         "ARPCOMMENTS" = "8:GihanSoft MangaReader"
         "ARPURLINFOABOUT" = "8:https://GihanSoft.ir"
-        "ARPPRODUCTICON" = "8:_E7054B980B8F48F6B90BBB4D66C9FAC3"
-        "ARPIconIndex" = "3:32512"
+        "ARPPRODUCTICON" = "8:_C4FFA529324945EA893B58F7A07973F4"
+        "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
         "TargetPlatform" = "3:0"
@@ -273,12 +309,12 @@
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
-            "IconIndex" = "3:32512"
+            "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_E7054B980B8F48F6B90BBB4D66C9FAC3"
             "Folder" = "8:_96B704ADEC2343FF8D297959A04E7788"
             "WorkingFolder" = "8:_FC336C826271404998D47022050EE70A"
-            "Icon" = "8:_E7054B980B8F48F6B90BBB4D66C9FAC3"
+            "Icon" = "8:_C4FFA529324945EA893B58F7A07973F4"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_786880721A4248A498B820C01FDD6014"
@@ -287,12 +323,12 @@
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
-            "IconIndex" = "3:32512"
+            "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_E7054B980B8F48F6B90BBB4D66C9FAC3"
             "Folder" = "8:_20C2FF87DD3B4D8A8CC58D0A28AB9C94"
             "WorkingFolder" = "8:_FC336C826271404998D47022050EE70A"
-            "Icon" = "8:_E7054B980B8F48F6B90BBB4D66C9FAC3"
+            "Icon" = "8:_C4FFA529324945EA893B58F7A07973F4"
             "Feature" = "8:"
             }
         }
@@ -696,7 +732,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E7054B980B8F48F6B90BBB4D66C9FAC3"
             {
-            "SourcePath" = "8:..\\MangaReader\\obj\\Release\\net5.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\MangaReader\\obj\\Release\\net5.0-windows\\win-x86\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_FC336C826271404998D47022050EE70A"
