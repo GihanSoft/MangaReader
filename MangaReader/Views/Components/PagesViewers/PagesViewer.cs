@@ -4,7 +4,7 @@ using MangaReader.PagesViewer;
 using System;
 using System.Windows.Controls;
 
-namespace MangaReader.Views.Components
+namespace MangaReader.Views.Components.PagesViewers
 {
     public abstract class PagesViewer : Border
     {

@@ -1,11 +1,13 @@
-﻿<local:PagesViewer x:Class="MangaReader.Views.Components.PageSingle"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:MangaReader.Views.Components"
-             xmlns:convert="clr-namespace:MangaReader.Views.XamlConverters"
-             mc:Ignorable="d"
+﻿<local:PagesViewer
+    x:Class="MangaReader.Views.Components.PagesViewers.PageSingle"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MangaReader.Views.Components.PagesViewers"
+    xmlns:convert="clr-namespace:MangaReader.Views.XamlConverters"
+    mc:Ignorable="d"
+    FocusVisualStyle="{x:Null}"
             Focusable="True" GotFocus="PagesViewer_GotFocus"
              d:DesignHeight="450" d:DesignWidth="800">
     <local:PagesViewer.Resources>
@@ -17,6 +19,7 @@
         Name="ScrollViewer"
         VerticalScrollBarVisibility="Auto"
         HorizontalScrollBarVisibility="Auto"
+        PreviewMouseWheel="ScrollViewer_MouseWheel"
         PreviewKeyDown="ScrollViewer_PreviewKeyDown">
         <Image
             Name="Img"

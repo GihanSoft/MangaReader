@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace MangaReader.Views.Components
+namespace MangaReader.Views.Components.PagesViewers
 {
     /// <summary>
     /// Interaction logic for PageSingle.xaml
@@ -120,6 +120,21 @@ namespace MangaReader.Views.Components
         private void PagesViewer_GotFocus(object sender, RoutedEventArgs e)
         {
             ControlzEx.KeyboardNavigationEx.Focus(ScrollViewer);
+        }
+
+        private void ScrollViewer_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if(Keyboard.Modifiers is ModifierKeys.Control)
+            {
+                if (e.Delta > 0)
+                {
+                    Zoom += 0.05;
+                }
+                else
+                {
+                    Zoom -= 0.05;
+                }
+            }
         }
     }
 }

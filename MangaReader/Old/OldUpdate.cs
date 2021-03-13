@@ -16,16 +16,15 @@ namespace MangaReader.Old
 {
     internal static class OldUpdate
     {
-        public static void UpdateSetting(string filePath)
+        public static void UpdateSetting(FileInfo preSettingFileInfo)
         {
-            if (filePath is null)
+            if (preSettingFileInfo is null)
             {
-                throw new ArgumentNullException(nameof(filePath));
+                throw new ArgumentNullException(nameof(preSettingFileInfo));
             }
             BinaryFormatter binaryFormatter = new();
 
-            FileInfo settingsFileInfo = new(filePath);
-            using Stream settingsFileStream = settingsFileInfo.OpenRead();
+            using Stream settingsFileStream = preSettingFileInfo.OpenRead();
 
 #pragma warning disable CA2300 // Do not use insecure deserializer BinaryFormatter
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
@@ -102,20 +101,20 @@ namespace MangaReader.Old
             }));
             dataDb.Database.Commit();
 
-            DirectoryInfo? coverDir = settingsFileInfo.Directory?.Parent?.EnumerateDirectories("covers").FirstOrDefault();
+            DirectoryInfo? coverDir = preSettingFileInfo.Directory?.Parent?.EnumerateDirectories("covers").FirstOrDefault();
             if (coverDir is not null && coverDir.Exists)
             {
                 coverDir.Delete(true);
             }
 #if !DEBUG
-            DirectoryInfo? refDir = settingsFileInfo.Directory?.Parent?.EnumerateDirectories("ref").FirstOrDefault();
+            DirectoryInfo? refDir = preSettingFileInfo.Directory?.Parent?.EnumerateDirectories("ref").FirstOrDefault();
             if (refDir is not null && refDir.Exists)
             {
                 refDir.Delete(true);
             }
 #endif
             settingsFileStream.Close();
-            settingsFileInfo.Directory?.Delete(true);
+            preSettingFileInfo.Directory?.Delete(true);
         }
 
     }

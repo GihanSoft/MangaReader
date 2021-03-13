@@ -1,20 +1,7 @@
 ﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Windows;
-using System.Windows.Threading;
-using System.Xml.Linq;
 
-using ControlzEx.Theming;
-
-using GihanSoft.Navigation;
-
-using LiteDB;
-
-using MangaReader.Data;
-using MangaReader.Data.Models;
-
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MangaReader
@@ -25,6 +12,10 @@ namespace MangaReader
     /// </summary>
     public partial class App : IDisposable
     {
+        public const string ArgumentsKey = "Arguments";
+
+        //static part ---------------------------------------------------
+
         public static new App Current => (App)Application.Current;
 
         public static void ShowError(Exception err)
@@ -36,8 +27,9 @@ namespace MangaReader
             MessageBox.Show(err.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        //instance part -------------------------------------------------
+
         private readonly ServiceProvider mainServiceProvider;
-        private readonly IServiceProvider serviceProvider;
         private readonly IServiceScope serviceScope;
         private bool disposedValue;
 
@@ -45,99 +37,46 @@ namespace MangaReader
         {
             InitializeComponent();
 
+            this.DispatcherUnhandledException += (_, e) =>
+            {
+                ShowError(e.Exception);
+                e.Handled = true;
+            };
+
+            var buildConfiguration = new Func<IServiceProvider?, IConfiguration>(
+                _ => new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json")
+                    .Build());
             IServiceCollection services = new ServiceCollection();
-            ConfigureServices(services);
+            services.AddTransient(buildConfiguration);
+
+            Startup.ServiceConfigurer serviceConfigurer = new(buildConfiguration(null));
+            serviceConfigurer.ConfigureServices(services);
+
             mainServiceProvider = services.BuildServiceProvider();
             serviceScope = mainServiceProvider.CreateScope();
-            serviceProvider = serviceScope.ServiceProvider;
-            services.AddSingleton(ServiceProvider);
-
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
         }
-
-        public static void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton(new Version(3, 0));
-
-            services.AddScoped<PageNavigator>();
-            string appDataPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    @"GihanSoft\MangaReader",
-                    "data.litedb");
-            Directory.CreateDirectory(Path.GetDirectoryName(appDataPath)!);
-            services.AddSingleton(new ConnectionString
-            {
-                Filename = appDataPath,
-                Upgrade = true,
-                Connection = ConnectionType.Shared
-            });
-            services.AddScoped<DataDb>();
-            services.AddScoped<SettingsManager>();
-        }
-
-        public IServiceProvider ServiceProvider => serviceProvider;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            SettingsManager settingsManager
-                = ActivatorUtilities.GetServiceOrCreateInstance<SettingsManager>(ServiceProvider);
-            MainOptions? mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
-            if (mainOptions is null)
+
+            if (e is null)
             {
-                FirstRunBootstraper();
-                mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
+                return;
+            }
+            if (e.Args.Length > 0)
+            {
+                Properties[ArgumentsKey] = e.Args;
             }
 
-            Version currentVersion = serviceProvider.GetService<Version>()!;
-            if (mainOptions!.Version != currentVersion.ToString())
-            {
-                OnVersionChange(Version.Parse(mainOptions.Version ?? "0.0"), currentVersion);
-            }
-            ThemeManager.Current.ChangeTheme(this, mainOptions.Appearance.Theme!);
-        }
+            this.MainWindow = (ActivatorUtilities.CreateInstance<MainWindow>(serviceScope.ServiceProvider));
 
-        private void OnVersionChange(Version preVersion, Version currentVersion)
-        {
-            if (preVersion.Major is 0 && currentVersion!.Major == 3)
-            {
-                Old.OldUpdate.UpdateSetting(Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "Data",
-                    "setting.ini"));
-                SettingsManager settingsManager = ActivatorUtilities
-                    .GetServiceOrCreateInstance<SettingsManager>(ServiceProvider);
-                MainOptions? mainOptions = settingsManager.GetMainOptions();
-                mainOptions.Version = currentVersion.ToString();
-                settingsManager.SaveMainOptions(mainOptions);
-            }
-        }
+            var bootstrapper = ActivatorUtilities.CreateInstance<Startup.Bootstrapper>(serviceScope.ServiceProvider);
+            bootstrapper.Bootstrap();
 
-        private void FirstRunBootstraper()
-        {
-            SettingsManager settingsManager
-                = ActivatorUtilities.GetServiceOrCreateInstance<SettingsManager>(ServiceProvider);
-            settingsManager.Save(MainOptions.Key, new MainOptions
-            {
-                Appearance = new MainOptions.AppearanceClass
-                {
-                    Theme = "Light.Blue",
-                    WindowPosition = new MainOptions.AppearanceClass.WindowPositionClass
-                    {
-                        Top = (SystemParameters.PrimaryScreenHeight - 450) / 2,
-                        Left = (SystemParameters.PrimaryScreenWidth - 800) / 2,
-                        Height = 450,
-                        Width = 800,
-                        WindowsState = (byte)WindowState.Maximized
-                    }
-                },
-            });
-        }
-
-        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            ShowError(e.Exception);
-            e.Handled = true;
+            MainWindow.Show();
         }
 
         protected override void OnExit(ExitEventArgs e)

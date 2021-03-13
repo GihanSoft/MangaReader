@@ -19,6 +19,8 @@ using System.Windows.Input;
 using System.Windows.Shell;
 using System.Windows.Data;
 using MahApps.Metro.Controls;
+using System.Windows.Controls;
+using System.Collections.ObjectModel;
 
 namespace MangaReader.Views.Pages
 {
@@ -37,17 +39,17 @@ namespace MangaReader.Views.Pages
 
         private readonly DataDb dataDb;
         private readonly SettingsManager settingsManager;
+        private readonly PageNavigator pageNavigator;
 
         public PgLibrary(
             DataDb dataDb,
-            SettingsManager settingsManager
+            SettingsManager settingsManager,
+            PageNavigator pageNavigator
             )
         {
             this.dataDb = dataDb;
             this.settingsManager = settingsManager;
-
-            Refresh += RefreshMethod;
-
+            this.pageNavigator = pageNavigator;
             InitializeComponent();
 
             SpDelete.SetBinding(VisibilityHelper.IsVisibleProperty, new Binding()
@@ -63,55 +65,77 @@ namespace MangaReader.Views.Pages
             set => SetValue(IsCheckActiveProperty, value);
         }
 
-        public void RefreshMethod()
+        public override async Task RefreshAsync()
         {
-            Task.Run(async () =>
-            {
-                Dispatcher.Invoke(() => this.SetCurrentValue(FocusableProperty, false));
+            Dispatcher.Invoke(() => this.SetCurrentValue(FocusableProperty, false));
 
-                Manga[] mangas = dataDb.Mangas.FindAll().OrderBy(m => m.Name, NaturalStringComparer.Default).ToArray();
-                for (int i = 0; i < mangas.Length; i++)
+            var resultMangas = dataDb.Mangas.FindAll()
+                .Where(manga => (manga.Name?.Contains(TxtSearch.Text, StringComparison.OrdinalIgnoreCase)).GetValueOrDefault(false))
+                .OrderBy(m => m.Name, NaturalStringComparer.Default)
+                .ToArray();
+
+            var panelCount = Dispatcher.Invoke(() => ListPanel.Children.Count);
+            for (int i = 0; i < Math.Max(resultMangas.Length, panelCount); i++)
+            {
+                var delay = Dispatcher.Invoke(() =>
                 {
-                    Manga manga = mangas[i];
-                    Dispatcher.Invoke(() =>
+                    Manga? mangaI = i < resultMangas.Length ? resultMangas[i] : null;
+                    MangaItem? mangaItemI = i < ListPanel.Children.Count ? ListPanel.Children[i] as MangaItem : null;
+
+                    if (mangaI is null)
                     {
-                        if (ListPanel.Children.Count >= i + 1)
+                        if (i < ListPanel.Children.Count)
                         {
-                            if (((MangaItem)ListPanel.Children[i]).Manga.Id == manga.Id)
-                            {
-                                if (i is 0)
-                                {
-                                    MoveFocus(new(FocusNavigationDirection.Next));
-                                }
-                                return;
-                            }
                             ListPanel.Children.RemoveAt(i);
+                            i--;
                         }
-                        MangaItem mangaItem = new(manga);
+                        return false;
+                    }
+                    if (mangaItemI is null || mangaItemI.Manga!.Id != mangaI.Id)
+                    {
+                        if (mangaItemI is not null &&
+                            NaturalStringComparer.Default.Compare(mangaI, mangaItemI.Manga) >= 0)
+                        {
+                            ListPanel.Children.Remove(mangaItemI);
+                            i--;
+                            return false;
+                        }
+                        mangaItemI = new();
+                        mangaItemI.Manga = mangaI;
                         Binding binding = new()
                         {
                             Source = this,
                             Path = new PropertyPath(nameof(IsCheckActive), null),
                         };
-                        mangaItem.SetBinding(MangaItem.IsCheckActiveProperty, binding);
-                        mangaItem.Click += MangaItem_Click;
-                        ListPanel.Children.Insert(i, mangaItem);
+                        mangaItemI.SetBinding(MangaItem.IsCheckActiveProperty, binding);
+                        mangaItemI.Click += MangaItem_Click;
+                        ListPanel.Children.Insert(i, mangaItemI);
                         if (i is 0)
                         {
-                            MoveFocus(new(FocusNavigationDirection.Next));
+                            mangaItemI.WorkingFocus();
                         }
-                    });
-                    await Task.Delay(10).ConfigureAwait(false);
-                }
-                if (mangas.Length is 0)
-                {
-                    Dispatcher.Invoke(() =>
+                        return true;
+                    }
+                    if (i is 0)
                     {
-                        this.SetCurrentValue(FocusableProperty, true);
-                        KeyboardNavigationEx.Focus(this);
-                    });
+                        mangaItemI.WorkingFocus();
+                    }
+                    return false;
+                });
+                if (delay)
+                {
+                    await Task.Delay(1).ConfigureAwait(false);
                 }
-            });
+            }
+            if (resultMangas.Length is 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    //this.Focusable
+                    this.SetCurrentValue(FocusableProperty, true);
+                    KeyboardNavigationEx.Focus(this);
+                });
+            }
         }
 
         private void MangaItem_Click(object? sender, RoutedEventArgs e)
@@ -121,8 +145,8 @@ namespace MangaReader.Views.Pages
                 return;
             }
 
-            PageNavigator!.GoTo<PgViewer>();
-            ((PgViewer)PageNavigator.Current).View("manga://" + ((MangaItem)sender).Manga.Id);
+            pageNavigator!.GoToAsync<PgViewer>();
+            ((PgViewer)pageNavigator.CurrentPage).View("manga://" + ((MangaItem)sender).Manga.Id);
             JumpList.AddToRecentCategory(new JumpTask()
             {
                 ApplicationPath = AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName,
@@ -241,7 +265,8 @@ namespace MangaReader.Views.Pages
                 }
                 Dispatcher.Invoke(() =>
                 {
-                    MangaItem mangaItem = new(manga);
+                    MangaItem mangaItem = new();
+                    mangaItem.Manga = manga;
                     Binding binding = new()
                     {
                         Source = this,
@@ -280,7 +305,7 @@ namespace MangaReader.Views.Pages
             {
                 await AddManga(mangaDirectory).ConfigureAwait(false);
             }
-            RefreshMethod();
+            await RefreshAsync().ConfigureAwait(false);
         }
 
         private async void CmdAddMangaBatch_Executed(object? sender, ExecutedRoutedEventArgs? e)
@@ -290,7 +315,7 @@ namespace MangaReader.Views.Pages
                 await AddManga(mangaDirectory).ConfigureAwait(false);
                 await Task.Delay(10).ConfigureAwait(false);
             }
-            RefreshMethod();
+            await RefreshAsync().ConfigureAwait(false);
         }
 
         private void CmdToggleDeleteState_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -338,7 +363,27 @@ namespace MangaReader.Views.Pages
             }
             dataDb.Mangas.DeleteMany(m => toDeleteMangaIds.Contains(m.Id));
             SetCurrentValue(IsCheckActiveProperty, false);
-            RefreshMethod();
+            RefreshAsync().ConfigureAwait(false);
+        }
+
+        private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key is Key.Back)
+            {
+                var txt = TxtSearch.Text.Length > 0 ? TxtSearch.Text[..^1] : null;
+                TxtSearch.SetCurrentValue(TextBox.TextProperty, txt);
+                RefreshAsync().ConfigureAwait(false);
+                return;
+            }
+
+            var ch = KeyboardHelper.GetCharFromKey(e.Key);
+            var x = ch > 0 && !char.IsControl(ch);
+            if (x)
+            {
+                TxtSearch.Text += ch;
+                RefreshAsync().ConfigureAwait(false);
+                e.Handled = true;
+            }
         }
     }
 }

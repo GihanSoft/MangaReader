@@ -23,11 +23,19 @@ namespace MangaReader.Views.XamlConverters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is string valStr)
+            {
+                value = double.Parse(valStr, culture);
+            }
             return Math.Round((double)value * Zarib, 2);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if(value is string valStr)
+            {
+                value = double.Parse(valStr, culture);
+            }
             return Math.Round((double)value / Zarib, 2);
         }
     }
