@@ -12,7 +12,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <EnableSecurityDebugging>false</EnableSecurityDebugging>
-    <_LastSelectedProfileId>C:\Users\chief\source\repos\MangaReader\MangaReader\Properties\PublishProfiles\FolderProfile1.pubxml</_LastSelectedProfileId>
+    <_LastSelectedProfileId>C:\Users\chief\source\repos\MangaReader\MangaReader\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartArguments>

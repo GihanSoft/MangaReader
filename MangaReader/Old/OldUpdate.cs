@@ -113,6 +113,32 @@ namespace MangaReader.Old
                 refDir.Delete(true);
             }
 #endif
+            var preVersionFilePaths = new[]
+            {
+                "MangaReader.exe.config",
+                "Newtonsoft.Json.dll",
+                "Newtonsoft.Json.xml",
+                "System.Net.Http.dll",
+                "System.Windows.Interactivity.dll",
+                "UnRAR.exe",
+                "Updater.exe",
+                "Updater.exe.config"
+            };
+            FileInfo[]? preVersionFiles = preSettingFileInfo.Directory?.Parent?.EnumerateFiles()?
+                .Where(f => preVersionFilePaths.Contains(f.Name, StringComparer.OrdinalIgnoreCase))?.ToArray();
+            if (preVersionFiles is not null)
+            {
+                foreach (var file in preVersionFiles)
+                {
+                    file.Delete();
+                }
+            }
+
+            if (coverDir is not null && coverDir.Exists)
+            {
+                coverDir.Delete(true);
+            }
+
             settingsFileStream.Close();
             preSettingFileInfo.Directory?.Delete(true);
         }
