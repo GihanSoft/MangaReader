@@ -49,7 +49,7 @@ namespace MangaReader.Controllers
             using var reader = ReaderFactory.Open(stream);
             while (reader.MoveToNextEntry())
             {
-                if (!reader.Entry.IsDirectory && FileTypeList.ImageTypes.Contains(Path.GetExtension(reader.Entry.Key)))
+                if (!reader.Entry.IsDirectory && FileTypeList.ImageTypes.Contains(Path.GetExtension(reader.Entry.Key), StringComparer.InvariantCultureIgnoreCase))
                     pageNames.Add(reader.Entry.Key);
             }
             pageNames.Sort(NaturalStringComparer.Default);

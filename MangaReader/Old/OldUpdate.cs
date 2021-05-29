@@ -46,7 +46,8 @@ namespace MangaReader.Old
                 Upgrade = true,
                 Connection = ConnectionType.Shared
             };
-            using DataDb dataDb = new(connectionString);
+            using LiteDatabase database = new(connectionString);
+            DataDb dataDb = new(database);
             SettingsManager settingsManager = new(dataDb);
             MainOptions mainOptions = settingsManager.GetMainOptions() ?? new MainOptions();
             mainOptions.Version = "3.0";

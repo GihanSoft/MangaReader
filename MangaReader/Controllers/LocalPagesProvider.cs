@@ -23,7 +23,7 @@ namespace GihanSoft.MangaSources.Local
 
             DirectoryInfo dir = new(path);
             pagePathes = dir.EnumerateFiles("*", SearchOption.AllDirectories)
-                .Where(f => FileTypeList.ImageTypes.Contains(f.Extension))
+                .Where(f => FileTypeList.ImageTypes.Contains(f.Extension, StringComparer.InvariantCultureIgnoreCase))
                 .Select(f => f.FullName).ToList();
             pagePathes.Sort(NaturalStringComparer.Default);
         }

@@ -1,4 +1,6 @@
-﻿namespace MangaReader.Data
+﻿using System;
+
+namespace MangaReader.Data
 {
     public class SettingsManager
     {

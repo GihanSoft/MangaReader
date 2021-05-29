@@ -14,10 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MahApps.Metro.IconPacks.Material", "MahApps.Metro.IconPacks\src\MahApps.Metro.IconPacks\MahApps.Metro.IconPacks.Material.csproj", "{49ECD390-50BC-4A20-AFDF-6BEC9B482304}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MahApps.Metro.IconPacks.Core", "MahApps.Metro.IconPacks\src\MahApps.Metro.IconPacks.Core\MahApps.Metro.IconPacks.Core.csproj", "{79823030-3531-409D-A534-7C3086014D6C}"
-EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{1D99DC62-80AE-4A88-BE2C-5FFF700E69FB}"
 EndProject
 Global
@@ -52,22 +48,6 @@ Global
 		{838EBAFD-59B0-4468-9925-5A606205846F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{838EBAFD-59B0-4468-9925-5A606205846F}.Release|x86.ActiveCfg = Release|Any CPU
 		{838EBAFD-59B0-4468-9925-5A606205846F}.Release|x86.Build.0 = Release|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Debug|x86.Build.0 = Debug|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Release|x86.ActiveCfg = Release|Any CPU
-		{49ECD390-50BC-4A20-AFDF-6BEC9B482304}.Release|x86.Build.0 = Release|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Debug|x86.Build.0 = Debug|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Release|x86.ActiveCfg = Release|Any CPU
-		{79823030-3531-409D-A534-7C3086014D6C}.Release|x86.Build.0 = Release|Any CPU
 		{1D99DC62-80AE-4A88-BE2C-5FFF700E69FB}.Debug|Any CPU.ActiveCfg = Debug
 		{1D99DC62-80AE-4A88-BE2C-5FFF700E69FB}.Debug|x86.ActiveCfg = Debug
 		{1D99DC62-80AE-4A88-BE2C-5FFF700E69FB}.Release|Any CPU.ActiveCfg = Release

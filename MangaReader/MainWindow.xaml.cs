@@ -130,7 +130,7 @@ namespace MangaReader
             if (this.GetFullScreen())
             {
                 restoreBounds = this.GetRealRestoreBounds();
-                windowState = WindowState.Maximized;
+                windowState = this.GetPreWindowsState();
             }
             else
             {

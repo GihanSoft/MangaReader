@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
-
-using ControlzEx.Standard;
 
 using GihanSoft;
 
 using MahApps.Metro.Controls;
+
+using MangaReader.Views.Native;
 
 namespace GihanSoft.Views.AttachedProperties
 {
@@ -38,99 +40,181 @@ namespace GihanSoft.Views.AttachedProperties
                 WindowInteropHelper windowInteropHelper = new(win);
                 HwndSource hwndSource = HwndSource.FromHwnd(windowInteropHelper.EnsureHandle());
 
-                static IntPtr LockHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-                {
-                    if(hwnd == IntPtr.Zero)
+                HwndSourceHook lockHook = new(
+                    (IntPtr _, int msg, IntPtr _, IntPtr lParam, ref bool _) =>
                     {
-                        return hwnd;
-                    }
-                    if (msg == 0x46)
-                    {
-#pragma warning disable CS0618 // Type or member is obsolete
-                        var wp = Marshal.PtrToStructure<WINDOWPOS>(lParam);
-                        wp.flags |= SWP.NOMOVE | SWP.NOSIZE;
-#pragma warning restore CS0618 // Type or member is obsolete
-                        Marshal.StructureToPtr(wp, lParam, false);
-                    }
-                    return IntPtr.Zero;
-                }
+                        if (msg == 0x46)
+                        {
+                            var wp = Marshal.PtrToStructure<WindowPos>(lParam);
+                            wp.flags |= SWP.NOMOVE | SWP.NOSIZE;
+                            Marshal.StructureToPtr(wp, lParam, false);
+                        }
+                        return IntPtr.Zero;
+                    });
 
                 if ((bool)args.NewValue)
                 {
                     win.SetRealRestoreBounds(win.RestoreBounds);
-                    win.Height = SystemParameters.PrimaryScreenHeight;
-                    win.Width = SystemParameters.PrimaryScreenWidth;
-                    win.Top = 0;
-                    win.Left = 0;
-                    win.ResizeMode = ResizeMode.NoResize;
-                    win.WindowStyle = WindowStyle.None;
-                    if (win is MetroWindow metroWindow)
+                    win.SetPreWindowsState(win.WindowState);
+
+                    win.SetCurrentValue(Window.TopProperty, 0d);
+                    win.SetCurrentValue(Window.LeftProperty, 0d);
+                    win.SetCurrentValue(FrameworkElement.HeightProperty, SystemParameters.PrimaryScreenHeight);
+                    win.SetCurrentValue(FrameworkElement.WidthProperty, SystemParameters.PrimaryScreenWidth);
+                    win.SetCurrentValue(Window.ResizeModeProperty, ResizeMode.NoResize);
+                    win.SetCurrentValue(Window.WindowStyleProperty, WindowStyle.None);
+
+                    Type? winType = win.GetType();
+                    while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
-                        metroWindow.ShowTitleBar = false;
-                        metroWindow.ShowCloseButton = false;
-                        metroWindow.GlowBrush = null;
+                        winType = winType.BaseType;
                     }
-                    SetPreWindowsState(win, win.WindowState);
+                    if (winType is not null &&
+                        (winType.FullName?.Equals("MahApps.Metro.Controls.MetroWindow", StringComparison.OrdinalIgnoreCase) ?? false))
+                    {
+                        var showTitleBarProperty =
+                            winType.GetField("ShowTitleBarProperty")?
+                            .GetValue(win)
+                            as DependencyProperty;
+
+                        if (showTitleBarProperty is not null)
+                        {
+                            win.SetCurrentValue(showTitleBarProperty, false);
+                        }
+
+                        var showCloseButtonProperty =
+                            winType.GetField("ShowCloseButtonProperty")?
+                            .GetValue(win)
+                            as DependencyProperty;
+                        if (showCloseButtonProperty is not null)
+                        {
+                            win.SetCurrentValue(showCloseButtonProperty, false);
+                        }
+                    }
                     win.WindowState = WindowState.Normal;
                     win.BorderThickness = new Thickness(0);
-                    hwndSource.AddHook(LockHook);
+                    hwndSource.AddHook(lockHook);
                 }
                 else
                 {
-                    hwndSource.RemoveHook(LockHook);
-                    win.WindowState = GetPreWindowsState(win);
+                    hwndSource.RemoveHook(lockHook);
                     Rect restoreBounds = win.GetRealRestoreBounds();
-                    win.Height = restoreBounds.Height;
-                    win.Width = restoreBounds.Width;
-                    win.Top = restoreBounds.Top;
-                    win.Left = restoreBounds.Left;
-                    win.ResizeMode = ResizeMode.CanResize;
-                    win.WindowStyle = WindowStyle.SingleBorderWindow;
-                    if (win is MetroWindow metroWindow)
+                    win.SetCurrentValue(Window.WindowStateProperty, win.GetPreWindowsState());
+                    win.SetCurrentValue(Window.TopProperty, restoreBounds.Top);
+                    win.SetCurrentValue(Window.LeftProperty, restoreBounds.Left);
+                    win.SetCurrentValue(FrameworkElement.HeightProperty, restoreBounds.Height);
+                    win.SetCurrentValue(FrameworkElement.WidthProperty, restoreBounds.Width);
+                    win.SetCurrentValue(Window.ResizeModeProperty, ResizeMode.CanResize);
+                    win.SetCurrentValue(Window.WindowStyleProperty, WindowStyle.ThreeDBorderWindow);
+                    win.SetCurrentValue(Control.BorderThicknessProperty, new Thickness(1));
+
+                    Type? winType = win.GetType();
+                    while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
-                        metroWindow.BorderThickness = new Thickness(1);
-                        metroWindow.ShowTitleBar = true;
-                        metroWindow.ShowCloseButton = true;
+                        winType = winType.BaseType;
+                    }
+                    if (winType is not null &&
+                        (winType.FullName?.Equals("MahApps.Metro.Controls.MetroWindow", StringComparison.OrdinalIgnoreCase) ?? false))
+                    {
+                        var showTitleBarProperty =
+                            winType.GetField("ShowTitleBarProperty")?
+                            .GetValue(win)
+                            as DependencyProperty;
+
+                        if (showTitleBarProperty is not null)
+                        {
+                            win.SetCurrentValue(showTitleBarProperty, true);
+                        }
+
+                        var showCloseButtonProperty =
+                            winType.GetField("ShowCloseButtonProperty")?
+                            .GetValue(win)
+                            as DependencyProperty;
+                        if (showCloseButtonProperty is not null)
+                        {
+                            win.SetCurrentValue(showCloseButtonProperty, true);
+                        }
                     }
                 }
             }));
 
-        public static bool GetFullScreen(Window obj)
+        /// <summary>Helper for getting <see cref="FullScreenProperty"/> from <paramref name="window"/>.</summary>
+        /// <param name="window"><see cref="Window"/> to read <see cref="FullScreenProperty"/> from.</param>
+        /// <returns>FullScreen property value.</returns>
+        [AttachedPropertyBrowsableForType(typeof(Window))]
+        public static bool GetFullScreen(Window window)
         {
-            return (bool)obj.GetValue(FullScreenProperty);
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
+            return (bool)window.GetValue(FullScreenProperty);
         }
-        public static void SetFullScreen(Window obj, bool value)
+        /// <summary>Helper for setting <see cref="FullScreenProperty"/> on <paramref name="window"/>.</summary>
+        /// <param name="window"><see cref="Window"/> to set <see cref="FullScreenProperty"/> on.</param>
+        /// <param name="value">FullScreen property value.</param>
+        [AttachedPropertyBrowsableForType(typeof(Window))]
+        public static void SetFullScreen(Window window, bool value)
         {
-            obj.SetValue(FullScreenProperty, value);
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
+            window.SetValue(FullScreenProperty, value);
         }
 
         public static WindowState GetPreWindowsState(this Window window)
         {
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
             return (WindowState)window.GetValue(PreWindowsStateProperty);
         }
         public static void SetPreWindowsState(this Window window, WindowState value)
         {
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
             window.SetValue(PreWindowsStateProperty, value);
         }
 
         public static Rect GetRealRestoreBounds(this Window window)
         {
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
             return (Rect)window.GetValue(RealRestoreBoundsProperty);
         }
         public static void SetRealRestoreBounds(this Window window, Rect value)
         {
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
             window.SetValue(RealRestoreBoundsProperty, value);
         }
     }
-    public static partial class WindowPropertiesExtensions
+    public static class WindowPropertiesExtensions
     {
         public static bool GetFullScreen(this Window window)
         {
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
             return (bool)window.GetValue(WindowProp.FullScreenProperty);
         }
+
         public static void SetFullScreen(this Window window, bool value)
         {
-            window.SetValue(WindowProp.FullScreenProperty, value);
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
+            window.SetCurrentValue(WindowProp.FullScreenProperty, value);
         }
     }
 }
