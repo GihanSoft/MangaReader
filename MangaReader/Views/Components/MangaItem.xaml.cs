@@ -81,8 +81,6 @@ namespace MangaReader.Views.Components
             {
                 imageSource = BitmapFrame.Create(new Uri(cover));
             }
-            //imageSource = new TransformedBitmap(imageSource,
-            //    new ScaleTransform(RenderSize.Width / imageSource.Width, RenderSize.Width / imageSource.Width));
             Cover.SetCurrentValue(Image.SourceProperty, imageSource);
         }
 

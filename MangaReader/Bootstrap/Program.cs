@@ -15,7 +15,8 @@ Environment.SetEnvironmentVariable(Startup.ProductNameKey, fileVersionInfo.Produ
 ServiceCollection services = new();
 Startup.ServiceConfigurer serviceConfigurer = new();
 serviceConfigurer.ConfigureServices(services);
-using var serviceProvider = services.BuildServiceProvider();
+
+var serviceProvider = services.BuildServiceProvider();
 
 var initializer = ActivatorUtilities.GetServiceOrCreateInstance<Startup.Initializer>(serviceProvider);
 initializer.Initialize();
@@ -27,8 +28,8 @@ Thread staThread = new(() =>
     initializer.InitializeGUI();
     app.MainWindow = ActivatorUtilities.GetServiceOrCreateInstance<MainWindow>(serviceProvider);
     app.Run(app.MainWindow);
+
+    serviceProvider.Dispose();
 });
 staThread.SetApartmentState(ApartmentState.STA);
 staThread.Start();
-
-while (staThread.IsAlive) { Thread.Sleep(100); }

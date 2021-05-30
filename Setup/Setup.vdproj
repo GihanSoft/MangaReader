@@ -43,6 +43,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -182,15 +190,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MangaReader"
-        "ProductCode" = "8:{06D9E4E7-0A1E-4917-B4B1-839AEA236AED}"
-        "PackageCode" = "8:{4AF850E9-2BEE-4075-8B9A-20DE721741E6}"
+        "ProductCode" = "8:{43479B0E-A169-4E4D-ACC8-B0A515F05784}"
+        "PackageCode" = "8:{496BCCE4-CC0E-43ED-A688-38C42BA73B90}"
         "UpgradeCode" = "8:{69154F09-396D-4C77-8942-141CA5C0EB65}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:3.0.0"
+        "ProductVersion" = "8:3.1.0"
         "Manufacturer" = "8:GihanSoft"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://t.me/ChiefMB"

@@ -76,20 +76,7 @@ namespace MangaReader.Bootstrap
 
             private void OnVersionChange(Version previousVersion, Version currentVersion)
             {
-                if (previousVersion.Major is 0 && currentVersion!.Major == 3)
-                {
-                    FileInfo previousSettingsFileInfo = new(Path.Combine(
-                        AppDomain.CurrentDomain.BaseDirectory,
-                        "Data",
-                        "setting.ini"));
-                    if (previousSettingsFileInfo.Exists)
-                    {
-                        Old.OldUpdate.UpdateSetting(previousSettingsFileInfo);
-                    }
-                    MainOptions? mainOptions = settingsManager.GetMainOptions();
-                    mainOptions.Version = currentVersion.ToString();
-                    settingsManager.SaveMainOptions(mainOptions);
-                }
+                //
             }
         }
 

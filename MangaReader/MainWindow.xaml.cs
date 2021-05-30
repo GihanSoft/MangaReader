@@ -47,11 +47,15 @@ namespace MangaReader
 
             PageNavigator = pageNavigator;
 
-            this.Loaded += OnLoaded;
+            Loaded += OnLoaded;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (PageNavigator is null)
+            {
+                return;
+            }
             if (App.Current.Properties.Contains(App.ArgumentsKey))
             {
                 await PageNavigator.GoToAsync<PgViewer>().ConfigureAwait(false);
@@ -66,9 +70,11 @@ namespace MangaReader
                 try
                 {
                     await PageNavigator.GoToAsync<PgLibrary>().ConfigureAwait(false);
+
                 }
                 catch (TaskCanceledException)
                 {
+                    //
                 }
             }
         }
@@ -78,8 +84,8 @@ namespace MangaReader
         /// </summary>
         public PageNavigator? PageNavigator
         {
-            get => (PageNavigator?)this.GetValue(PageNavigatorProperty);
-            private set => this.SetValue(PageNavigatorPropertyKey, value);
+            get => (PageNavigator?)GetValue(PageNavigatorProperty);
+            private set => SetValue(PageNavigatorPropertyKey, value);
         }
 
         private void FlyoutCancelBtn_Click(object sender, RoutedEventArgs e)
@@ -114,11 +120,11 @@ namespace MangaReader
             double y = e.GetPosition(this).Y;
             if (y < 30)
             {
-                ShowTitleBar = true;
+                SetCurrentValue(ShowTitleBarProperty, true);
             }
             else if (y > 60 && !ToolBar.IsMouseOver)
             {
-                ShowTitleBar = false;
+                SetCurrentValue(ShowTitleBarProperty, false);
             }
         }
 
@@ -165,13 +171,13 @@ namespace MangaReader
 
         private void CmdOpenMenu_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            MenuFlyout.IsOpen = true;
+            MenuFlyout.SetCurrentValue(Flyout.IsOpenProperty, true);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             PageNavigator!.GoToAsync<PgLibrary>();
-            MenuFlyout.IsOpen = false;
+            MenuFlyout.SetCurrentValue(Flyout.IsOpenProperty, false);
         }
     }
 }

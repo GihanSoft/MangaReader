@@ -4,7 +4,7 @@
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>OtakuLib.ico</ApplicationIcon>
-		<Version>3.0.0</Version>
+		<Version>3.1.0</Version>
 		<Company>GihanSoft</Company>
 		<Authors>Muhammad Babayi</Authors>
 		<PackageId>GihanSoft.MangaReader</PackageId>
