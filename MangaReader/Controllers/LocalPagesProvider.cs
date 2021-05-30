@@ -16,14 +16,14 @@ namespace GihanSoft.MangaSources.Local
 
         public LocalPagesProvider(string path)
         {
-            if (!File.GetAttributes(path).HasFlag(FileAttributes.Directory))
+            if ((File.GetAttributes(path) & FileAttributes.Directory) == 0)
                 throw new ArgumentException("is not directory path", nameof(path));
 
             loadedPages = new Dictionary<int, MemoryStream>();
 
             DirectoryInfo dir = new(path);
             pagePathes = dir.EnumerateFiles("*", SearchOption.AllDirectories)
-                .Where(f => FileTypeList.ImageTypes.Contains(f.Extension))
+                .Where(f => FileTypeList.ImageTypes.Contains(f.Extension, StringComparer.InvariantCultureIgnoreCase))
                 .Select(f => f.FullName).ToList();
             pagePathes.Sort(NaturalStringComparer.Default);
         }
@@ -56,16 +56,22 @@ namespace GihanSoft.MangaSources.Local
 
         public override Task UnLoadPageAsync(int page)
         {
-            throw new NotImplementedException();
+            loadedPages.Remove(page, out var memoryStream);
+            memoryStream?.Dispose();
+            return Task.CompletedTask;
         }
 
         protected override void Dispose(bool disposing)
         {
-            foreach (var loaded in loadedPages)
+            if (disposing && loadedPages is not null)
             {
-                loaded.Value.Dispose();
+                foreach (var loaded in loadedPages.Values)
+                {
+                    loaded.Dispose();
+                }
+                loadedPages.Clear();
             }
-            loadedPages.Clear();
+            base.Dispose(disposing);
         }
     }
 }

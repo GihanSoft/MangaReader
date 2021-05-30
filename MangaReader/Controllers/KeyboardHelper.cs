@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MangaReader.Controllers
 {
-    class KeyboardHelper
+    internal static class KeyboardHelper
     {
         public enum MapType : uint
         {
@@ -49,10 +45,8 @@ namespace MangaReader.Controllers
             switch (result)
             {
                 case -1:
-                    break;
                 case 0:
                     break;
-                case 1:
                 default:
                     ch = stringBuilder[0];
                     break;

@@ -23,7 +23,8 @@ namespace AnimePlayer.Views.XamlConverters
         object? IList.this[int index]
         {
             get => items[index];
-            set => items[index] = (BoolToIconConverterItem)value;
+            set => items[index] = value as BoolToIconConverterItem ??
+                throw new InvalidOperationException("item type must be BoolToIconConverterItem");
         }
 
         public int Count => items.Count;
@@ -41,7 +42,7 @@ namespace AnimePlayer.Views.XamlConverters
             items.Add(item);
         }
 
-        public int Add(object value)
+        public int Add(object? value)
         {
             return ((IList)items).Add(value);
         }
@@ -56,17 +57,17 @@ namespace AnimePlayer.Views.XamlConverters
             return items.Contains(item);
         }
 
-        public bool Contains(object value)
+        public bool Contains(object? value)
         {
             return ((IList)items).Contains(value);
         }
 
         #region IValueConverter
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             return items.LastOrDefault(i => i.Value.Equals(value))?.Kind;
         }
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is not PackIconMaterialKind) return null;
             return items.LastOrDefault(i => i.Kind == (PackIconMaterialKind)value)?.Value;
@@ -93,7 +94,7 @@ namespace AnimePlayer.Views.XamlConverters
             return items.IndexOf(item);
         }
 
-        public int IndexOf(object value)
+        public int IndexOf(object? value)
         {
             return ((IList)items).IndexOf(value);
         }
@@ -103,7 +104,7 @@ namespace AnimePlayer.Views.XamlConverters
             items.Insert(index, item);
         }
 
-        public void Insert(int index, object value)
+        public void Insert(int index, object? value)
         {
             ((IList)items).Insert(index, value);
         }
@@ -113,7 +114,7 @@ namespace AnimePlayer.Views.XamlConverters
             return items.Remove(item);
         }
 
-        public void Remove(object value)
+        public void Remove(object? value)
         {
             ((IList)items).Remove(value);
         }

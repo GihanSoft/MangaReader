@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using ControlzEx;
@@ -21,9 +22,7 @@ namespace MangaReader.Views.Components
             typeof(bool),
             typeof(MangaItem),
             new PropertyMetadata(default(bool), (d, _) =>
-            {
-                d.SetCurrentValue(IsCheckedProperty, false);
-            }));
+                d.SetCurrentValue(IsCheckedProperty, false)));
 
         /// <summary>Identifies the <see cref="IsChecked"/> dependency property.</summary>
         public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
@@ -64,11 +63,10 @@ namespace MangaReader.Views.Components
         {
             if (cover is null)
             {
-                Cover.Source = null;
+                Cover.SetCurrentValue(Image.SourceProperty, null);
                 return;
             }
-            Bitmap bitmap;
-            //NetVips.Image image;
+            BitmapSource imageSource;
             if (cover.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
             {
                 var dataStr = cover.Split(new[] { ',' }, 2)[1];
@@ -77,54 +75,19 @@ namespace MangaReader.Views.Components
                 {
                     Position = 0
                 };
-                bitmap = new Bitmap(memStreamMain);
-                //image = NetVips.Image.NewFromBuffer(data);
+                imageSource = BitmapFrame.Create(memStreamMain);
             }
             else
             {
-                bitmap = new Bitmap(cover);
-                //image = NetVips.Image.NewFromFile(cover);
+                imageSource = BitmapFrame.Create(new Uri(cover));
             }
-            cover = null;
-            var nesbat = bitmap.Height / (double)bitmap.Width;
-            var thumbImage = bitmap.GetThumbnailImage(
-                (int)Width * 3,
-                (int)(Width * 3 * nesbat),
-                null,
-                IntPtr.Zero);
-            //NetVips.Image thumbImage = image.ThumbnailImage((int)MaxWidth * 3);
-
-            bitmap.Dispose();
-            //image.Dispose();
-            MemoryStream memoryStream = new();
-            thumbImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-            //thumbImage.PngsaveStream(memoryStream, 0);
-            thumbImage.Dispose();
-            memoryStream.Position = 0;
-            BitmapImage bitmapImage = new();
-            bitmapImage.BeginInit();
-            bitmapImage.StreamSource = memoryStream;
-            bitmapImage.EndInit();
-            Cover.Source = bitmapImage;
-            GC.Collect();
+            Cover.SetCurrentValue(Image.SourceProperty, imageSource);
         }
 
         public bool IsEditActive
         {
-            get
-            {
-                if (EditBorder.Visibility == Visibility.Collapsed)
-                    return false;
-                else
-                    return true;
-            }
-            set
-            {
-                if (value == true)
-                    EditBorder.Visibility = Visibility.Visible;
-                else
-                    EditBorder.Visibility = Visibility.Collapsed;
-            }
+            get => EditBorder.Visibility != Visibility.Collapsed;
+            set => EditBorder.SetValue(VisibilityProperty, value ? Visibility.Visible : Visibility.Collapsed);
         }
 
         public Manga? Manga
@@ -143,48 +106,20 @@ namespace MangaReader.Views.Components
             KeyboardNavigationEx.Focus(Btn);
         }
 
-        //public MangaItem(Manga manga) : this()
-        //{
-        //    MangaTitle = manga.Name;
-        //    SetCoverSource(manga.Cover);
-        //    Manga = manga;
-        //}
-
         private void EditNameBtn_Click(object sender, RoutedEventArgs e)
         {
-            NameEntryBorder.Visibility = Visibility.Visible;
-            NameEntry.Text = Manga.Name;
+            NameEntryBorder.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+            NameEntry.SetCurrentValue(TextBox.TextProperty, Manga?.Name);
         }
 
         private void EditCoverBtn_Click(object sender, RoutedEventArgs e)
         {
-            //string filter = "Image files (";
-            //foreach (string format in FileTypeList.ImageTypes)
-            //{
-            //    filter += $"*.{format}, ";
-            //}
-            //filter = filter.Substring(0, filter.Length - 2);
-            //filter += ")|";
-            //foreach (string format in FileTypeList.ImageTypes)
-            //{
-            //    filter += $"*.{format};";
-            //}
-            //filter = filter.Substring(0, filter.Length - 1);
-
-            //var fileChooser = new Microsoft.Win32.OpenFileDialog()
-            //{
-            //    Filter = filter,
-            //    InitialDirectory = Manga.Address
-            //};
-            //var r = fileChooser.ShowDialog();
-            //if (r == true)
-            //    SettingApi.This.MangaList[Manga.Id].CoverAddress = CoverSource = Manga.CoverAddress = fileChooser.FileName;
+            //
         }
 
         private void NameEditOK_Click(object sender, RoutedEventArgs e)
         {
-            //SettingApi.This.MangaList[Manga.Id].Name = MangaTitle = Manga.Name = NameEntry.Text;
-            //NameEntryBorder.Visibility = Visibility.Collapsed;
+            //
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

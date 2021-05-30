@@ -37,11 +37,7 @@ namespace MangaReader.Views.Components.PagesViewers
                 memoryStream = PagesProvider[page];
             }
 
-            BitmapImage bitmap = new();
-            bitmap.BeginInit();
-            bitmap.StreamSource = memoryStream!;
-            bitmap.EndInit();
-            Img.SetCurrentValue(Image.SourceProperty, bitmap);
+            Img.SetCurrentValue(Image.SourceProperty, BitmapFrame.Create(memoryStream));
         }
 
         protected override void OnZoomChanged(double zoom)

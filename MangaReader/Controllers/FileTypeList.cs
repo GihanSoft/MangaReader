@@ -2,7 +2,6 @@
 
 namespace MangaReader.Controllers
 {
-
     public static class FileTypeList
     {
         public static IEnumerable<string> ImageTypes { get; }

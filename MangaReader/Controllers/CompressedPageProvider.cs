@@ -16,12 +16,13 @@ namespace MangaReader.Controllers
         private readonly List<string> pageNames;
 
         private readonly MemoryStream? compressedStream;
-        private readonly string? filePath;
+        private readonly string filePath;
 
         private CompressedPageProvider()
         {
             loadedPages = new Dictionary<int, MemoryStream>();
             pageNames = new List<string>();
+            filePath = string.Empty;
         }
 
         public CompressedPageProvider(MemoryStream stream) : this()
@@ -30,16 +31,19 @@ namespace MangaReader.Controllers
             Initialize(compressedStream);
         }
 
-        public CompressedPageProvider(string? filePath) : this()
+        public CompressedPageProvider(string filePath) : this()
         {
-            this.filePath = filePath;
+            this.filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
 
             using var file = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             Initialize(file);
         }
 
         public CompressedPageProvider(Uri fileUri)
-            : this(fileUri?.LocalPath)
+            : this(
+                  fileUri is null ?
+                  throw new ArgumentNullException(nameof(fileUri)) :
+                  fileUri.LocalPath ?? throw new ArgumentException("LocalPath not found", nameof(fileUri)))
         {
         }
 
@@ -49,7 +53,7 @@ namespace MangaReader.Controllers
             using var reader = ReaderFactory.Open(stream);
             while (reader.MoveToNextEntry())
             {
-                if (!reader.Entry.IsDirectory && FileTypeList.ImageTypes.Contains(Path.GetExtension(reader.Entry.Key)))
+                if (!reader.Entry.IsDirectory && FileTypeList.ImageTypes.Contains(Path.GetExtension(reader.Entry.Key), StringComparer.InvariantCultureIgnoreCase))
                     pageNames.Add(reader.Entry.Key);
             }
             pageNames.Sort(NaturalStringComparer.Default);
@@ -97,16 +101,29 @@ namespace MangaReader.Controllers
 
         public override Task UnLoadPageAsync(int page)
         {
-            throw new NotImplementedException();
+            loadedPages.Remove(page, out var mem);
+            mem?.Dispose();
+            return Task.CompletedTask;
         }
 
         protected override void Dispose(bool disposing)
         {
-            foreach (var loaded in loadedPages)
+            if (disposing)
             {
-                loaded.Value.Dispose();
+                var mems = loadedPages?.Values;
+                if(mems is null)
+                {
+                    return;
+                }
+
+                foreach (var item in mems)
+                {
+                    item.Dispose();
+                }
+
+                loadedPages?.Clear();
             }
-            loadedPages.Clear();
+            base.Dispose(disposing);
         }
     }
 }

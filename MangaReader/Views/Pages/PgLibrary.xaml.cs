@@ -67,10 +67,10 @@ namespace MangaReader.Views.Pages
 
         public override async Task RefreshAsync()
         {
-            Dispatcher.Invoke(() => this.SetCurrentValue(FocusableProperty, false));
+            Dispatcher.Invoke(() => SetCurrentValue(FocusableProperty, false));
 
             var resultMangas = dataDb.Mangas.FindAll()
-                .Where(manga => (manga.Name?.Contains(TxtSearch.Text, StringComparison.OrdinalIgnoreCase)).GetValueOrDefault(false))
+                .Where(manga => (manga.Name?.Contains(TxtSearch.Text, StringComparison.OrdinalIgnoreCase)) ?? false)
                 .OrderBy(m => m.Name, NaturalStringComparer.Default)
                 .ToArray();
 
@@ -132,7 +132,7 @@ namespace MangaReader.Views.Pages
                 Dispatcher.Invoke(() =>
                 {
                     //this.Focusable
-                    this.SetCurrentValue(FocusableProperty, true);
+                    SetCurrentValue(FocusableProperty, true);
                     KeyboardNavigationEx.Focus(this);
                 });
             }
@@ -146,7 +146,7 @@ namespace MangaReader.Views.Pages
             }
 
             pageNavigator!.GoToAsync<PgViewer>();
-            ((PgViewer)pageNavigator.CurrentPage).View("manga://" + ((MangaItem)sender).Manga.Id);
+            (pageNavigator.CurrentPage as PgViewer)?.View("manga://" + ((MangaItem)sender).Manga.Id);
             JumpList.AddToRecentCategory(new JumpTask()
             {
                 ApplicationPath = AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName,

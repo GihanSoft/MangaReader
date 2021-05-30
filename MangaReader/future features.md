@@ -3,7 +3,7 @@
 - [x] CLI, JumpList
 
 ##### PgLibrary:
-- [ ] InLine Search
+- [x] InLine Search
 
 ##### PgViewer:
 - [ ] AutoScroll (middle mouse click)
