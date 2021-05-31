@@ -3,7 +3,9 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 	</PropertyGroup>
-
+    <ItemGroup>
+        <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.10" />
 	</ItemGroup>

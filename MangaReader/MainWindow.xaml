@@ -10,6 +10,7 @@
     xmlns:attach="clr-namespace:GihanSoft.Views.AttachedProperties"
     xmlns:nav="http://gihansoft.ir/netfx/xaml/navigation"
     mc:Ignorable="d"
+    x:ClassModifier="internal" x:FieldModifier="protected"
     Name="This"
     Title="GihanSoft Manga Reader" TitleCharacterCasing="Normal"
     Height="450" Width="800"

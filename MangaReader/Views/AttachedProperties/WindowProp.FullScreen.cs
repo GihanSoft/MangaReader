@@ -1,33 +1,34 @@
-﻿using System;
-using System.Reflection;
+﻿// -----------------------------------------------------------------------
+// <copyright file="WindowProp.FullScreen.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 
-using GihanSoft;
-
-using MahApps.Metro.Controls;
-
 using MangaReader.Views.Native;
 
 namespace GihanSoft.Views.AttachedProperties
 {
-    public static partial class WindowProp
+    public static class WindowProp
     {
-        public readonly static DependencyProperty RealRestoreBoundsProperty = DependencyProperty.RegisterAttached(
+        public static readonly DependencyProperty RealRestoreBoundsProperty = DependencyProperty.RegisterAttached(
             "RealRestoreBounds",
             typeof(Rect),
             typeof(WindowProp),
             new PropertyMetadata(null));
 
-        public readonly static DependencyProperty PreWindowsStateProperty = DependencyProperty.RegisterAttached(
+        public static readonly DependencyProperty PreWindowsStateProperty = DependencyProperty.RegisterAttached(
             "PreWindowsState",
             typeof(WindowState),
             typeof(WindowProp),
             new PropertyMetadata(null));
 
-        public readonly static DependencyProperty FullScreenProperty = DependencyProperty.RegisterAttached(
+        public static readonly DependencyProperty FullScreenProperty = DependencyProperty.RegisterAttached(
             "FullScreen",
             typeof(bool),
             typeof(WindowProp),
@@ -37,18 +38,20 @@ namespace GihanSoft.Views.AttachedProperties
                 {
                     return;
                 }
+
                 WindowInteropHelper windowInteropHelper = new(win);
-                HwndSource hwndSource = HwndSource.FromHwnd(windowInteropHelper.EnsureHandle());
+                var hwndSource = HwndSource.FromHwnd(windowInteropHelper.EnsureHandle());
 
                 HwndSourceHook lockHook = new(
                     (IntPtr _, int msg, IntPtr _, IntPtr lParam, ref bool _) =>
                     {
-                        if (msg == 0x46)
+                        if (msg is 0x46)
                         {
                             var wp = Marshal.PtrToStructure<WindowPos>(lParam);
                             wp.flags |= SWP.NOMOVE | SWP.NOSIZE;
                             Marshal.StructureToPtr(wp, lParam, false);
                         }
+
                         return IntPtr.Zero;
                     });
 
@@ -64,7 +67,7 @@ namespace GihanSoft.Views.AttachedProperties
                     win.SetCurrentValue(Window.ResizeModeProperty, ResizeMode.NoResize);
                     win.SetCurrentValue(Window.WindowStyleProperty, WindowStyle.None);
 
-                    Type? winType = win.GetType();
+                    var winType = win.GetType();
                     while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
                         winType = winType.BaseType;
@@ -98,7 +101,7 @@ namespace GihanSoft.Views.AttachedProperties
                 else
                 {
                     hwndSource.RemoveHook(lockHook);
-                    Rect restoreBounds = win.GetRealRestoreBounds();
+                    var restoreBounds = win.GetRealRestoreBounds();
                     win.SetCurrentValue(Window.WindowStateProperty, win.GetPreWindowsState());
                     win.SetCurrentValue(Window.TopProperty, restoreBounds.Top);
                     win.SetCurrentValue(Window.LeftProperty, restoreBounds.Left);
@@ -108,7 +111,7 @@ namespace GihanSoft.Views.AttachedProperties
                     win.SetCurrentValue(Window.WindowStyleProperty, WindowStyle.ThreeDBorderWindow);
                     win.SetCurrentValue(Control.BorderThicknessProperty, new Thickness(1));
 
-                    Type? winType = win.GetType();
+                    var winType = win.GetType();
                     while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
                         winType = winType.BaseType;
@@ -148,8 +151,10 @@ namespace GihanSoft.Views.AttachedProperties
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             return (bool)window.GetValue(FullScreenProperty);
         }
+
         /// <summary>Helper for setting <see cref="FullScreenProperty"/> on <paramref name="window"/>.</summary>
         /// <param name="window"><see cref="Window"/> to set <see cref="FullScreenProperty"/> on.</param>
         /// <param name="value">FullScreen property value.</param>
@@ -160,43 +165,53 @@ namespace GihanSoft.Views.AttachedProperties
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             window.SetValue(FullScreenProperty, value);
         }
 
+        [AttachedPropertyBrowsableForType(typeof(Window))]
         public static WindowState GetPreWindowsState(this Window window)
         {
             if (window is null)
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             return (WindowState)window.GetValue(PreWindowsStateProperty);
         }
+
         public static void SetPreWindowsState(this Window window, WindowState value)
         {
             if (window is null)
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             window.SetValue(PreWindowsStateProperty, value);
         }
 
+        [AttachedPropertyBrowsableForType(typeof(Window))]
         public static Rect GetRealRestoreBounds(this Window window)
         {
             if (window is null)
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             return (Rect)window.GetValue(RealRestoreBoundsProperty);
         }
+
         public static void SetRealRestoreBounds(this Window window, Rect value)
         {
             if (window is null)
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             window.SetValue(RealRestoreBoundsProperty, value);
         }
     }
+
     public static class WindowPropertiesExtensions
     {
         public static bool GetFullScreen(this Window window)
@@ -205,6 +220,7 @@ namespace GihanSoft.Views.AttachedProperties
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             return (bool)window.GetValue(WindowProp.FullScreenProperty);
         }
 
@@ -214,6 +230,7 @@ namespace GihanSoft.Views.AttachedProperties
             {
                 throw new ArgumentNullException(nameof(window));
             }
+
             window.SetCurrentValue(WindowProp.FullScreenProperty, value);
         }
     }

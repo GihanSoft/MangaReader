@@ -14,7 +14,7 @@
 
         private Setting()
         {
-            Key = "";
+            Key = string.Empty;
             Options = Key;
         }
     }

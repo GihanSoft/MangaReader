@@ -35,9 +35,6 @@ namespace MangaReader.Controllers
             return SafeNativeMethods.StrCmpLogicalW(x, y);
         }
 
-        public int Compare(Manga? a, Manga? b)
-        {
-            return Compare(a?.Name, b?.Name);
-        }
+        public int Compare(Manga? a, Manga? b) => Compare(a?.Name, b?.Name);
     }
 }

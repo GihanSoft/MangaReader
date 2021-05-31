@@ -1,13 +1,20 @@
-﻿using System.Windows;
-using MangaReader.PagesViewer;
+﻿// -----------------------------------------------------------------------
+// <copyright file="PagesViewer.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
 
 using System;
+using System.Windows;
 using System.Windows.Controls;
+
+using MangaReader.PagesViewer;
 
 namespace MangaReader.Views.Components.PagesViewers
 {
     public abstract class PagesViewer : Border
     {
+        /// <summary>Identifies the <see cref="Page"/> dependency property.</summary>
         public static readonly DependencyProperty PageProperty = DependencyProperty.Register(
             nameof(Page),
             typeof(int),
@@ -58,14 +65,14 @@ namespace MangaReader.Views.Components.PagesViewers
             {
                 throw new ArgumentNullException(nameof(pagesProvider));
             }
-            this.PagesProvider = pagesProvider;
-            if (this.Page == page)
+            PagesProvider = pagesProvider;
+            if (Page == page)
             {
                 OnPageChanged(page, 0);
             }
             else
             {
-                this.SetCurrentValue(PageProperty, page);
+                SetCurrentValue(PageProperty, page);
             }
         }
 

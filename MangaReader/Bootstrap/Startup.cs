@@ -1,4 +1,10 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Startup.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -11,7 +17,6 @@ using LiteDB;
 
 using MangaReader.Data;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MangaReader.Bootstrap
@@ -52,7 +57,7 @@ namespace MangaReader.Bootstrap
             public void InitializeGUI()
             {
                 var mainOptions = settingsManager.GetMainOptions();
-                ThemeManager.Current.ChangeTheme(App.Current, mainOptions?.Appearance?.Theme!);
+                ThemeManager.Current.ChangeTheme(App.Current, mainOptions?.Appearance?.Theme);
             }
 
             private void FirstRunBootstraper()
@@ -62,14 +67,14 @@ namespace MangaReader.Bootstrap
                     Appearance = new MainOptions.AppearanceClass
                     {
                         Theme = "Light.Blue",
-                        WindowPosition = new MainOptions.AppearanceClass.WindowPositionClass
+                        WindowPosition = new()
                         {
                             Top = (SystemParameters.PrimaryScreenHeight - 450) / 2,
                             Left = (SystemParameters.PrimaryScreenWidth - 800) / 2,
                             Height = 450,
                             Width = 800,
-                            WindowsState = (byte)WindowState.Maximized
-                        }
+                            WindowsState = (byte)WindowState.Maximized,
+                        },
                     },
                 });
             }

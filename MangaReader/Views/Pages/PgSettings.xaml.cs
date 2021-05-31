@@ -38,10 +38,7 @@ namespace MangaReader.Views.Pages
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            pageNavigator.Navigating += Navigator_Navigating;
-        }
+        private void Page_Loaded(object sender, RoutedEventArgs e) => pageNavigator.Navigating += Navigator_Navigating;
 
         public override Task RefreshAsync()
         {
@@ -66,8 +63,8 @@ namespace MangaReader.Views.Pages
                 var result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync(
                     "Warning",
                     "Are sure to cancel all changes",
-                    MessageDialogStyle.AffirmativeAndNegative);
-                if (result == MessageDialogResult.Affirmative)
+                    MessageDialogStyle.AffirmativeAndNegative).ConfigureAwait(false);
+                if (result is MessageDialogResult.Affirmative)
                 {
                     BtnCancel_Click(null, null);
                 }
@@ -114,9 +111,7 @@ namespace MangaReader.Views.Pages
         }
 
         private void BtnApply_Click(object sender, RoutedEventArgs e)
-        {
-            settingsManager.Save(MainOptions.Key, mainOptions);
-        }
+        => settingsManager.Save(MainOptions.Key, mainOptions);
 
         protected override void Dispose(bool disposing)
         {

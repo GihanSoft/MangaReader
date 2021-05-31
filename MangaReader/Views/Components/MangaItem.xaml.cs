@@ -66,6 +66,7 @@ namespace MangaReader.Views.Components
                 Cover.SetCurrentValue(Image.SourceProperty, null);
                 return;
             }
+
             BitmapSource imageSource;
             if (cover.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
             {
@@ -73,7 +74,7 @@ namespace MangaReader.Views.Components
                 var data = Convert.FromBase64String(dataStr);
                 MemoryStream? memStreamMain = new(data)
                 {
-                    Position = 0
+                    Position = 0,
                 };
                 imageSource = BitmapFrame.Create(memStreamMain);
             }
@@ -81,6 +82,7 @@ namespace MangaReader.Views.Components
             {
                 imageSource = BitmapFrame.Create(new Uri(cover));
             }
+
             Cover.SetCurrentValue(Image.SourceProperty, imageSource);
         }
 
@@ -101,10 +103,7 @@ namespace MangaReader.Views.Components
             InitializeComponent();
         }
 
-        public void WorkingFocus()
-        {
-            KeyboardNavigationEx.Focus(Btn);
-        }
+        public void WorkingFocus() => KeyboardNavigationEx.Focus(Btn);
 
         private void EditNameBtn_Click(object sender, RoutedEventArgs e)
         {

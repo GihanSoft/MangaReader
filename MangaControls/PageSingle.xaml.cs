@@ -1,21 +1,11 @@
-﻿using MangaReader.PagesViewer;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
+using GihanSoft;
 
 namespace MangaReader.PagesViewer
 {
@@ -28,24 +18,28 @@ namespace MangaReader.PagesViewer
 
         public override double Zoom
         {
-            get => (Array.Find(images, image => image != null)?.GetBindingExpression(MaxWidthProperty)?
-                        .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
+            get => Array.Find(images, image => image != null)?
+                .GetBindingExpression(MaxWidthProperty)?
+                .ParentBinding.Converter.As<ZaribConverter>()?.Zarib ?? 1;
             set
             {
                 foreach (var image in images)
                 {
-                    if (image is null) continue;
-                    (BindingOperations.GetBinding(image, MaxWidthProperty)
-                        .Converter as ZaribConverter).Zarib = value;
-                    (BindingOperations.GetBinding(image, MaxHeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
-                    (BindingOperations.GetBinding(image, HeightProperty)
-                        .Converter as ZaribConverter).Zarib = value;
+                    if (image is null)
+                    {
+                        continue;
+                    }
+
+                    BindingOperations.GetBinding(image, MaxWidthProperty)
+                        .Converter.As<ZaribConverter>().Zarib = value;
+                    BindingOperations.GetBinding(image, MaxHeightProperty)
+                        .Converter.As<ZaribConverter>().Zarib = value;
+                    BindingOperations.GetBinding(image, HeightProperty)
+                        .Converter.As<ZaribConverter>().Zarib = value;
                     image.SetBinding(MaxWidthProperty, BindingOperations.GetBinding(image, MaxWidthProperty));
                     image.SetBinding(MaxHeightProperty, BindingOperations.GetBinding(image, MaxHeightProperty));
                     image.SetBinding(HeightProperty, BindingOperations.GetBinding(image, HeightProperty));
                 }
-
             }
         }
         public override double Offset
@@ -58,19 +52,31 @@ namespace MangaReader.PagesViewer
             get => _page + 1;
             set
             {
-                if (value >= images.Length || value < 0) return;
+                if (value >= images.Length || value < 0)
+                {
+                    return;
+                }
+
                 _page = value;
                 if (images[_page] is null)
+                {
                     LoadPage(_page).GetAwaiter().GetResult();
+                }
+
                 ImageFrameBrd.Child = images[_page];
                 Offset = 0;
-                _ = Task.Run(() =>
+                Task.Run(() =>
                   {
                       Thread.Sleep(250);
                       if (_page + 1 < images.Length)
+                      {
                           LoadPage(_page + 1);
+                      }
+
                       if (_page > 0)
+                      {
                           LoadPage(_page - 1);
+                      }
                   });
             }
         }

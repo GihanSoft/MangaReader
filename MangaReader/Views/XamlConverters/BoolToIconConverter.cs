@@ -1,4 +1,8 @@
-﻿using MahApps.Metro.IconPacks;
+﻿// -----------------------------------------------------------------------
+// <copyright file="BoolToIconConverter.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
 
 using System;
 using System.Collections;
@@ -7,6 +11,8 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+
+using MahApps.Metro.IconPacks;
 
 namespace AnimePlayer.Views.XamlConverters
 {
@@ -37,97 +43,51 @@ namespace AnimePlayer.Views.XamlConverters
 
         public bool IsFixedSize => ((IList)items).IsFixedSize;
 
-        public void Add(BoolToIconConverterItem item)
-        {
-            items.Add(item);
-        }
+        public void Add(BoolToIconConverterItem item)=> items.Add(item);
 
-        public int Add(object? value)
-        {
-            return ((IList)items).Add(value);
-        }
+        public int Add(object? value) => ((IList)items).Add(value);
 
-        public void Clear()
-        {
-            items.Clear();
-        }
+        public void Clear() => items.Clear();
 
-        public bool Contains(BoolToIconConverterItem item)
-        {
-            return items.Contains(item);
-        }
+        public bool Contains(BoolToIconConverterItem item) => items.Contains(item);
 
-        public bool Contains(object? value)
-        {
-            return ((IList)items).Contains(value);
-        }
+        public bool Contains(object? value) => ((IList)items).Contains(value);
 
         #region IValueConverter
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            return items.LastOrDefault(i => i.Value.Equals(value))?.Kind;
-        }
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => items.LastOrDefault(i => i.Value.Equals(value))?.Kind;
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is not PackIconMaterialKind) return null;
+            if (value is not PackIconMaterialKind)
+            {
+                return null;
+            }
+
             return items.LastOrDefault(i => i.Kind == (PackIconMaterialKind)value)?.Value;
         }
         #endregion
 
-        public void CopyTo(BoolToIconConverterItem[] array, int arrayIndex)
-        {
-            items.CopyTo(array, arrayIndex);
-        }
+        public void CopyTo(BoolToIconConverterItem[] array, int arrayIndex) => items.CopyTo(array, arrayIndex);
 
-        public void CopyTo(Array array, int index)
-        {
-            ((ICollection)items).CopyTo(array, index);
-        }
+        public void CopyTo(Array array, int index) => ((ICollection)items).CopyTo(array, index);
 
-        public IEnumerator<BoolToIconConverterItem> GetEnumerator()
-        {
-            return items.GetEnumerator();
-        }
+        public IEnumerator<BoolToIconConverterItem> GetEnumerator() => items.GetEnumerator();
 
-        public int IndexOf(BoolToIconConverterItem item)
-        {
-            return items.IndexOf(item);
-        }
+        public int IndexOf(BoolToIconConverterItem item) => items.IndexOf(item);
 
-        public int IndexOf(object? value)
-        {
-            return ((IList)items).IndexOf(value);
-        }
+        public int IndexOf(object? value) => ((IList)items).IndexOf(value);
 
-        public void Insert(int index, BoolToIconConverterItem item)
-        {
-            items.Insert(index, item);
-        }
+        public void Insert(int index, BoolToIconConverterItem item)=> items.Insert(index, item);
 
-        public void Insert(int index, object? value)
-        {
-            ((IList)items).Insert(index, value);
-        }
+        public void Insert(int index, object? value) => ((IList)items).Insert(index, value);
 
-        public bool Remove(BoolToIconConverterItem item)
-        {
-            return items.Remove(item);
-        }
+        public bool Remove(BoolToIconConverterItem item) => items.Remove(item);
 
-        public void Remove(object? value)
-        {
-            ((IList)items).Remove(value);
-        }
+        public void Remove(object? value) => ((IList)items).Remove(value);
 
-        public void RemoveAt(int index)
-        {
-            items.RemoveAt(index);
-        }
+        public void RemoveAt(int index)=> items.RemoveAt(index);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)items).GetEnumerator();
-        }
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)items).GetEnumerator();
     }
 
     public class BoolToIconConverterItem

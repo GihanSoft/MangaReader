@@ -1,33 +1,53 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="App.xaml.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
 
 namespace MangaReader
 {
-    /// <inheritdoc />
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Interaction logic for App.xaml.
     /// </summary>
-    public partial class App
+    internal partial class App
     {
+        /// <summary>
+        /// Key to access args stored in <see cref="App.Properties"/>.
+        /// </summary>
         public const string ArgumentsKey = "Arguments";
 
-        //static part ---------------------------------------------------
-
+        /// <summary>
+        /// Gets current instance of <see cref="App"/> class.
+        /// </summary>
         public static new App Current => (App)Application.Current;
 
-        public static void ShowError(Exception err)
+        /// <summary>
+        /// Log errors is %appdata%/GihanSoft/MangaReader/log.txt file.
+        /// </summary>
+        /// <param name="err"><see cref="Exception"/> to be logged.</param>
+        /// <param name="prefix">optional prefix for log.</param>
+        public static void LogError(Exception err, string? prefix = null)
         {
             if (err is null)
             {
                 throw new ArgumentNullException(nameof(err));
             }
+
             var logPath = Environment.ExpandEnvironmentVariables(@"%appdata%\GihanSoft\MangaReader\log.txt");
             using var writter = File.AppendText(logPath);
+
             var errType = err.GetType();
-            MessageBox.Show(err.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             writter.WriteLine(DateTime.Now);
+            if (prefix is not null)
+            {
+                writter.WriteLine($"# {prefix} #");
+            }
+
             writter.WriteLine(errType.Name + ' ' + new string(Enumerable.Repeat('-', 80 - errType.Name.Length).ToArray()));
             writter.WriteLine(err.Message);
             writter.WriteLine(err.ToString());
@@ -35,8 +55,24 @@ namespace MangaReader
             writter.WriteLine();
         }
 
-        //instance part -------------------------------------------------
+        /// <summary>
+        /// Log and show error.
+        /// </summary>
+        /// <param name="err"><see cref="Exception"/> to be logged.</param>
+        public static void ShowError(Exception err)
+        {
+            if (err is null)
+            {
+                throw new ArgumentNullException(nameof(err));
+            }
 
+            LogError(err);
+            MessageBox.Show(err.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class.
+        /// </summary>
         public App()
         {
             DispatcherUnhandledException += (_, e) =>
@@ -46,6 +82,7 @@ namespace MangaReader
             };
         }
 
+        /// <inheritdoc/>
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -54,7 +91,8 @@ namespace MangaReader
             {
                 return;
             }
-            if (e.Args.Length > 0)
+
+            if(e.Args is { Length: > 0 })
             {
                 Properties[ArgumentsKey] = e.Args;
             }

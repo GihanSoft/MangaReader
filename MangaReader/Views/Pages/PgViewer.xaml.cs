@@ -1,32 +1,37 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="PgViewer.xaml.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Input;
 
 using GihanSoft.MangaSources.Local;
+using GihanSoft.Navigation;
 
 using MangaReader.Controllers;
 using MangaReader.Data;
 using MangaReader.Data.Models;
 using MangaReader.PagesViewer;
-using MangaReader.Views.Components;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using MangaReader.Views.XamlConverters;
-using System.Timers;
-using GihanSoft.Navigation;
 using MangaReader.Views.Components.PagesViewers;
+using MangaReader.Views.XamlConverters;
 
 namespace MangaReader.Views.Pages
 {
     /// <summary>
-    /// Interaction logic for PgViewer.xaml
+    /// Interaction logic for PgViewer.xaml.
     /// </summary>
     [CLSCompliant(false)]
     public partial class PgViewer
@@ -42,13 +47,15 @@ namespace MangaReader.Views.Pages
                 {
                     return;
                 }
+
                 if (pgViewer.CurrentPagesProvider is not null)
                 {
                     pgViewer.CurrentPagesProvider.Dispose();
                 }
+
                 if (currentChapter is DirectoryInfo directory)
                 {
-                    FileInfo[] files = directory.GetFiles("*", SearchOption.AllDirectories);
+                    var files = directory.GetFiles("*", SearchOption.AllDirectories);
                     if (files.Any(file => FileTypeList.CompressedType.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
                     {
                         pgViewer.CurrentPagesProvider = new CompressedPageProvider(files.First(x => FileTypeList.CompressedType.Contains(x.Extension, StringComparer.InvariantCultureIgnoreCase)).FullName);
@@ -62,24 +69,27 @@ namespace MangaReader.Views.Pages
                 {
                     pgViewer.CurrentPagesProvider = new CompressedPageProvider(currentChapter.FullName);
                 }
+
                 pgViewer.TbPagesCount.SetCurrentValue(TextBlock.TextProperty, pgViewer.CurrentPagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture));
 
                 while (pgViewer.PagesViewer is null)
                 {
                     Task.Delay(10);
                 }
-                int page = 0;
+
+                var page = 0;
                 if (e.OldValue is not null)
                 {
                     pgViewer.Save();
                 }
                 else
                 {
-                    int currentPage = pgViewer.manga!.CurrentPage;
+                    var currentPage = pgViewer.manga.CurrentPage;
                     page = currentPage < pgViewer.CurrentPagesProvider.Count ?
                         currentPage :
                         pgViewer.CurrentPagesProvider.Count - 1;
                 }
+
                 pgViewer.PagesViewer.View(pgViewer.CurrentPagesProvider, page);
             }));
 
@@ -211,8 +221,8 @@ namespace MangaReader.Views.Pages
 
         private void Save()
         {
-            manga!.CurrentChapter = Chapters!.IndexOf(CurrentChapter!);
-            manga.CurrentPage = PagesViewer!.Page;
+            manga.CurrentChapter = Chapters.IndexOf(CurrentChapter);
+            manga.CurrentPage = PagesViewer.Page;
             manga.Zoom = PagesViewer.Zoom;
 
             dataDb.Mangas.Update(manga);
@@ -227,7 +237,7 @@ namespace MangaReader.Views.Pages
 
             if (path.StartsWith("manga://", StringComparison.OrdinalIgnoreCase))
             {
-                if (!int.TryParse(path.Split('/').Last(), NumberStyles.Any, CultureInfo.InvariantCulture, out int mangaId))
+                if (!int.TryParse(path.Split('/').Last(), NumberStyles.Any, CultureInfo.InvariantCulture, out var mangaId))
                 {
                     throw new ArgumentException("Manga Id is not valid.", nameof(path));
                 }
@@ -236,17 +246,17 @@ namespace MangaReader.Views.Pages
                 {
                     throw new ArgumentException("Manga not found.", nameof(path));
                 }
-                Chapters!.Clear();
-                foreach (FileSystemInfo chapter in GetChapterList(manga))
+                Chapters.Clear();
+                foreach (var chapter in GetChapterList(manga))
                 {
                     Chapters.Add(chapter);
                 }
                 SetCurrentValue(CurrentChapterProperty, Chapters[manga.CurrentChapter]);
-                PagesViewer!.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, manga.Zoom);
+                PagesViewer.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, manga.Zoom);
             }
             ControlzEx.KeyboardNavigationEx.Focus(PagesViewer);
 
-            pageNavigator!.Navigated += (sender, e) =>
+            pageNavigator.Navigated += (sender, e) =>
             {
                 if (e.Previous == this)
                 {
@@ -260,32 +270,34 @@ namespace MangaReader.Views.Pages
 
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            int chapter = CboChapters.SelectedIndex + 1;
-            if (chapter >= Chapters!.Count)
+            var chapter = CboChapters.SelectedIndex + 1;
+            if (chapter >= Chapters.Count)
             {
                 return;
             }
+
             SetCurrentValue(CurrentChapterProperty, Chapters[chapter]);
         }
 
         private void CmdPreviousChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            int chapter = CboChapters.SelectedIndex - 1;
-            if (chapter < 0)
+            var chapter = CboChapters.SelectedIndex - 1;
+            if (chapter is < 0)
             {
                 return;
             }
-            SetCurrentValue(CurrentChapterProperty, Chapters![chapter]);
+
+            SetCurrentValue(CurrentChapterProperty, Chapters[chapter]);
         }
 
         private void CmdZoomIn_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            PagesViewer!.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, PagesViewer.Zoom + 0.1);
+            PagesViewer.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, PagesViewer.Zoom + 0.1);
         }
 
         private void CmdZoomOut_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            PagesViewer!.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, PagesViewer.Zoom - 0.1);
+            PagesViewer.SetCurrentValue(Components.PagesViewers.PagesViewer.ZoomProperty, PagesViewer.Zoom - 0.1);
         }
     }
 }

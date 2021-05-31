@@ -16,8 +16,10 @@ namespace GihanSoft.MangaSources.Local
 
         public LocalPagesProvider(string path)
         {
-            if ((File.GetAttributes(path) & FileAttributes.Directory) == 0)
+            if ((File.GetAttributes(path) & FileAttributes.Directory) is 0)
+            {
                 throw new ArgumentException("is not directory path", nameof(path));
+            }
 
             loadedPages = new Dictionary<int, MemoryStream>();
 
@@ -46,7 +48,10 @@ namespace GihanSoft.MangaSources.Local
         public override async Task LoadPageAsync(int page)
         {
             if (loadedPages.ContainsKey(page))
+            {
                 return;
+            }
+
             using var file = File.Open(pagePathes[page], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var mem = new MemoryStream();
             await file.CopyToAsync(mem).ConfigureAwait(false);

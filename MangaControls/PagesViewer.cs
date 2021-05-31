@@ -22,8 +22,8 @@ namespace MangaReader.PagesViewer
 
         private PagesProvider? pagesProvider;
 
-        protected BitmapImage[]? bitmaps;
-        protected Image[]? images;
+        protected BitmapImage?[]? bitmaps;
+        protected Image?[]? images;
 
         public abstract double Zoom { get; set; }
         public abstract double Offset { get; set; }
