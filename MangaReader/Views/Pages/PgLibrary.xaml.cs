@@ -24,6 +24,7 @@ using MahApps.Metro.Controls;
 using MangaReader.Controllers;
 using MangaReader.Data;
 using MangaReader.Data.Models;
+using MangaReader.Exceptions;
 using MangaReader.Views.Components;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -36,7 +37,7 @@ namespace MangaReader.Views.Pages
     public partial class PgLibrary
     {
         /// <summary>Identifies the <see cref="IsCheckActive"/> dependency property.</summary>
-        public static readonly DependencyProperty IsCheckActiveProperty = DependencyProperty.Register(
+        public readonly static DependencyProperty IsCheckActiveProperty = DependencyProperty.Register(
             nameof(IsCheckActive),
             typeof(bool),
             typeof(PgLibrary),
@@ -172,7 +173,6 @@ namespace MangaReader.Views.Pages
                     "!!!",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return;
             }
 
             var noCompressedFile = !topFiles.Any(f => FileTypeList.CompressedType.Contains(f.Extension, StringComparer.InvariantCultureIgnoreCase));
@@ -197,11 +197,7 @@ namespace MangaReader.Views.Pages
 
             if (dataDb.Mangas.FindOne(m => m.Path == mangaPath) is not null)
             {
-                MessageBox.Show(
-                    "This manga already exist",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                throw new DuplicateMangaException("This manga already exist");
                 return;
             }
 
@@ -303,25 +299,33 @@ namespace MangaReader.Views.Pages
             return batch ? Directory.GetDirectories(dialog.FileName) : new[] { dialog.FileName };
         }
 
-        private async void CmdAddManga_Executed(object sender, ExecutedRoutedEventArgs? e)
+        private void CmdAddManga_Executed(object sender, ExecutedRoutedEventArgs? e)
         {
             foreach (var mangaDirectory in ShowAddMangaDialog(false))
             {
-                await AddManga(mangaDirectory).ConfigureAwait(false);
+
+                AddManga(mangaDirectory).ConfigureAwait(false);
             }
 
-            await RefreshAsync().ConfigureAwait(false);
+            RefreshAsync().ConfigureAwait(false);
         }
 
-        private async void CmdAddMangaBatch_Executed(object? sender, ExecutedRoutedEventArgs? e)
+        private void CmdAddMangaBatch_Executed(object? sender, ExecutedRoutedEventArgs? e)
         {
             foreach (var mangaDirectory in ShowAddMangaDialog(true))
             {
-                await AddManga(mangaDirectory).ConfigureAwait(false);
-                await Task.Delay(10).ConfigureAwait(false);
+                try
+                {
+                    AddManga(mangaDirectory).ConfigureAwait(false);
+                }
+                catch (DuplicateMangaException err)
+                {
+                    App.LogError(err);
+                }
+                Task.Delay(10).ConfigureAwait(false);
             }
 
-            await RefreshAsync().ConfigureAwait(false);
+            RefreshAsync().ConfigureAwait(false);
         }
 
         private void CmdToggleDeleteState_Executed(object sender, ExecutedRoutedEventArgs e) => SetCurrentValue(IsCheckActiveProperty, !IsCheckActive);
@@ -354,7 +358,7 @@ namespace MangaReader.Views.Pages
                 "Delete Managa",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
-            if (dialogResult is  not MessageBoxResult.Yes)
+            if (dialogResult is not MessageBoxResult.Yes)
             {
                 return;
             }

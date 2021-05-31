@@ -16,8 +16,8 @@ using MangaReader.Bootstrap;
 using Microsoft.Extensions.DependencyInjection;
 
 var fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-Environment.SetEnvironmentVariable(Startup.CompanyNameKey, fileVersionInfo.CompanyName, EnvironmentVariableTarget.Process);
-Environment.SetEnvironmentVariable(Startup.ProductNameKey, fileVersionInfo.ProductName, EnvironmentVariableTarget.Process);
+Environment.SetEnvironmentVariable(Startup.ServiceConfigurer.CompanyNameKey, fileVersionInfo.CompanyName, EnvironmentVariableTarget.Process);
+Environment.SetEnvironmentVariable(Startup.ServiceConfigurer.ProductNameKey, fileVersionInfo.ProductName, EnvironmentVariableTarget.Process);
 
 ServiceCollection services = new();
 Startup.ServiceConfigurer serviceConfigurer = new();

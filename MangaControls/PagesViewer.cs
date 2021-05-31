@@ -36,7 +36,11 @@ namespace MangaReader.PagesViewer
                 throw new PagesViewerException();
             }
 
-            if (bitmaps![page] != null) return;
+            if (bitmaps![page] != null)
+            {
+                return;
+            }
+
             bitmaps[page] = new();
             await pagesProvider.LoadPageAsync(page).ConfigureAwait(false);
             bitmaps[page].BeginInit();
