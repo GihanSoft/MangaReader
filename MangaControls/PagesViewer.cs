@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace MangaReader.PagesViewer
@@ -22,7 +23,7 @@ namespace MangaReader.PagesViewer
 
         private PagesProvider? pagesProvider;
 
-        protected BitmapImage?[]? bitmaps;
+        protected ImageSource?[]? bitmaps;
         protected Image?[]? images;
 
         public abstract double Zoom { get; set; }
@@ -31,26 +32,23 @@ namespace MangaReader.PagesViewer
 
         protected async Task LoadBitmap(int page)
         {
-            if (pagesProvider is null)
+            if(pagesProvider is null)
             {
                 throw new PagesViewerException();
             }
 
-            if (bitmaps![page] != null)
+            if(bitmaps[page] is not null)
             {
                 return;
             }
 
-            bitmaps[page] = new();
             await pagesProvider.LoadPageAsync(page).ConfigureAwait(false);
-            bitmaps[page].BeginInit();
-            bitmaps[page].SetCurrentValue(BitmapImage.StreamSourceProperty, pagesProvider[page]);
-            bitmaps[page].EndInit();
+            bitmaps[page] = BitmapFrame.Create(pagesProvider[page]);
         }
 
         public virtual void View(PagesProvider pagesProvider, int page)
         {
-            if (pagesProvider is null)
+            if(pagesProvider is null)
             {
                 throw new ArgumentNullException(nameof(pagesProvider));
             }

@@ -34,7 +34,7 @@ namespace GihanSoft.Views.AttachedProperties
             typeof(WindowProp),
             new PropertyMetadata(false, (sender, args) =>
             {
-                if (sender is not Window win)
+                if(sender is not Window win)
                 {
                     return;
                 }
@@ -45,7 +45,7 @@ namespace GihanSoft.Views.AttachedProperties
                 HwndSourceHook lockHook = new(
                     (IntPtr _, int msg, IntPtr _, IntPtr lParam, ref bool _) =>
                     {
-                        if (msg is 0x46)
+                        if(msg is 0x46)
                         {
                             var wp = Marshal.PtrToStructure<WindowPos>(lParam);
                             wp.flags |= SWP.NOMOVE | SWP.NOSIZE;
@@ -55,7 +55,7 @@ namespace GihanSoft.Views.AttachedProperties
                         return IntPtr.Zero;
                     });
 
-                if ((bool)args.NewValue)
+                if((bool)args.NewValue)
                 {
                     win.SetRealRestoreBounds(win.RestoreBounds);
                     win.SetPreWindowsState(win.WindowState);
@@ -68,11 +68,11 @@ namespace GihanSoft.Views.AttachedProperties
                     win.SetCurrentValue(Window.WindowStyleProperty, WindowStyle.None);
 
                     var winType = win.GetType();
-                    while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
+                    while(winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
                         winType = winType.BaseType;
                     }
-                    if (winType is not null &&
+                    if(winType is not null &&
                         (winType.FullName?.Equals("MahApps.Metro.Controls.MetroWindow", StringComparison.OrdinalIgnoreCase) ?? false))
                     {
                         var showTitleBarProperty =
@@ -80,7 +80,7 @@ namespace GihanSoft.Views.AttachedProperties
                             .GetValue(win)
                             as DependencyProperty;
 
-                        if (showTitleBarProperty is not null)
+                        if(showTitleBarProperty is not null)
                         {
                             win.SetCurrentValue(showTitleBarProperty, false);
                         }
@@ -89,7 +89,7 @@ namespace GihanSoft.Views.AttachedProperties
                             winType.GetField("ShowCloseButtonProperty")?
                             .GetValue(win)
                             as DependencyProperty;
-                        if (showCloseButtonProperty is not null)
+                        if(showCloseButtonProperty is not null)
                         {
                             win.SetCurrentValue(showCloseButtonProperty, false);
                         }
@@ -112,11 +112,11 @@ namespace GihanSoft.Views.AttachedProperties
                     win.SetCurrentValue(Control.BorderThicknessProperty, new Thickness(1));
 
                     var winType = win.GetType();
-                    while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
+                    while(winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
                         winType = winType.BaseType;
                     }
-                    if (winType is not null &&
+                    if(winType is not null &&
                         (winType.FullName?.Equals("MahApps.Metro.Controls.MetroWindow", StringComparison.OrdinalIgnoreCase) ?? false))
                     {
                         var showTitleBarProperty =
@@ -124,7 +124,7 @@ namespace GihanSoft.Views.AttachedProperties
                             .GetValue(win)
                             as DependencyProperty;
 
-                        if (showTitleBarProperty is not null)
+                        if(showTitleBarProperty is not null)
                         {
                             win.SetCurrentValue(showTitleBarProperty, true);
                         }
@@ -133,7 +133,7 @@ namespace GihanSoft.Views.AttachedProperties
                             winType.GetField("ShowCloseButtonProperty")?
                             .GetValue(win)
                             as DependencyProperty;
-                        if (showCloseButtonProperty is not null)
+                        if(showCloseButtonProperty is not null)
                         {
                             win.SetCurrentValue(showCloseButtonProperty, true);
                         }
@@ -146,92 +146,45 @@ namespace GihanSoft.Views.AttachedProperties
         /// <returns>FullScreen property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Window))]
         public static bool GetFullScreen(Window window)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
-
-            return (bool)window.GetValue(FullScreenProperty);
-        }
+            => window?.GetValue(FullScreenProperty)?.CastTo<bool>() ?? false;
 
         /// <summary>Helper for setting <see cref="FullScreenProperty"/> on <paramref name="window"/>.</summary>
         /// <param name="window"><see cref="Window"/> to set <see cref="FullScreenProperty"/> on.</param>
         /// <param name="value">FullScreen property value.</param>
         [AttachedPropertyBrowsableForType(typeof(Window))]
         public static void SetFullScreen(Window window, bool value)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
+            => window?.SetCurrentValue(FullScreenProperty, value);
 
-            window.SetValue(FullScreenProperty, value);
-        }
-
+        /// <summary>Helper for getting <see cref="PreWindowsStateProperty"/> from <paramref name="window"/>.</summary>
+        /// <param name="window"><see cref="Window"/> to read <see cref="PreWindowsStateProperty"/> from.</param>
+        /// <returns>PreWindowsState property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Window))]
         public static WindowState GetPreWindowsState(this Window window)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
+            => window?.GetValue(PreWindowsStateProperty)?.CastTo<WindowState>() ?? WindowState.Normal;
 
-            return (WindowState)window.GetValue(PreWindowsStateProperty);
-        }
-
+        /// <summary>Helper for setting <see cref="PreWindowsStateProperty"/> on <paramref name="window"/>.</summary>
+        /// <param name="window"><see cref="Window"/> to set <see cref="PreWindowsStateProperty"/> on.</param>
+        /// <param name="value">PreWindowsState property value.</param>
         public static void SetPreWindowsState(this Window window, WindowState value)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
-
-            window.SetValue(PreWindowsStateProperty, value);
-        }
+            => window?.SetCurrentValue(PreWindowsStateProperty, value);
 
         [AttachedPropertyBrowsableForType(typeof(Window))]
         public static Rect GetRealRestoreBounds(this Window window)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
+            => window?.GetValue(RealRestoreBoundsProperty)?.CastTo<Rect>() ?? throw new ArgumentNullException(nameof(window));
 
-            return (Rect)window.GetValue(RealRestoreBoundsProperty);
-        }
-
+        /// <summary>Helper for setting <see cref="RealRestoreBoundsProperty"/> on <paramref name="window"/>.</summary>
+        /// <param name="window"><see cref="Window"/> to set <see cref="RealRestoreBoundsProperty"/> on.</param>
+        /// <param name="value">RealRestoreBounds property value.</param>
         public static void SetRealRestoreBounds(this Window window, Rect value)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
-
-            window.SetValue(RealRestoreBoundsProperty, value);
-        }
+            => window?.SetCurrentValue(RealRestoreBoundsProperty, value);
     }
 
     public static class WindowPropertiesExtensions
     {
         public static bool GetFullScreen(this Window window)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
-
-            return (bool)window.GetValue(WindowProp.FullScreenProperty);
-        }
+            => window?.GetValue(WindowProp.FullScreenProperty)?.CastTo<bool>() ?? false;
 
         public static void SetFullScreen(this Window window, bool value)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
-
-            window.SetCurrentValue(WindowProp.FullScreenProperty, value);
-        }
+            => window?.SetCurrentValue(WindowProp.FullScreenProperty, value);
     }
 }

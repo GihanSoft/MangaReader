@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 
@@ -18,11 +19,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MangaReader.Bootstrap.Startup
 {
-    public class ServiceConfigurer
+    public sealed class ServiceConfigurer
     {
         public const string CompanyNameKey = "CompanyName";
         public const string ProductNameKey = "ProductName";
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "IoC pattern")]
         public void ConfigureServices(IServiceCollection services)
         {
             AddVersion(services);
@@ -33,7 +35,7 @@ namespace MangaReader.Bootstrap.Startup
             services.AddScoped<SettingsManager>();
         }
 
-        private void AddConnectionString(IServiceCollection services)
+        private static void AddConnectionString(IServiceCollection services)
         {
             ConnectionString connectionString = new()
             {

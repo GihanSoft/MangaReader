@@ -19,11 +19,9 @@ namespace MangaReader.PagesViewer
         {
             get
             {
-                if (images is null)
-                {
-                    return 1;
-                }
-                return (System.Array.Find(images, image => image != null)?.GetBindingExpression(MaxHeightProperty)?
+                return images is null
+                    ? 1
+                    : (System.Array.Find(images, image => image != null)?.GetBindingExpression(MaxHeightProperty)?
                        .ParentBinding.Converter as ZaribConverter)?.Zarib ?? 1;
             }
 
@@ -38,7 +36,9 @@ namespace MangaReader.PagesViewer
                 }
                 foreach (var image in images)
                 {
-                    if (image is null) continue;
+                    if (image is null) {
+                        continue;
+                    }
                     ((ZaribConverter)BindingOperations.GetBinding(image, MaxHeightProperty).Converter).Zarib = value;
                     ((ZaribConverter)BindingOperations.GetBinding(image, HeightProperty).Converter).Zarib = value;
                     image.SetBinding(MaxHeightProperty, BindingOperations.GetBinding(image, MaxHeightProperty));
@@ -60,12 +60,18 @@ namespace MangaReader.PagesViewer
                 {
                     return;
                 }
-                if (value > images.Length || value < 1) return;
+                if (value > images.Length || value < 1) {
+                    return;
+                }
                 _page = value - 1;
                 if (images[_page] is null)
+                    {
                     LoadPage(_page);
+                }
                 if (_page + 1 < images.Length && images[_page + 1] is null)
+                    {
                     LoadPage(_page + 1);
+                }
                 ImageFrameGrd.Children.Clear();
                 if (images[_page].Source.Width > images[_page].Source.Height ||
                    _page + 1 == images.Length ||
@@ -89,13 +95,21 @@ namespace MangaReader.PagesViewer
                   {
                       Thread.Sleep(250);
                       if (_page + 2 < images.Length)
+                          {
                           LoadPage(_page + 2);
+                      }
                       if (_page + 1 < images.Length)
+                          {
                           LoadPage(_page + 1);
+                      }
                       if (_page > 0)
+                          {
                           LoadPage(_page - 1);
+                      }
                       if (_page > 1)
+                          {
                           LoadPage(_page - 2);
+                      }
                   });
             }
         }

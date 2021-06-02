@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -16,16 +17,17 @@ namespace MangaReader
     /// <summary>
     /// Interaction logic for MainWindow.xaml.
     /// </summary>
+    [SuppressMessage("Performance", "CA1812:BoolToIconConverter is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic.", Justification = "WPF object")]
     internal partial class MainWindow
     {
-        private static readonly DependencyPropertyKey PageNavigatorPropertyKey = DependencyProperty.RegisterReadOnly(
-                    nameof(PageNavigator),
-                    typeof(PageNavigator),
-                    typeof(MainWindow),
-                    new PropertyMetadata(default(PageNavigator)));
+        //private static readonly DependencyPropertyKey PageNavigatorPropertyKey = DependencyProperty.RegisterReadOnly(
+        //            nameof(PageNavigator),
+        //            typeof(PageNavigator),
+        //            typeof(MainWindow),
+        //            new PropertyMetadata(default(PageNavigator)));
 
-        /// <summary>Identifies the <see cref="PageNavigator"/> dependency property.</summary>
-        public static readonly DependencyProperty PageNavigatorProperty = PageNavigatorPropertyKey.DependencyProperty;
+        ///// <summary>Identifies the <see cref="PageNavigator"/> dependency property.</summary>
+        //public static readonly DependencyProperty PageNavigatorProperty = PageNavigatorPropertyKey.DependencyProperty;
 
         private readonly SettingsManager settingsManager;
 
@@ -33,8 +35,12 @@ namespace MangaReader
             SettingsManager settingsManager,
             PageNavigator pageNavigator)
         {
-            InitializeComponent();
             this.settingsManager = settingsManager;
+            PageNavigator = pageNavigator;
+
+            InitializeComponent();
+
+
             var mainOptions = settingsManager.GetMainOptions();
 
             Top = mainOptions.Appearance.WindowPosition.Top;
@@ -43,21 +49,20 @@ namespace MangaReader
             Height = mainOptions.Appearance.WindowPosition.Height;
             WindowState = (WindowState)mainOptions.Appearance.WindowPosition.WindowsState;
 
-            PageNavigator = pageNavigator;
 
             Loaded += OnLoaded;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (PageNavigator is null)
+            if(PageNavigator is null)
             {
                 return;
             }
-            if (App.Current.Properties.Contains(App.ArgumentsKey))
+            if(App.Current.Properties.Contains(App.ArgumentsKey))
             {
                 await PageNavigator.GoToAsync<PgViewer>().ConfigureAwait(false);
-                if (PageNavigator.CurrentPage is PgViewer pgViewer &&
+                if(PageNavigator.CurrentPage is PgViewer pgViewer &&
                     App.Current.Properties[App.ArgumentsKey] is string[] args)
                 {
                     pgViewer.View(args[0]);
@@ -69,7 +74,7 @@ namespace MangaReader
                 {
                     await PageNavigator.GoToAsync<PgLibrary>().ConfigureAwait(false);
                 }
-                catch (TaskCanceledException)
+                catch(TaskCanceledException)
                 {
                     //
                 }
@@ -79,11 +84,7 @@ namespace MangaReader
         /// <summary>
         /// Gets Page Navigator.
         /// </summary>
-        public PageNavigator? PageNavigator
-        {
-            get => (PageNavigator?)GetValue(PageNavigatorProperty);
-            private set => SetValue(PageNavigatorPropertyKey, value);
-        }
+        public PageNavigator PageNavigator { get; }
 
         private void FlyoutCancelBtn_Click(object sender, RoutedEventArgs e) => MenuFlyout.SetCurrentValue(Flyout.IsOpenProperty, false);
 
@@ -103,17 +104,17 @@ namespace MangaReader
 
         private void This_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!this.GetFullScreen())
+            if(!this.GetFullScreen())
             {
                 return;
             }
 
             var y = e.GetPosition(this).Y;
-            if (y is < 30)
+            if(y is < 30)
             {
                 SetCurrentValue(ShowTitleBarProperty, true);
             }
-            else if (y is > 60 && !ToolBar.IsMouseOver)
+            else if(y is > 60 && !ToolBar.IsMouseOver)
             {
                 SetCurrentValue(ShowTitleBarProperty, false);
             }
@@ -124,7 +125,7 @@ namespace MangaReader
             var mainOptions = settingsManager.GetMainOptions();
             Rect restoreBounds;
             WindowState windowState;
-            if (this.GetFullScreen())
+            if(this.GetFullScreen())
             {
                 restoreBounds = this.GetRealRestoreBounds();
                 windowState = this.GetPreWindowsState();
@@ -146,7 +147,7 @@ namespace MangaReader
 
         private void CmdGoBack_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (PageNavigator.CanGoBack)
+            if(PageNavigator.CanGoBack)
             {
                 PageNavigator.GoBackAsync();
             }
@@ -154,7 +155,7 @@ namespace MangaReader
 
         private void CmdGoForward_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (PageNavigator.CanGoForward)
+            if(PageNavigator.CanGoForward)
             {
                 PageNavigator.GoFrowardAsync();
             }

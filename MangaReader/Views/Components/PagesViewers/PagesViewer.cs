@@ -8,7 +8,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-using MangaReader.PagesViewer;
 
 namespace MangaReader.Views.Components.PagesViewers
 {

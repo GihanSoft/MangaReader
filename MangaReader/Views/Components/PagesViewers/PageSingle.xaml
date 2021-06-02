@@ -22,7 +22,7 @@
         PreviewMouseWheel="ScrollViewer_MouseWheel"
         PreviewKeyDown="ScrollViewer_PreviewKeyDown">
         <Image
-            Name="Img"
+            Name="Img" RenderOptions.BitmapScalingMode="HighQuality"
             Height="{Binding ViewportHeight, ElementName=ScrollViewer, Converter={StaticResource ZaribConverter}}"
             Width="{Binding ViewportWidth, ElementName=ScrollViewer, Converter={StaticResource ZaribConverter}}" />
     </ScrollViewer>

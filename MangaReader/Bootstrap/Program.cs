@@ -11,21 +11,21 @@ using System.Reflection;
 using System.Threading;
 
 using MangaReader;
-using MangaReader.Bootstrap;
+using MangaReader.Bootstrap.Startup;
 
 using Microsoft.Extensions.DependencyInjection;
 
 var fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-Environment.SetEnvironmentVariable(Startup.ServiceConfigurer.CompanyNameKey, fileVersionInfo.CompanyName, EnvironmentVariableTarget.Process);
-Environment.SetEnvironmentVariable(Startup.ServiceConfigurer.ProductNameKey, fileVersionInfo.ProductName, EnvironmentVariableTarget.Process);
+Environment.SetEnvironmentVariable(ServiceConfigurer.CompanyNameKey, fileVersionInfo.CompanyName, EnvironmentVariableTarget.Process);
+Environment.SetEnvironmentVariable(ServiceConfigurer.ProductNameKey, fileVersionInfo.ProductName, EnvironmentVariableTarget.Process);
 
 ServiceCollection services = new();
-Startup.ServiceConfigurer serviceConfigurer = new();
+ServiceConfigurer serviceConfigurer = new();
 serviceConfigurer.ConfigureServices(services);
 
 var serviceProvider = services.BuildServiceProvider();
 
-var initializer = ActivatorUtilities.GetServiceOrCreateInstance<Startup.Initializer>(serviceProvider);
+var initializer = ActivatorUtilities.GetServiceOrCreateInstance<Initializer>(serviceProvider);
 initializer.Initialize();
 
 Thread staThread = new(() =>

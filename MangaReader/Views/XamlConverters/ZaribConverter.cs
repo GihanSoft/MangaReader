@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -14,6 +15,7 @@ namespace MangaReader.Views.XamlConverters
     /// <summary>
     /// multiple a double by <see cref="Zarib"/>.
     /// </summary>
+    [SuppressMessage("WpfAnalyzers.IValueConverter", "WPF0072:ValueConversion must use correct types.", Justification = "its really double to double")]
     [ValueConversion(typeof(double), typeof(double))]
     public class ZaribConverter : DependencyObject, IValueConverter
     {

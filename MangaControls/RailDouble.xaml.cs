@@ -25,15 +25,19 @@ namespace MangaReader.PagesViewer
                 var page = Page;
                 var offset = Offset;
                 double? dZoom = null;
-                foreach (var rowDef in ImagesRailGrd.RowDefinitions)
+                foreach(var rowDef in ImagesRailGrd.RowDefinitions)
                 {
-                    if (rowDef is null) continue;
-                    if (dZoom is null)
+                    if(rowDef is null)
+                    {
+                        continue;
+                    }
+
+                    if(dZoom is null)
                     {
 
                         dZoom = value / (GetBinding(rowDef, HeightProperty).Converter as ZaribConverter).Zarib;
-                            (GetBinding(rowDef, MaxHeightProperty)
-                                .Converter as ZaribConverter).Zarib = value;
+                        (GetBinding(rowDef, MaxHeightProperty)
+                            .Converter as ZaribConverter).Zarib = value;
                     }
                     (GetBinding(rowDef, HeightProperty)
                         .Converter as ZaribConverter).Zarib = value;
@@ -58,8 +62,10 @@ namespace MangaReader.PagesViewer
             get => (int)Math.Round(Sv.VerticalOffset / Sv.ViewportHeight > 0 ? Sv.ViewportHeight : 1) + 1;
             set
             {
-                if (value > images.Length || value < 1) return;
-
+                if(value > images.Length || value < 1)
+                {
+                    return;
+                }
             }
         }
 
@@ -71,7 +77,7 @@ namespace MangaReader.PagesViewer
         public override void View(PagesProvider pagesProvider, int page)
         {
             base.View(pagesProvider, page);
-            for (int i = 0; i < Math.Floor(pagesProvider.Count / 2.0); i++)
+            for(var i = 0; i < Math.Floor(pagesProvider.Count / 2.0); i++)
             {
                 var heightBinding = new Binding(nameof(Sv.ViewportHeight))
                 {
@@ -83,7 +89,7 @@ namespace MangaReader.PagesViewer
                 rowDef.SetBinding(MaxHeightProperty, heightBinding);
                 ImagesRailGrd.RowDefinitions.Add(rowDef);
             }
-            for (int i = 0; i < pagesProvider.Count; i++)
+            for(var i = 0; i < pagesProvider.Count; i++)
             {
                 images[i] = new Image();
             }

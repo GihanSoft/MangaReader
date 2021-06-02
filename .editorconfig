@@ -22,10 +22,10 @@ csharp_indent_switch_labels = true
 csharp_new_line_before_catch = true
 #place else statements on a new line
 csharp_new_line_before_else = true
-#require members of object intializers to be on separate lines
+#require members of object initializers to be on separate lines
 csharp_new_line_before_members_in_object_initializers = true
 #require braces to be on a new line for methods, lambdas, object_collection_array_initializers, control_blocks, types, properties, and accessors (also known as "Allman" style)
-csharp_new_line_before_open_brace = methods, lambdas, object_collection_array_initializers, control_blocks, types, properties, accessors
+csharp_new_line_before_open_brace =all
 
 #Formatting - organize using options
 
@@ -39,7 +39,7 @@ csharp_space_after_cast = false
 #require a space before the colon for bases or interfaces in a type declaration
 csharp_space_after_colon_in_inheritance_clause = true
 #require a space after a keyword in a control flow statement such as a for loop
-csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_keywords_in_control_flow_statements =false
 #require a space before the colon for bases or interfaces in a type declaration
 csharp_space_before_colon_in_inheritance_clause = true
 #remove space within empty argument list parentheses
@@ -68,15 +68,15 @@ csharp_prefer_braces = true:suggestion
 #Style - expression bodied member options
 
 #prefer expression-bodied members for accessors
-csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_accessors =when_on_single_line:suggestion
 #prefer block bodies for constructors
-csharp_style_expression_bodied_constructors = false:suggestion
+csharp_style_expression_bodied_constructors =false:warning
 #prefer expression-bodied members for indexers
-csharp_style_expression_bodied_indexers = true:suggestion
+csharp_style_expression_bodied_indexers =when_on_single_line:suggestion
 #prefer block bodies for methods
 csharp_style_expression_bodied_methods =when_on_single_line:suggestion
 #prefer expression-bodied members for properties
-csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_properties =when_on_single_line:suggestion
 
 #Style - expression level options
 
@@ -88,7 +88,7 @@ dotnet_style_predefined_type_for_member_access = true:suggestion
 #Style - Expression-level  preferences
 
 #prefer default(T) over default
-csharp_prefer_simple_default_expression = false:suggestion
+csharp_prefer_simple_default_expression =true:suggestion
 #prefer objects to be initialized using object initializers when possible
 dotnet_style_object_initializer = true:suggestion
 #prefer inferred tuple element names
@@ -116,7 +116,7 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggest
 #Style - Modifier preferences
 
 #when this rule is set to a list of modifiers, prefer the specified ordering.
-csharp_preferred_modifier_order = public,private,protected,readonly,override,static,abstract,async,virtual:suggestion
+csharp_preferred_modifier_order = public, private, protected, internal, static, extern, new, virtual, abstract, sealed, override, readonly, unsafe, volatile, async:silent
 
 #Style - Pattern matching
 
@@ -133,10 +133,18 @@ dotnet_style_qualification_for_field = false:suggestion
 dotnet_style_qualification_for_method = false:suggestion
 #prefer properties not to be prefaced with this. or Me. in Visual Basic
 dotnet_style_qualification_for_property = false:suggestion
-dotnet_diagnostic.SA1000.severity=silent
-dotnet_diagnostic.SA1101.severity=silent
-csharp_style_expression_bodied_operators=when_on_single_line:silent
+csharp_style_expression_bodied_operators=when_on_single_line:suggestion
 insert_final_newline=true
+csharp_style_expression_bodied_lambdas=true:silent
+csharp_style_expression_bodied_local_functions=false:suggestion
+csharp_prefer_static_local_function=true:suggestion
+csharp_style_unused_value_assignment_preference=discard_variable:warning
 
 [*.{cs,vb}]
-dotnet_diagnostic.CA1014.severity=silent
+dotnet_style_parentheses_in_other_operators=always_for_clarity:suggestion
+dotnet_style_predefined_type_for_locals_parameters_members=true:warning
+dotnet_style_prefer_conditional_expression_over_return=true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment=true:suggestion
+
+[*.{json,xml}]
+indent_size=2

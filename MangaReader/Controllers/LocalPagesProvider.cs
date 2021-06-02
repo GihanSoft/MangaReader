@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using MangaReader.Controllers;
-using MangaReader.PagesViewer;
+using MangaReader.Views.Components.PagesViewers;
 
 namespace GihanSoft.MangaSources.Local
 {

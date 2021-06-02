@@ -1,25 +1,29 @@
-﻿namespace MangaReader.Data
+﻿using System;
+
+namespace MangaReader.Data
 {
     public class SettingsManager
     {
         private readonly DataDb dataDb;
 
+        [CLSCompliant(false)]
         public SettingsManager(DataDb dataDb)
         {
             this.dataDb = dataDb;
         }
 
-        public TOptions? Get<TOptions>(string key)
-            where TOptions : class
+        public SettingsManager(string connectionString)
+            : this(new DataDb(new LiteDB.LiteDatabase(connectionString)))
         {
-            return dataDb.Settings.FindOne(s => s.Key == key)?.Options as TOptions;
         }
+
+        public TOptions? Get<TOptions>(string key) where TOptions : class => dataDb.Settings.FindOne(s => s.Key == key)?.Options as TOptions;
         public void Save<TOptions>(string key, TOptions options)
             where TOptions : class
         {
-            Setting settings = new Setting(key, options);
+            Setting settings = new(key, options);
             var found = dataDb.Settings.Update(settings);
-            if (!found)
+            if(!found)
             {
                 dataDb.Settings.Insert(settings);
             }

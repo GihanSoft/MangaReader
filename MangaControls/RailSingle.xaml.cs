@@ -27,12 +27,17 @@ namespace MangaReader.PagesViewer
                 var page = Page;
                 var offset = Offset;
                 double? dZoom = null;
-                foreach (var image in images)
+                foreach(var image in images)
                 {
-                    if (image is null) continue;
-                    if (dZoom is null)
+                    if(image is null)
+                    {
+                        continue;
+                    }
+
+                    if(dZoom is null)
+                    {
                         dZoom = value / (GetBinding(image, MaxHeightProperty).Converter as ZaribConverter).Zarib;
-                    (GetBinding(image, MaxHeightProperty).Converter as ZaribConverter).Zarib = value;
+                    } (GetBinding(image, MaxHeightProperty).Converter as ZaribConverter).Zarib = value;
                     (GetBinding(image, HeightProperty).Converter as ZaribConverter).Zarib = value;
                     image.SetBinding(MaxHeightProperty, GetBinding(image, MaxHeightProperty));
                     image.SetBinding(HeightProperty, GetBinding(image, HeightProperty));
@@ -52,14 +57,14 @@ namespace MangaReader.PagesViewer
         }
         public override int Page
         {
-            get
-            {
-                return (int)Math.Round(Sv.VerticalOffset / (images?.First()?.Height ?? 1)) + 1;
-            }
+            get => (int)Math.Round(Sv.VerticalOffset / (images?.First()?.Height ?? 1)) + 1;
             set
             {
-                if (value == 1)
+                if(value is 1)
+                {
                     LoadPage(0);
+                }
+
                 Sv.ScrollToVerticalOffset(images.First().Height * (value - 1));
             }
         }
@@ -73,17 +78,17 @@ namespace MangaReader.PagesViewer
         {
             Dispatcher.Invoke(() =>
             {
-                if (images[page].Source is null)
+                if(images[page].Source is null)
                 {
                     LoadBitmap(page);
-                    images[page].Source = bitmaps[page];
+                    images[page].SetCurrentValue(Image.SourceProperty, bitmaps[page]);
                 }
             }, System.Windows.Threading.DispatcherPriority.Normal, default);
         }
         public override void View(PagesProvider pagesProvider, int page)
         {
             base.View(pagesProvider, page);
-            for (int i = 0; i < images.Length; i++)
+            for(var i = 0; i < images.Length; i++)
             {
                 var heightBinding = new Binding(nameof(Sv.ViewportHeight))
                 {
@@ -99,27 +104,32 @@ namespace MangaReader.PagesViewer
 
         private void Sv_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (e.ViewportHeightChange != 0 && e.ViewportHeight != e.ViewportHeightChange)
+            if(e.ViewportHeightChange != 0 && e.ViewportHeight != e.ViewportHeightChange)
             {
                 Page = (int)Math.Round(e.VerticalOffset / (e.ViewportHeight - e.ViewportHeightChange)) + 1;
                 var preOffset = e.VerticalOffset - ((e.ViewportHeight - e.ViewportHeightChange) * (Page - 1));
                 Offset = preOffset * (e.ViewportHeight / (e.ViewportHeight - e.ViewportHeightChange));
                 return;
             }
-            if (e.VerticalChange != 0)
+            if(e.VerticalChange != 0)
             {
                 var prePage = (int)Math.Round((e.VerticalOffset - e.VerticalChange) / e.ViewportHeight);
                 var currentPage = (int)Math.Round(e.VerticalOffset / e.ViewportHeight);
-                if (prePage != currentPage)
+                if(prePage != currentPage)
                 {
                     LoadPage(currentPage);
                     _ = Task.Run(() =>
                       {
                           Thread.Sleep(250);
-                          if (currentPage + 1 < images.Length)
+                          if(currentPage + 1 < images.Length)
+                          {
                               LoadPage(currentPage + 1);
-                          if (currentPage > 0)
+                          }
+
+                          if(currentPage > 0)
+                          {
                               LoadPage(currentPage - 1);
+                          }
                       });
                 }
             }

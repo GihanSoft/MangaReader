@@ -25,7 +25,7 @@
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Image Name="Cover" Grid.Row="0" Stretch="Uniform" Height="150" />
+                <Image Name="Cover" RenderOptions.BitmapScalingMode="LowQuality" Grid.Row="0" Stretch="Uniform" Height="150" />
                 <TextBlock Grid.Row="1" Text="{Binding Manga.Name}" TextAlignment="Center" />
             </Grid>
         </Button>

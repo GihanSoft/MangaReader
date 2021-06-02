@@ -19,8 +19,8 @@ namespace MangaReader.Controllers
             uint wVirtKey,
             uint wScanCode,
             byte[] lpKeyState,
-            [Out, MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 4)]
-            StringBuilder pwszBuff,
+            [Out]
+            char[] pwszBuff,
             int cchBuff,
             uint wFlags);
 
@@ -32,23 +32,24 @@ namespace MangaReader.Controllers
 
         public static char GetCharFromKey(Key key)
         {
-            char ch = '\0';
+            var ch = '\0';
 
-            int virtualKey = KeyInterop.VirtualKeyFromKey(key);
-            byte[] keyboardState = new byte[256];
-            GetKeyboardState(keyboardState);
+            var virtualKey = KeyInterop.VirtualKeyFromKey(key);
+            var keyboardState = new byte[256];
+            _ = GetKeyboardState(keyboardState);
 
-            uint scanCode = MapVirtualKey((uint)virtualKey, MapType.MAPVK_VK_TO_VSC);
-            StringBuilder stringBuilder = new(2);
+            var scanCode = MapVirtualKey((uint)virtualKey, MapType.MAPVK_VK_TO_VSC);
+            //StringBuilder stringBuilder = new(2);
 
-            int result = ToUnicode((uint)virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity, 0);
+            var c = new char[1];
+            var result = ToUnicode((uint)virtualKey, scanCode, keyboardState, c, 2, 0);
             switch (result)
             {
                 case -1:
                 case 0:
                     break;
                 default:
-                    ch = stringBuilder[0];
+                    ch = c[0];
                     break;
             }
             return ch;

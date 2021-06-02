@@ -9,6 +9,9 @@ using System.Windows;
 
 using ControlzEx.Theming;
 
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+
 using MangaReader.Data;
 
 namespace MangaReader.Bootstrap.Startup
@@ -29,13 +32,13 @@ namespace MangaReader.Bootstrap.Startup
         public void Initialize()
         {
             var mainOptions = settingsManager.GetMainOptions();
-            if (mainOptions is null)
+            if(mainOptions is null)
             {
                 FirstRunBootstraper();
                 mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
             }
             var previusVersion = Version.Parse(mainOptions?.Version ?? "0.0");
-            if (previusVersion != currentVersion)
+            if(previusVersion != currentVersion)
             {
                 OnVersionChange(previusVersion, currentVersion);
             }
@@ -44,7 +47,14 @@ namespace MangaReader.Bootstrap.Startup
         public void InitializeGUI()
         {
             var mainOptions = settingsManager.GetMainOptions();
-            ThemeManager.Current.ChangeTheme(App.Current, mainOptions?.Appearance?.Theme);
+            if(mainOptions.Appearance.Theme is null)
+            {
+                ThemeManager.Current.SyncTheme(ThemeSyncMode.SyncAll);
+            }
+            else
+            {
+                ThemeManager.Current.ChangeTheme(App.Current, mainOptions.Appearance.Theme);
+            }
         }
 
         private void FirstRunBootstraper()
@@ -66,9 +76,14 @@ namespace MangaReader.Bootstrap.Startup
             });
         }
 
-        private void OnVersionChange(Version previousVersion, Version currentVersion)
+        private static void OnVersionChange(Version previousVersion, Version currentVersion)
         {
-            //
+            if(App.Current?.MainWindow is MetroWindow metroWindow)
+            {
+                metroWindow.ShowMessageAsync(
+                    "new version",
+                    $"Application updated!\n{previousVersion} to {currentVersion}");
+            }
         }
     }
 }

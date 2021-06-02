@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -17,7 +18,8 @@ using MahApps.Metro.IconPacks;
 namespace AnimePlayer.Views.XamlConverters
 {
     [ValueConversion(typeof(object), typeof(PackIconMaterialKind))]
-    public class BoolToIconConverter :
+    [SuppressMessage("Performance", "CA1812:BoolToIconConverter is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic.", Justification ="WPF object")]
+    internal class BoolToIconConverter :
         DependencyObject,
         IValueConverter,
         IList,
@@ -43,7 +45,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public bool IsFixedSize => ((IList)items).IsFixedSize;
 
-        public void Add(BoolToIconConverterItem item)=> items.Add(item);
+        public void Add(BoolToIconConverterItem item) => items.Add(item);
 
         public int Add(object? value) => ((IList)items).Add(value);
 
@@ -55,15 +57,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         #region IValueConverter
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => items.LastOrDefault(i => i.Value.Equals(value))?.Kind;
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (value is not PackIconMaterialKind)
-            {
-                return null;
-            }
-
-            return items.LastOrDefault(i => i.Kind == (PackIconMaterialKind)value)?.Value;
-        }
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => value is not PackIconMaterialKind ? null : (items.LastOrDefault(i => i.Kind == (PackIconMaterialKind)value)?.Value);
         #endregion
 
         public void CopyTo(BoolToIconConverterItem[] array, int arrayIndex) => items.CopyTo(array, arrayIndex);
@@ -76,7 +70,7 @@ namespace AnimePlayer.Views.XamlConverters
 
         public int IndexOf(object? value) => ((IList)items).IndexOf(value);
 
-        public void Insert(int index, BoolToIconConverterItem item)=> items.Insert(index, item);
+        public void Insert(int index, BoolToIconConverterItem item) => items.Insert(index, item);
 
         public void Insert(int index, object? value) => ((IList)items).Insert(index, value);
 
@@ -84,15 +78,9 @@ namespace AnimePlayer.Views.XamlConverters
 
         public void Remove(object? value) => ((IList)items).Remove(value);
 
-        public void RemoveAt(int index)=> items.RemoveAt(index);
+        public void RemoveAt(int index) => items.RemoveAt(index);
 
         /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)items).GetEnumerator();
-    }
-
-    public class BoolToIconConverterItem
-    {
-        public PackIconMaterialKind Kind { get; set; }
-        public bool Value { get; set; }
     }
 }

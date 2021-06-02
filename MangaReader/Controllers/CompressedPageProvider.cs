@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using MangaReader.PagesViewer;
+using MangaReader.Views.Components.PagesViewers;
 
 using SharpCompress.Readers;
 
