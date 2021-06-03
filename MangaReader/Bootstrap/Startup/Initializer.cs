@@ -13,6 +13,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
 using MangaReader.Data;
+using MangaReader.Options;
 
 namespace MangaReader.Bootstrap.Startup
 {
@@ -61,7 +62,7 @@ namespace MangaReader.Bootstrap.Startup
         {
             settingsManager.Save(MainOptions.Key, new MainOptions
             {
-                Appearance = new MainOptions.AppearanceClass
+                Appearance = new Appearance
                 {
                     Theme = "Light.Blue",
                     WindowPosition = new()

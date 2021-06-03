@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ using MangaReader.Controllers;
 using MangaReader.Data;
 using MangaReader.Data.Models;
 using MangaReader.Exceptions;
+using MangaReader.Options;
 using MangaReader.Views.Components;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -157,11 +159,11 @@ namespace MangaReader.Views.Pages
             }
 
             pageNavigator!.GoToAsync<PgViewer>();
-            (pageNavigator.CurrentPage as PgViewer)?.View("manga://" + (sender.As<MangaItem>().Manga?.Id ?? 0));
+            (pageNavigator.CurrentPage as PgViewer)?.View("manga://" + (sender.As<MangaItem>().Manga?.Id ?? 0).ToString(CultureInfo.InvariantCulture));
             JumpList.AddToRecentCategory(new JumpTask()
             {
                 ApplicationPath = AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName,
-                Arguments = $"manga://{mangaItem.Manga?.Id ?? 0}",
+                Arguments = $"manga://{(mangaItem.Manga?.Id ?? 0).ToString(CultureInfo.InvariantCulture)}",
                 Title = mangaItem.Manga?.Name ?? string.Empty,
             });
         }

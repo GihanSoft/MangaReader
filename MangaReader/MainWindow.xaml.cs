@@ -10,6 +10,7 @@ using GihanSoft.Views.AttachedProperties;
 using MahApps.Metro.Controls;
 
 using MangaReader.Data;
+using MangaReader.Options;
 using MangaReader.Views.Pages;
 
 namespace MangaReader

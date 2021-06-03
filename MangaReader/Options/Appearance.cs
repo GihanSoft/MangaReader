@@ -6,13 +6,10 @@
 
 namespace MangaReader.Options
 {
-    public partial class MainOptions
+    public partial class Appearance
     {
-        public const string Key = "C2620BE2-F092-4807-B867-3DD8426E9F45";
+        public WindowPosition WindowPosition { get; set; } = new WindowPosition();
 
-        public Appearance Appearance { get; set; } = new Appearance();
-
-        public string? MangaRootFolder { get; set; }
-        public string? Version { get; set; }
+        public string? Theme { get; set; }
     }
 }
