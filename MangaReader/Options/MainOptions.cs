@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MangaReader.Data
+namespace MangaReader.Options
 {
     public class MainOptions
     {

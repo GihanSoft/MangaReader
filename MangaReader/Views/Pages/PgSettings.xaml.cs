@@ -1,20 +1,17 @@
-﻿using ControlzEx.Theming;
-
-using GihanSoft.Navigation;
-using GihanSoft.Navigation.Events;
-
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-
-using MangaReader.Data;
-using MangaReader.Exceptions;
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+
+using ControlzEx.Theming;
+
+using GihanSoft.Navigation;
+
+using MangaReader.Data;
+using MangaReader.Exceptions;
+using MangaReader.Options;
 
 namespace MangaReader.Views.Pages
 {

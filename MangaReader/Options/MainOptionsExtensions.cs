@@ -6,7 +6,9 @@
 
 using System;
 
-namespace MangaReader.Data
+using MangaReader.Data;
+
+namespace MangaReader.Options
 {
     public static class MainOptionsExtensions
     {

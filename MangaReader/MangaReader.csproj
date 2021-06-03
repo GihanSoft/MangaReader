@@ -28,6 +28,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MangaReader.Data\MangaReader.Data.csproj" />
 	</ItemGroup>
-
-	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>
