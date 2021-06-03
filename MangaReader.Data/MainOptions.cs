@@ -4,8 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-
 namespace MangaReader.Data
 {
     public class MainOptions
@@ -32,21 +30,5 @@ namespace MangaReader.Data
 
         public string? MangaRootFolder { get; set; }
         public string? Version { get; set; }
-    }
-
-    public static class MainOptionsExtensions
-    {
-        public static MainOptions GetMainOptions(this SettingsManager src)
-            => src?.Get<MainOptions>(MainOptions.Key) ?? throw new ArgumentNullException(nameof(src));
-
-        public static void SaveMainOptions(this SettingsManager src, MainOptions mainOptions)
-        {
-            if (src is null)
-            {
-                throw new ArgumentNullException(nameof(src));
-            }
-
-            src.Save(MainOptions.Key, mainOptions);
-        }
     }
 }
