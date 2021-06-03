@@ -8,13 +8,12 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace MangaReader.Views.Components.PagesViewers
 {
     public abstract class PagesViewer : Border
     {
         /// <summary>Identifies the <see cref="Page"/> dependency property.</summary>
-        public readonly static DependencyProperty PageProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty PageProperty = DependencyProperty.Register(
             nameof(Page),
             typeof(int),
             typeof(PagesViewer),
@@ -29,7 +28,7 @@ namespace MangaReader.Views.Components.PagesViewers
             }));
 
         /// <summary>Identifies the <see cref="Zoom"/> dependency property.</summary>
-        public readonly static DependencyProperty ZoomProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register(
             nameof(Zoom),
             typeof(double),
             typeof(PagesViewer),

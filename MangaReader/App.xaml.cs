@@ -92,7 +92,7 @@ namespace MangaReader
                 return;
             }
 
-            if(e.Args is { Length: > 0 })
+            if (e.Args is { Length: > 0 })
             {
                 Properties[ArgumentsKey] = e.Args;
             }

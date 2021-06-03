@@ -1,4 +1,10 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="SettingsManager.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 
 namespace MangaReader.Data
 {
@@ -17,13 +23,14 @@ namespace MangaReader.Data
         {
         }
 
-        public TOptions? Get<TOptions>(string key) where TOptions : class => dataDb.Settings.FindOne(s => s.Key == key)?.Options as TOptions;
+        public TOptions? Get<TOptions>(string key) where TOptions : class
+            => dataDb.Settings.FindOne(s => s.Key == key)?.Options as TOptions;
         public void Save<TOptions>(string key, TOptions options)
             where TOptions : class
         {
             Setting settings = new(key, options);
             var found = dataDb.Settings.Update(settings);
-            if(!found)
+            if (!found)
             {
                 dataDb.Settings.Insert(settings);
             }

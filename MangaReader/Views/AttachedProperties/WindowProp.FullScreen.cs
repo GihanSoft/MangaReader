@@ -34,7 +34,7 @@ namespace GihanSoft.Views.AttachedProperties
             typeof(WindowProp),
             new PropertyMetadata(false, (sender, args) =>
             {
-                if(sender is not Window win)
+                if (sender is not Window win)
                 {
                     return;
                 }
@@ -45,7 +45,7 @@ namespace GihanSoft.Views.AttachedProperties
                 HwndSourceHook lockHook = new(
                     (IntPtr _, int msg, IntPtr _, IntPtr lParam, ref bool _) =>
                     {
-                        if(msg is 0x46)
+                        if (msg is 0x46)
                         {
                             var wp = Marshal.PtrToStructure<WindowPos>(lParam);
                             wp.flags |= SWP.NOMOVE | SWP.NOSIZE;
@@ -55,7 +55,7 @@ namespace GihanSoft.Views.AttachedProperties
                         return IntPtr.Zero;
                     });
 
-                if((bool)args.NewValue)
+                if ((bool)args.NewValue)
                 {
                     win.SetRealRestoreBounds(win.RestoreBounds);
                     win.SetPreWindowsState(win.WindowState);
@@ -68,11 +68,11 @@ namespace GihanSoft.Views.AttachedProperties
                     win.SetCurrentValue(Window.WindowStyleProperty, WindowStyle.None);
 
                     var winType = win.GetType();
-                    while(winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
+                    while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
                         winType = winType.BaseType;
                     }
-                    if(winType is not null &&
+                    if (winType is not null &&
                         (winType.FullName?.Equals("MahApps.Metro.Controls.MetroWindow", StringComparison.OrdinalIgnoreCase) ?? false))
                     {
                         var showTitleBarProperty =
@@ -80,7 +80,7 @@ namespace GihanSoft.Views.AttachedProperties
                             .GetValue(win)
                             as DependencyProperty;
 
-                        if(showTitleBarProperty is not null)
+                        if (showTitleBarProperty is not null)
                         {
                             win.SetCurrentValue(showTitleBarProperty, false);
                         }
@@ -89,7 +89,7 @@ namespace GihanSoft.Views.AttachedProperties
                             winType.GetField("ShowCloseButtonProperty")?
                             .GetValue(win)
                             as DependencyProperty;
-                        if(showCloseButtonProperty is not null)
+                        if (showCloseButtonProperty is not null)
                         {
                             win.SetCurrentValue(showCloseButtonProperty, false);
                         }
@@ -112,11 +112,11 @@ namespace GihanSoft.Views.AttachedProperties
                     win.SetCurrentValue(Control.BorderThicknessProperty, new Thickness(1));
 
                     var winType = win.GetType();
-                    while(winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
+                    while (winType is not null && winType is not { FullName: "MahApps.Metro.Controls.MetroWindow" })
                     {
                         winType = winType.BaseType;
                     }
-                    if(winType is not null &&
+                    if (winType is not null &&
                         (winType.FullName?.Equals("MahApps.Metro.Controls.MetroWindow", StringComparison.OrdinalIgnoreCase) ?? false))
                     {
                         var showTitleBarProperty =
@@ -124,7 +124,7 @@ namespace GihanSoft.Views.AttachedProperties
                             .GetValue(win)
                             as DependencyProperty;
 
-                        if(showTitleBarProperty is not null)
+                        if (showTitleBarProperty is not null)
                         {
                             win.SetCurrentValue(showTitleBarProperty, true);
                         }
@@ -133,7 +133,7 @@ namespace GihanSoft.Views.AttachedProperties
                             winType.GetField("ShowCloseButtonProperty")?
                             .GetValue(win)
                             as DependencyProperty;
-                        if(showCloseButtonProperty is not null)
+                        if (showCloseButtonProperty is not null)
                         {
                             win.SetCurrentValue(showCloseButtonProperty, true);
                         }

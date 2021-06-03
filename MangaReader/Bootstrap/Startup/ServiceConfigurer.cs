@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MangaReader.Bootstrap.Startup
 {
-    public sealed class ServiceConfigurer
+    internal sealed class ServiceConfigurer
     {
         public const string CompanyNameKey = "CompanyName";
         public const string ProductNameKey = "ProductName";

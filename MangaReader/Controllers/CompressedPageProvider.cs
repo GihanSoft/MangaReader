@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using GihanSoft.String;
+
 using MangaReader.Views.Components.PagesViewers;
 
 using SharpCompress.Readers;
@@ -106,7 +108,7 @@ namespace MangaReader.Controllers
                 }
             }
 
-            pageNames.Sort(NaturalStringComparer.Default);
+            pageNames.Sort(NaturalComparer.InvariantCultureIgnoreCase);
         }
 
         /// <summary>
@@ -134,7 +136,7 @@ namespace MangaReader.Controllers
                 do
                 {
                     reader.MoveToNextEntry();
-                } while (reader.Entry.Key != name);
+                } while (!reader.Entry.Key.Equals(name, StringComparison.OrdinalIgnoreCase));
 
                 var memStream = new MemoryStream();
                 reader.WriteEntryTo(memStream);

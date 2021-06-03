@@ -43,8 +43,6 @@ namespace MangaReader.Views.Pages
             mainOptions = settingsManager?.Get<MainOptions>(MainOptions.Key) ?? throw new NotInitializedException();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e) => pageNavigator.Navigating += Navigator_Navigating;
-
         public override Task RefreshAsync()
         {
             mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key) ?? throw new NotInitializedException();
@@ -59,26 +57,9 @@ namespace MangaReader.Views.Pages
             return base.RefreshAsync();
         }
 
-        private async void Navigator_Navigating(object? sender, NavigatingEventArgs e)
-        {
-            if(e.Current == this && false /* any thing changed flag */)
-            {
-                e.Cancel = true;
-
-                var result = await ((MetroWindow)App.Current.MainWindow).ShowMessageAsync(
-                    "Warning",
-                    "Are sure to cancel all changes",
-                    MessageDialogStyle.AffirmativeAndNegative).ConfigureAwait(false);
-                if(result is MessageDialogResult.Affirmative)
-                {
-                    BtnCancel_Click(null, null);
-                }
-            }
-        }
-
         private void CboThemeBase_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(CboThemeBase.SelectedItem is not string newBaseTheme)
+            if (CboThemeBase.SelectedItem is not string newBaseTheme)
             {
                 return;
             }
@@ -88,7 +69,7 @@ namespace MangaReader.Views.Pages
 
         private void CboTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(CboThemeColor.SelectedItem is not string newThemeColor)
+            if (CboThemeColor.SelectedItem is not string newThemeColor)
             {
                 return;
             }
@@ -120,7 +101,7 @@ namespace MangaReader.Views.Pages
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if(disposing)
+            if (disposing)
             {
                 Cancel();
             }

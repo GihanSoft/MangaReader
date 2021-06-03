@@ -17,7 +17,7 @@ namespace MangaReader.Views.XamlConverters
     /// </summary>
     [SuppressMessage("WpfAnalyzers.IValueConverter", "WPF0072:ValueConversion must use correct types.", Justification = "its really double to double")]
     [ValueConversion(typeof(double), typeof(double))]
-    public class ZaribConverter : DependencyObject, IValueConverter
+    internal class ZaribConverter : DependencyObject, IValueConverter
     {
         /// <summary>Identifies the <see cref="Zarib"/> dependency property.</summary>
         public static readonly DependencyProperty ZaribProperty = DependencyProperty.Register(

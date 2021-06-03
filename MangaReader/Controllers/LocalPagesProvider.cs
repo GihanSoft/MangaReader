@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using GihanSoft.String;
+
 using MangaReader.Controllers;
 using MangaReader.Views.Components.PagesViewers;
 
@@ -27,7 +29,7 @@ namespace GihanSoft.MangaSources.Local
             pagePathes = dir.EnumerateFiles("*", SearchOption.AllDirectories)
                 .Where(f => FileTypeList.ImageTypes.Contains(f.Extension, StringComparer.InvariantCultureIgnoreCase))
                 .Select(f => f.FullName).ToList();
-            pagePathes.Sort(NaturalStringComparer.Default);
+            pagePathes.Sort(NaturalComparer.InvariantCultureIgnoreCase);
         }
 
         public override MemoryStream? this[int page]

@@ -20,10 +20,12 @@ using System.Windows.Input;
 
 using GihanSoft.MangaSources.Local;
 using GihanSoft.Navigation;
+using GihanSoft.String;
 
 using MangaReader.Controllers;
 using MangaReader.Data;
 using MangaReader.Data.Models;
+using MangaReader.Exceptions;
 using MangaReader.Views.Components.PagesViewers;
 using MangaReader.Views.XamlConverters;
 
@@ -42,17 +44,17 @@ namespace MangaReader.Views.Pages
             typeof(PgViewer),
             new PropertyMetadata(default(FileSystemInfo), (d, e) =>
             {
-                if(d is not PgViewer pgViewer || e.NewValue is not FileSystemInfo currentChapter)
+                if (d is not PgViewer pgViewer || e.NewValue is not FileSystemInfo currentChapter)
                 {
                     return;
                 }
 
-                if(pgViewer.CurrentPagesProvider is not null)
+                if (pgViewer.CurrentPagesProvider is not null)
                 {
                     pgViewer.CurrentPagesProvider.Dispose();
                 }
 
-                if(currentChapter is DirectoryInfo directory)
+                if (currentChapter is DirectoryInfo directory)
                 {
                     var files = directory.GetFiles("*", SearchOption.AllDirectories);
                     pgViewer.CurrentPagesProvider = files.Any(file => FileTypeList.CompressedType.Contains(file.Extension, StringComparer.OrdinalIgnoreCase))
@@ -66,13 +68,13 @@ namespace MangaReader.Views.Pages
 
                 pgViewer.TbPagesCount.SetCurrentValue(TextBlock.TextProperty, pgViewer.CurrentPagesProvider.Count.ToString("/#", CultureInfo.InvariantCulture));
 
-                while(pgViewer.PagesViewer is null)
+                while (pgViewer.PagesViewer is null)
                 {
                     System.Threading.Thread.Sleep(10);
                 }
 
                 var page = 0;
-                if(e.OldValue is not null)
+                if (e.OldValue is not null)
                 {
                     pgViewer.Save();
                 }
@@ -114,7 +116,7 @@ namespace MangaReader.Views.Pages
 
         private static IEnumerable<FileSystemInfo> GetChapterList(Manga manga)
         {
-            if(manga.Path is null)
+            if (manga.Path is null)
             {
                 return Enumerable.Empty<FileSystemInfo>();
             }
@@ -123,7 +125,7 @@ namespace MangaReader.Views.Pages
 
             return dir.EnumerateDirectories().Cast<FileSystemInfo>()
                     .Concat(dir.EnumerateFiles().Where(f => FileTypeList.CompressedType.Contains(f.Extension, StringComparer.InvariantCultureIgnoreCase)))
-                    .OrderBy(f => f.Name, NaturalStringComparer.Default);
+                    .OrderBy(f => f.Name, NaturalComparer.InvariantCultureIgnoreCase);
         }
 
         private readonly IValueConverter zaribConverter100;
@@ -133,11 +135,7 @@ namespace MangaReader.Views.Pages
         private readonly Timer timer;
         private Manga? manga;
 
-        private Manga Manga
-        {
-            get => manga ?? throw new ArgumentNullException("why null!!");
-            set => manga = value;
-        }
+        private Manga Manga => manga ?? throw new UnrealException("why null!!");
 
         public PgViewer(
             DataDb dataDb,
@@ -154,27 +152,27 @@ namespace MangaReader.Views.Pages
             CboChapters.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
             {
                 Source = this,
-                Path = new PropertyPath(nameof(Chapters), null)
+                Path = new PropertyPath(nameof(Chapters), null),
             });
             CboChapters.SetBinding(Selector.SelectedItemProperty, new Binding
             {
                 Source = this,
                 Path = new PropertyPath(nameof(CurrentChapter), null),
-                Mode = BindingMode.TwoWay
+                Mode = BindingMode.TwoWay,
             });
             TxtPage.SetBinding(TextBox.TextProperty, new Binding
             {
                 Source = PagesViewer,
                 Path = new PropertyPath(nameof(PagesViewer.Page), null),
                 Mode = BindingMode.TwoWay,
-                Converter = incrementalConverter
+                Converter = incrementalConverter,
             });
             TxtZoom.SetBinding(TextBox.TextProperty, new Binding
             {
                 Source = PagesViewer,
                 Path = new PropertyPath(nameof(PagesViewer.Zoom), null),
                 Mode = BindingMode.TwoWay,
-                Converter = zaribConverter100
+                Converter = zaribConverter100,
             });
 
             timer = new()
@@ -206,7 +204,7 @@ namespace MangaReader.Views.Pages
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if(disposing)
+            if (disposing)
             {
                 timer.Dispose();
                 Save();
@@ -215,7 +213,7 @@ namespace MangaReader.Views.Pages
 
         private void Save()
         {
-            if(CurrentChapter is not null)
+            if (CurrentChapter is not null)
             {
                 Manga.CurrentChapter = Chapters.IndexOf(CurrentChapter);
             }
@@ -229,19 +227,19 @@ namespace MangaReader.Views.Pages
         {
             _ = path ?? throw new ArgumentNullException(nameof(path));
 
-            if(path.StartsWith("manga://", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith("manga://", StringComparison.OrdinalIgnoreCase))
             {
-                if(!int.TryParse(path.Split('/').Last(), NumberStyles.Any, CultureInfo.InvariantCulture, out var mangaId))
+                if (!int.TryParse(path.Split('/')[^1], NumberStyles.Any, CultureInfo.InvariantCulture, out var mangaId))
                 {
                     throw new ArgumentException("Manga Id is not valid.", nameof(path));
                 }
                 manga = dataDb.Mangas.FindAll().FirstOrDefault(m => m.Id == mangaId);
-                if(manga is null)
+                if (manga is null)
                 {
                     throw new ArgumentException("Manga not found.", nameof(path));
                 }
                 Chapters.Clear();
-                foreach(var chapter in GetChapterList(manga))
+                foreach (var chapter in GetChapterList(manga))
                 {
                     Chapters.Add(chapter);
                 }
@@ -252,12 +250,9 @@ namespace MangaReader.Views.Pages
 
             pageNavigator.Navigated += (sender, e) =>
             {
-                if(e.Previous == this)
+                if (e.Previous == this)
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        Save();
-                    });
+                    Dispatcher.Invoke(() => Save());
                 }
             };
         }
@@ -265,7 +260,7 @@ namespace MangaReader.Views.Pages
         private void CmdNextChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var chapter = CboChapters.SelectedIndex + 1;
-            if(chapter >= Chapters.Count)
+            if (chapter >= Chapters.Count)
             {
                 return;
             }
@@ -276,7 +271,7 @@ namespace MangaReader.Views.Pages
         private void CmdPreviousChapter_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var chapter = CboChapters.SelectedIndex - 1;
-            if(chapter is < 0)
+            if (chapter is < 0)
             {
                 return;
             }

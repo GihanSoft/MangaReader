@@ -6,16 +6,17 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace MangaReader.Views.Native
 {
     /// <summary>
     /// SetWindowPos options.
     /// </summary>
-    //[SuppressMessage("Design", "CA1028:Enum Storage should be Int32", Justification = "Win32 API")]
+    // [SuppressMessage("Design", "CA1028:Enum Storage should be Int32", Justification = "Win32 API")]
     [SuppressMessage("Design", "CA1069:Enums values should not be duplicated", Justification = "Win32 API")]
     [Flags]
-    //[SuppressMessage("Readability", "RCS1234:Duplicate enum value.", Justification = "Win32 API")]
+    [SuppressMessage("Readability", "RCS1234:Duplicate enum value.", Justification = "Win32 API")]
     internal enum SWP : uint
     {
         /// <summary>
@@ -113,11 +114,13 @@ namespace MangaReader.Views.Native
         ASYNCWINDOWPOS = 16384,
     }
 
-    //[SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Win32 API")]
-    //[SuppressMessage("Minor Code Smell", "S1104:Fields should not have public accessibility", Justification = "Win32 API")]
-    //[SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "Win32 API")]
-    //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:Elements should be documented", Justification = "Win32 API")]
-    //[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:Accessible fields should begin with upper-case letter", Justification = "Win32 API")]
+
+    // [SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Win32 API")]
+    // [SuppressMessage("Minor Code Smell", "S1104:Fields should not have public accessibility", Justification = "Win32 API")]
+    // [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "Win32 API")]
+    // [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:Elements should be documented", Justification = "Win32 API")]
+    // [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:Accessible fields should begin with upper-case letter", Justification = "Win32 API")]
+    [SuppressMessage("Performance", "MA0008:Add StructLayoutAttribute", Justification = "<Pending>")]
     internal struct WindowPos
     {
         public IntPtr hwnd;

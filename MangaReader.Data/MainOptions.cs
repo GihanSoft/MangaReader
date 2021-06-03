@@ -1,4 +1,10 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="MainOptions.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 
 namespace MangaReader.Data
 {
@@ -31,13 +37,7 @@ namespace MangaReader.Data
     public static class MainOptionsExtensions
     {
         public static MainOptions GetMainOptions(this SettingsManager src)
-        {
-            if (src is null)
-            {
-                throw new ArgumentNullException(nameof(src));
-            }
-            return src.Get<MainOptions>(MainOptions.Key)!;
-        }
+            => src?.Get<MainOptions>(MainOptions.Key) ?? throw new ArgumentNullException(nameof(src));
 
         public static void SaveMainOptions(this SettingsManager src, MainOptions mainOptions)
         {
@@ -45,6 +45,7 @@ namespace MangaReader.Data
             {
                 throw new ArgumentNullException(nameof(src));
             }
+
             src.Save(MainOptions.Key, mainOptions);
         }
     }

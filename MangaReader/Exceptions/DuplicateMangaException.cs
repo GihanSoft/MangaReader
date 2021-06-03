@@ -2,7 +2,6 @@
 
 namespace MangaReader.Exceptions
 {
-
     [Serializable]
     public class DuplicateMangaException : Exception
     {

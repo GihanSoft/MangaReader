@@ -1,4 +1,10 @@
-﻿namespace MangaReader.Data
+﻿// -----------------------------------------------------------------------
+// <copyright file="Setting.cs" company="GihanSoft">
+// Copyright (c) 2021 GihanSoft. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace MangaReader.Data
 {
     public class Setting
     {

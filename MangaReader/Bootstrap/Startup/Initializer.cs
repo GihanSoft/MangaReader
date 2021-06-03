@@ -32,13 +32,13 @@ namespace MangaReader.Bootstrap.Startup
         public void Initialize()
         {
             var mainOptions = settingsManager.GetMainOptions();
-            if(mainOptions is null)
+            if (mainOptions is null)
             {
                 FirstRunBootstraper();
                 mainOptions = settingsManager.Get<MainOptions>(MainOptions.Key);
             }
             var previusVersion = Version.Parse(mainOptions?.Version ?? "0.0");
-            if(previusVersion != currentVersion)
+            if (previusVersion != currentVersion)
             {
                 OnVersionChange(previusVersion, currentVersion);
             }
@@ -47,7 +47,7 @@ namespace MangaReader.Bootstrap.Startup
         public void InitializeGUI()
         {
             var mainOptions = settingsManager.GetMainOptions();
-            if(mainOptions.Appearance.Theme is null)
+            if (mainOptions.Appearance.Theme is null)
             {
                 ThemeManager.Current.SyncTheme(ThemeSyncMode.SyncAll);
             }
@@ -78,7 +78,7 @@ namespace MangaReader.Bootstrap.Startup
 
         private static void OnVersionChange(Version previousVersion, Version currentVersion)
         {
-            if(App.Current?.MainWindow is MetroWindow metroWindow)
+            if (App.Current?.MainWindow is MetroWindow metroWindow)
             {
                 metroWindow.ShowMessageAsync(
                     "new version",

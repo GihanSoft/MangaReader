@@ -39,7 +39,6 @@ namespace MangaReader.Controllers
             _ = GetKeyboardState(keyboardState);
 
             var scanCode = MapVirtualKey((uint)virtualKey, MapType.MAPVK_VK_TO_VSC);
-            //StringBuilder stringBuilder = new(2);
 
             var c = new char[1];
             var result = ToUnicode((uint)virtualKey, scanCode, keyboardState, c, 2, 0);

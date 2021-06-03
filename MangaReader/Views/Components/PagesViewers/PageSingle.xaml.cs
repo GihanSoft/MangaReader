@@ -1,11 +1,15 @@
-﻿using MangaReader.Views.XamlConverters;
+﻿using GihanSoft;
+
+using MangaReader.Views.XamlConverters;
 
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace MangaReader.Views.Components.PagesViewers
 {
@@ -42,23 +46,12 @@ namespace MangaReader.Views.Components.PagesViewers
 
         protected override void OnZoomChanged(double zoom)
         {
-            ((ZaribConverter)Resources[nameof(ZaribConverter)]).SetCurrentValue(ZaribConverter.ZaribProperty, zoom);
+            Resources[nameof(ZaribConverter)].As<ZaribConverter>().SetCurrentValue(ZaribConverter.ZaribProperty, zoom);
+
             Img.GetBindingExpression(HeightProperty).UpdateTarget();
-            if (ScrollViewer is { ScrollableWidth: 0d } && zoom is > 1)
-            {
-                Task.Run(async () =>
-                {
-                    while (Dispatcher.Invoke(() => ScrollViewer.ScrollableWidth) is 0d)
-                    {
-                        await Task.Delay(10).ConfigureAwait(false);
-                    }
-                    Dispatcher.Invoke(() => ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.ScrollableWidth / 2));
-                });
-            }
-            else
-            {
-                ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.ScrollableWidth / 2);
-            }
+            Dispatcher.Invoke(() =>
+                ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.ScrollableWidth / 2),
+                DispatcherPriority.ApplicationIdle);
         }
 
         private void ScrollViewer_PreviewKeyDown(object sender, KeyEventArgs e)
